@@ -8,6 +8,15 @@
 
 [!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/clong)
 
+
+## 옆커폰 중고폰 거래 플랫폼 (MVP)
+
+이 저장소에는 Hiyori 템플릿 위에 옆커폰 중고폰 거래 플랫폼 MVP가 추가되어 있습니다.
+
+- 기획서: [docs/used-phone-mvp-spec.md](docs/used-phone-mvp-spec.md)
+- 구현 가이드 (실행, DB 적용, 경로/API 맵, 상태 머신): [docs/used-phone-mvp-setup.md](docs/used-phone-mvp-setup.md)
+- 소비자 `/products`, 판매자센터 `/seller`, 관리자 `/admin/marketplace`
+
 ## Features
 
 - **Searching Feature with GraphQL**: Dynamic and efficient searching, allowing complex queries with optimized data fetching.

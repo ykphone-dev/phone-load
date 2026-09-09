@@ -538,3 +538,6 @@ export type InsertMedia = InferInsertModel<typeof medias>;
 //     }
 //   }
 // )
+
+// 옆커폰 중고폰 거래 플랫폼 (판매자/상품/주문/분쟁)
+export * from "./schema-used-phones";
