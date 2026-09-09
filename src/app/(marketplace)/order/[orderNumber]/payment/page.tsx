@@ -10,12 +10,17 @@ import { productTitle } from "@/features/used-phones/utils";
 
 export const dynamic = "force-dynamic";
 
-export default async function PaymentPage({ params }: { params: { orderNumber: string } }) {
+export default async function PaymentPage({
+  params,
+}: {
+  params: { orderNumber: string };
+}) {
   let order: Awaited<ReturnType<typeof getBuyerOrderView>>;
   try {
     order = await getBuyerOrderView(params.orderNumber);
   } catch (err) {
-    if (err instanceof AppError && err.status === 403) redirect(`/order/lookup?orderNumber=${params.orderNumber}`);
+    if (err instanceof AppError && err.status === 403)
+      redirect(`/order/lookup?orderNumber=${params.orderNumber}`);
     notFound();
   }
 
@@ -31,22 +36,35 @@ export default async function PaymentPage({ params }: { params: { orderNumber: s
         <p className="font-mono text-sm">{order.orderNumber}</p>
         <div className="flex items-center justify-center gap-2 pt-1 text-sm">
           <OrderStatusBadge status={order.status} />
-          <DepositCountdown reservedUntil={order.reservedUntil ? order.reservedUntil.toISOString() : null} />
+          <DepositCountdown
+            reservedUntil={
+              order.reservedUntil ? order.reservedUntil.toISOString() : null
+            }
+          />
         </div>
       </div>
 
       <div className="border p-4 text-sm">
-        <p className="font-medium">{productTitle(order.product)} · {order.product.color}</p>
+        <p className="font-medium">
+          {productTitle(order.product)} · {order.product.color}
+        </p>
         <p className="text-zinc-500">{order.seller.businessName}</p>
       </div>
 
       <BankTransferPanel amount={order.price} seller={order.seller} />
 
-      <DepositReportForm orderNumber={order.orderNumber} defaultName={order.buyerName} />
+      <DepositReportForm
+        orderNumber={order.orderNumber}
+        defaultName={order.buyerName}
+      />
 
       <div className="flex justify-between text-xs text-zinc-500">
-        <Link href={`/order/${order.orderNumber}`} className="underline">주문 상세 보기</Link>
-        <Link href="/products" className="underline">쇼핑 계속하기</Link>
+        <Link href={`/order/${order.orderNumber}`} className="underline">
+          주문 상세 보기
+        </Link>
+        <Link href="/products" className="underline">
+          쇼핑 계속하기
+        </Link>
       </div>
     </div>
   );

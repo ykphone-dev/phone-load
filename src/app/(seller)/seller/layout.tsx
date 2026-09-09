@@ -15,7 +15,11 @@ const NAV_ITEMS: SidebarNavItem[] = [
   { title: "판매자 정보", href: "/seller/profile", icon: "user", items: [] },
 ];
 
-export default async function SellerLayout({ children }: { children: ReactNode }) {
+export default async function SellerLayout({
+  children,
+}: {
+  children: ReactNode;
+}) {
   const ctx = await getSessionContext();
   if (!ctx.user) redirect("/sign-in?from=/seller");
 
@@ -27,8 +31,13 @@ export default async function SellerLayout({ children }: { children: ReactNode }
             옆커폰 판매자센터
           </Link>
           <div className="flex items-center gap-4 text-sm">
-            <span className="hidden text-zinc-500 sm:inline">{ctx.user.email}</span>
-            <Link href="/products" className="underline-offset-4 hover:underline">
+            <span className="hidden text-zinc-500 sm:inline">
+              {ctx.user.email}
+            </span>
+            <Link
+              href="/products"
+              className="underline-offset-4 hover:underline"
+            >
               쇼핑몰로
             </Link>
           </div>
@@ -55,7 +64,9 @@ export default async function SellerLayout({ children }: { children: ReactNode }
           <div className="py-6 pr-4">
             {ctx.seller && (
               <div className="mb-4 rounded-md border p-3">
-                <p className="truncate text-sm font-medium">{ctx.seller.businessName}</p>
+                <p className="truncate text-sm font-medium">
+                  {ctx.seller.businessName}
+                </p>
                 <div className="mt-1">
                   <SellerStatusBadge status={ctx.seller.status} />
                 </div>

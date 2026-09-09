@@ -1,10 +1,20 @@
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import { ProductStatusBadge, SectionTitle } from "@/features/used-phones/components";
+import {
+  ProductStatusBadge,
+  SectionTitle,
+} from "@/features/used-phones/components";
 import { ProductForm } from "@/features/used-phones/components/seller/ProductForm";
-import { INSPECTION_ITEMS, type ImageKind, type InspectionResult } from "@/features/used-phones/constants";
+import {
+  INSPECTION_ITEMS,
+  type ImageKind,
+  type InspectionResult,
+} from "@/features/used-phones/constants";
 import { AppError } from "@/features/used-phones/server/errors";
-import { getSellerProduct, type SellerProductDetail } from "@/features/used-phones/server/products";
+import {
+  getSellerProduct,
+  type SellerProductDetail,
+} from "@/features/used-phones/server/products";
 import { guardSellerPage } from "@/features/used-phones/server/seller-guard";
 import type { ProductFormInput } from "@/features/used-phones/validations";
 import Link from "next/link";
@@ -14,7 +24,10 @@ export const dynamic = "force-dynamic";
 
 function toFormDefaults(p: SellerProductDetail): ProductFormInput {
   const inspection = Object.fromEntries(
-    INSPECTION_ITEMS.map((k) => [k, (p.inspection?.[k] as InspectionResult | undefined) ?? "UNKNOWN"]),
+    INSPECTION_ITEMS.map((k) => [
+      k,
+      (p.inspection?.[k] as InspectionResult | undefined) ?? "UNKNOWN",
+    ]),
   ) as ProductFormInput["inspection"];
   return {
     brand: p.brand,
@@ -38,12 +51,19 @@ function toFormDefaults(p: SellerProductDetail): ProductFormInput {
     imei: p.imei ?? "",
     description: p.description ?? "",
     inspection,
-    images: p.images.map((img) => ({ imageUrl: img.imageUrl, kind: img.kind as ImageKind })),
+    images: p.images.map((img) => ({
+      imageUrl: img.imageUrl,
+      kind: img.kind as ImageKind,
+    })),
     publish: p.status === "ON_SALE",
   };
 }
 
-export default async function EditProductPage({ params }: { params: { id: string } }) {
+export default async function EditProductPage({
+  params,
+}: {
+  params: { id: string };
+}) {
   await guardSellerPage();
 
   let product: SellerProductDetail;
@@ -61,7 +81,10 @@ export default async function EditProductPage({ params }: { params: { id: string
       <div>
         <SectionTitle
           right={
-            <Link href="/seller/products" className="text-sm text-zinc-500 underline-offset-4 hover:underline">
+            <Link
+              href="/seller/products"
+              className="text-sm text-zinc-500 underline-offset-4 hover:underline"
+            >
               목록으로
             </Link>
           }
@@ -91,7 +114,11 @@ export default async function EditProductPage({ params }: { params: { id: string
           </AlertDescription>
         </Alert>
       ) : (
-        <ProductForm mode="edit" productId={product.id} defaultValues={toFormDefaults(product)} />
+        <ProductForm
+          mode="edit"
+          productId={product.id}
+          defaultValues={toFormDefaults(product)}
+        />
       )}
     </div>
   );

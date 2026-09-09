@@ -3,7 +3,10 @@
 import { revalidatePath } from "next/cache";
 import { toActionError, type ActionResult } from "../server/errors";
 import { registerSeller, updateMySellerProfile } from "../server/sellers";
-import type { SellerRegisterInput, SellerProfileUpdateInput } from "../validations";
+import type {
+  SellerRegisterInput,
+  SellerProfileUpdateInput,
+} from "../validations";
 
 export async function registerSellerAction(
   input: SellerRegisterInput,

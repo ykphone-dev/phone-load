@@ -31,19 +31,44 @@ export function OrderProgress({ status }: { status: OrderStatus }) {
           return (
             <li key={step} className="flex flex-1 flex-col items-center">
               <div className="flex w-full items-center">
-                <div className={cn("h-0.5 flex-1", i === 0 ? "bg-transparent" : done ? "bg-black" : "bg-zinc-200")} />
+                <div
+                  className={cn(
+                    "h-0.5 flex-1",
+                    i === 0
+                      ? "bg-transparent"
+                      : done
+                        ? "bg-black"
+                        : "bg-zinc-200",
+                  )}
+                />
                 <div
                   className={cn(
                     "flex h-6 w-6 shrink-0 items-center justify-center rounded-full border-2 text-[10px] font-bold",
-                    done ? "border-black bg-black text-white" : "border-zinc-300 bg-white text-zinc-400",
+                    done
+                      ? "border-black bg-black text-white"
+                      : "border-zinc-300 bg-white text-zinc-400",
                     current && "ring-2 ring-black/20",
                   )}
                 >
                   {i + 1}
                 </div>
-                <div className={cn("h-0.5 flex-1", i === PROGRESS_STEPS.length - 1 ? "bg-transparent" : done && i < idx ? "bg-black" : "bg-zinc-200")} />
+                <div
+                  className={cn(
+                    "h-0.5 flex-1",
+                    i === PROGRESS_STEPS.length - 1
+                      ? "bg-transparent"
+                      : done && i < idx
+                        ? "bg-black"
+                        : "bg-zinc-200",
+                  )}
+                />
               </div>
-              <span className={cn("mt-1 text-center text-[11px] leading-tight", done ? "text-black" : "text-zinc-400")}>
+              <span
+                className={cn(
+                  "mt-1 text-center text-[11px] leading-tight",
+                  done ? "text-black" : "text-zinc-400",
+                )}
+              >
                 {STEP_LABEL[step] ?? ORDER_STATUS_LABEL[step]}
               </span>
             </li>

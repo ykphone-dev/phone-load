@@ -1,6 +1,9 @@
 import { handle, readJson } from "@/features/used-phones/server/api";
 import { setOrderAccessCookie } from "@/features/used-phones/server/guest-access";
-import { createOrder, listMyOrders } from "@/features/used-phones/server/orders";
+import {
+  createOrder,
+  listMyOrders,
+} from "@/features/used-phones/server/orders";
 import type { NextRequest } from "next/server";
 
 export const dynamic = "force-dynamic";
@@ -13,7 +16,9 @@ export async function GET() {
 /** 주문 생성. 응답과 함께 주문 접근 쿠키를 내려준다. */
 export async function POST(request: NextRequest) {
   return handle(async () => {
-    const { order, token, reservationMinutes } = await createOrder(await readJson(request));
+    const { order, token, reservationMinutes } = await createOrder(
+      await readJson(request),
+    );
     setOrderAccessCookie(order.orderNumber, token);
     return {
       orderId: order.id,

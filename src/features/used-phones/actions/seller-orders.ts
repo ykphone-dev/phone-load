@@ -32,7 +32,11 @@ type Result = ActionResult<{ status: string }>;
 
 async function run(
   orderId: string,
-  fn: () => Promise<{ status: string; orderNumber?: string; productId?: string }>,
+  fn: () => Promise<{
+    status: string;
+    orderNumber?: string;
+    productId?: string;
+  }>,
 ): Promise<Result> {
   try {
     const o = await fn();
@@ -43,28 +47,47 @@ async function run(
   }
 }
 
-export async function sellerConfirmDepositAction(orderId: string): Promise<Result> {
+export async function sellerConfirmDepositAction(
+  orderId: string,
+): Promise<Result> {
   return run(orderId, () => sellerConfirmDeposit(orderId));
 }
-export async function sellerUnconfirmDepositAction(orderId: string): Promise<Result> {
+export async function sellerUnconfirmDepositAction(
+  orderId: string,
+): Promise<Result> {
   return run(orderId, () => sellerUnconfirmDeposit(orderId));
 }
-export async function sellerStartPreparingAction(orderId: string): Promise<Result> {
+export async function sellerStartPreparingAction(
+  orderId: string,
+): Promise<Result> {
   return run(orderId, () => sellerStartPreparing(orderId));
 }
-export async function sellerShipAction(orderId: string, input: ShipmentInput): Promise<Result> {
+export async function sellerShipAction(
+  orderId: string,
+  input: ShipmentInput,
+): Promise<Result> {
   return run(orderId, () => sellerShip(orderId, input));
 }
-export async function sellerMarkDeliveredAction(orderId: string): Promise<Result> {
+export async function sellerMarkDeliveredAction(
+  orderId: string,
+): Promise<Result> {
   return run(orderId, () => sellerMarkDelivered(orderId));
 }
-export async function sellerCancelAction(orderId: string, reason?: string): Promise<Result> {
+export async function sellerCancelAction(
+  orderId: string,
+  reason?: string,
+): Promise<Result> {
   return run(orderId, () => sellerCancelBeforeDeposit(orderId, reason));
 }
-export async function sellerApproveCancelAction(orderId: string): Promise<Result> {
+export async function sellerApproveCancelAction(
+  orderId: string,
+): Promise<Result> {
   return run(orderId, () => sellerApproveCancel(orderId));
 }
-export async function sellerRejectCancelAction(orderId: string, note?: string): Promise<Result> {
+export async function sellerRejectCancelAction(
+  orderId: string,
+  note?: string,
+): Promise<Result> {
   return run(orderId, () => sellerRejectCancel(orderId, note));
 }
 export async function sellerDecideRefundAction(

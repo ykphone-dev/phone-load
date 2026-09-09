@@ -32,6 +32,8 @@ describe("utils", () => {
   test("정규화", () => {
     expect(normalizePhone("010-1234-5678")).toBe("01012345678");
     expect(normalizeBusinessNumber("123-45-67890")).toBe("1234567890");
-    expect(productTitle({ model: "iPhone 15 Pro", storage: "256GB" })).toBe("iPhone 15 Pro 256GB");
+    expect(productTitle({ model: "iPhone 15 Pro", storage: "256GB" })).toBe(
+      "iPhone 15 Pro 256GB",
+    );
   });
 });

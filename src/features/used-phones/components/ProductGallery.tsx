@@ -7,7 +7,13 @@ import { IMAGE_KIND_LABEL, type ImageKind } from "../constants";
 
 type Img = { id?: string; imageUrl: string; kind?: string | null };
 
-export function ProductGallery({ images, alt }: { images: Img[]; alt: string }) {
+export function ProductGallery({
+  images,
+  alt,
+}: {
+  images: Img[];
+  alt: string;
+}) {
   const [index, setIndex] = useState(0);
   if (images.length === 0) {
     return (
@@ -20,7 +26,14 @@ export function ProductGallery({ images, alt }: { images: Img[]; alt: string }) 
   return (
     <div className="space-y-2">
       <div className="relative aspect-square w-full overflow-hidden bg-zinc-100">
-        <Image src={current.imageUrl} alt={alt} fill sizes="(max-width: 768px) 100vw, 50vw" className="object-contain" priority />
+        <Image
+          src={current.imageUrl}
+          alt={alt}
+          fill
+          sizes="(max-width: 768px) 100vw, 50vw"
+          className="object-contain"
+          priority
+        />
         {current.kind && (
           <span className="absolute left-2 top-2 rounded-sm bg-black/60 px-2 py-0.5 text-xs text-white">
             {IMAGE_KIND_LABEL[current.kind as ImageKind] ?? current.kind}
@@ -40,7 +53,13 @@ export function ProductGallery({ images, alt }: { images: Img[]; alt: string }) 
               )}
               aria-label={`사진 ${i + 1}`}
             >
-              <Image src={img.imageUrl} alt="" fill sizes="64px" className="object-cover" />
+              <Image
+                src={img.imageUrl}
+                alt=""
+                fill
+                sizes="64px"
+                className="object-cover"
+              />
             </button>
           ))}
         </div>

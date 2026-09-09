@@ -45,8 +45,7 @@ export function normalizeBusinessNumber(value: string) {
 /** 주문번호: ORDER-YYYYMMDD-XXXXXX (6자리 난수, 유니크 제약으로 충돌 시 재시도) */
 export function generateOrderNumber(now: Date = new Date(), random?: number) {
   const date = dayjs(now).format("YYYYMMDD");
-  const n =
-    random ?? Math.floor(Math.random() * 1_000_000);
+  const n = random ?? Math.floor(Math.random() * 1_000_000);
   return `ORDER-${date}-${String(n).padStart(6, "0")}`;
 }
 

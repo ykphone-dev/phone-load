@@ -13,11 +13,7 @@ import {
 } from "@/lib/supabase/schema";
 import { and, asc, desc, eq, inArray, lt, sql, type SQL } from "drizzle-orm";
 import type { OrderStatus, ProductStatus } from "../constants";
-import {
-  nextStatus,
-  type Actor,
-  type TransitionKey,
-} from "../order-state";
+import { nextStatus, type Actor, type TransitionKey } from "../order-state";
 import { generateOrderNumber, normalizePhone } from "../utils";
 import {
   cancelOrderSchema,
@@ -65,7 +61,9 @@ async function loadOrder(where: SQL) {
     with: {
       product: {
         columns: { imei: false },
-        with: { images: { orderBy: [asc(phoneProductImages.sortOrder)], limit: 3 } },
+        with: {
+          images: { orderBy: [asc(phoneProductImages.sortOrder)], limit: 3 },
+        },
       },
       seller: true,
       transferReport: true,
@@ -112,11 +110,15 @@ async function transition(
   const [updated] = await tx
     .update(phoneOrders)
     .set({ status: to, updatedAt: new Date(), ...(meta.set ?? {}) })
-    .where(and(eq(phoneOrders.id, order.id), eq(phoneOrders.status, order.status)))
+    .where(
+      and(eq(phoneOrders.id, order.id), eq(phoneOrders.status, order.status)),
+    )
     .returning();
 
   if (!updated) {
-    throw conflict("주문 상태가 방금 변경되었습니다. 새로고침 후 다시 시도하세요.");
+    throw conflict(
+      "주문 상태가 방금 변경되었습니다. 새로고침 후 다시 시도하세요.",
+    );
   }
 
   await logAudit(
@@ -145,7 +147,12 @@ async function setProductStatus(
   await tx
     .update(phoneProducts)
     .set({ status: to, updatedAt: new Date() })
-    .where(and(eq(phoneProducts.id, productId), inArray(phoneProducts.status, fromArr)));
+    .where(
+      and(
+        eq(phoneProducts.id, productId),
+        inArray(phoneProducts.status, fromArr),
+      ),
+    );
 }
 
 /**
@@ -163,7 +170,10 @@ export async function expireStaleReservations() {
         updatedAt: now,
       })
       .where(
-        and(eq(phoneOrders.status, "WAITING_DEPOSIT"), lt(phoneOrders.reservedUntil, now)),
+        and(
+          eq(phoneOrders.status, "WAITING_DEPOSIT"),
+          lt(phoneOrders.reservedUntil, now),
+        ),
       )
       .returning({ id: phoneOrders.id, productId: phoneOrders.productId });
 
@@ -209,9 +219,16 @@ async function resolveBuyerAccess(orderNumber: string): Promise<BuyerAccess> {
   }
   const cookieToken = getOrderAccessCookie(orderNumber);
   if (tokenMatches(cookieToken, order.accessTokenHash)) {
-    return { order, actor: "BUYER", actorRole: user ? "BUYER" : "GUEST", userId: user?.id ?? null };
+    return {
+      order,
+      actor: "BUYER",
+      actorRole: user ? "BUYER" : "GUEST",
+      userId: user?.id ?? null,
+    };
   }
-  throw forbidden("이 주문을 조회할 권한이 없습니다. 주문조회에서 주문번호와 비밀번호로 확인하세요.");
+  throw forbidden(
+    "이 주문을 조회할 권한이 없습니다. 주문조회에서 주문번호와 비밀번호로 확인하세요.",
+  );
 }
 
 /** 소비자 주문 상세 뷰. 판매자 계좌는 이 화면에서만 노출된다. */
@@ -234,8 +251,10 @@ export async function lookupGuestOrder(raw: OrderLookupInput) {
   });
   const genericError = new AppError("주문 정보가 일치하지 않습니다.", 404);
   if (!order) throw genericError;
-  if (normalizePhone(order.buyerPhone) !== normalizePhone(input.buyerPhone)) throw genericError;
-  if (!verifyPassword(input.password, order.buyerPasswordHash)) throw genericError;
+  if (normalizePhone(order.buyerPhone) !== normalizePhone(input.buyerPhone))
+    throw genericError;
+  if (!verifyPassword(input.password, order.buyerPasswordHash))
+    throw genericError;
 
   // 새 토큰 발급 (기존 브라우저 쿠키는 무효화됨)
   const token = generateAccessToken();
@@ -257,7 +276,9 @@ export async function listMyOrders() {
     with: {
       product: {
         columns: { imei: false },
-        with: { images: { orderBy: [asc(phoneProductImages.sortOrder)], limit: 1 } },
+        with: {
+          images: { orderBy: [asc(phoneProductImages.sortOrder)], limit: 1 },
+        },
       },
       seller: { columns: { businessName: true } },
     },
@@ -267,7 +288,9 @@ export async function listMyOrders() {
 // ───────────────────────────── 주문 생성 ─────────────────────────────
 
 function isUniqueViolation(err: unknown) {
-  return Boolean(err && typeof err === "object" && (err as any).code === "23505");
+  return Boolean(
+    err && typeof err === "object" && (err as any).code === "23505",
+  );
 }
 
 /**
@@ -295,19 +318,30 @@ export async function createOrder(raw: CreateOrderInput) {
         const [product] = await tx
           .update(phoneProducts)
           .set({ status: "RESERVED", updatedAt: new Date() })
-          .where(and(eq(phoneProducts.id, input.productId), eq(phoneProducts.status, "ON_SALE")))
+          .where(
+            and(
+              eq(phoneProducts.id, input.productId),
+              eq(phoneProducts.status, "ON_SALE"),
+            ),
+          )
           .returning();
 
         if (!product) {
-          throw conflict("이 상품은 방금 다른 고객이 주문했거나 현재 판매중이 아닙니다.");
+          throw conflict(
+            "이 상품은 방금 다른 고객이 주문했거나 현재 판매중이 아닙니다.",
+          );
         }
 
-        const seller = await tx.query.sellers.findFirst({ where: eq(sellers.id, product.sellerId) });
+        const seller = await tx.query.sellers.findFirst({
+          where: eq(sellers.id, product.sellerId),
+        });
         if (!seller || seller.status !== "APPROVED") {
           throw conflict("현재 주문을 받을 수 없는 판매자입니다.");
         }
 
-        const reservedUntil = new Date(Date.now() + reservationMinutes * 60 * 1000);
+        const reservedUntil = new Date(
+          Date.now() + reservationMinutes * 60 * 1000,
+        );
         const [o] = await tx
           .insert(phoneOrders)
           .values({
@@ -317,7 +351,9 @@ export async function createOrder(raw: CreateOrderInput) {
             buyerId: user?.id ?? null,
             buyerName: input.buyerName,
             buyerPhone: normalizePhone(input.buyerPhone),
-            buyerPasswordHash: input.password ? hashPassword(input.password) : null,
+            buyerPasswordHash: input.password
+              ? hashPassword(input.password)
+              : null,
             accessTokenHash: hashToken(token),
             shippingPostalCode: input.shippingPostalCode || null,
             shippingAddress: input.shippingAddress,
@@ -373,9 +409,13 @@ export async function createOrder(raw: CreateOrderInput) {
 
 // ───────────────────────────── 소비자 액션 ─────────────────────────────
 
-export async function reportDeposit(orderNumber: string, raw: { depositorName: string }) {
+export async function reportDeposit(
+  orderNumber: string,
+  raw: { depositorName: string },
+) {
   const input = depositReportSchema.parse(raw);
-  const { order, actor, actorRole, userId } = await resolveBuyerAccess(orderNumber);
+  const { order, actor, actorRole, userId } =
+    await resolveBuyerAccess(orderNumber);
   return db.transaction(async (tx) => {
     const updated = await transition(tx, order, "REPORT_DEPOSIT", actor, {
       userId,
@@ -391,36 +431,57 @@ export async function reportDeposit(orderNumber: string, raw: { depositorName: s
 }
 
 /** 입금 전 즉시 취소 */
-export async function cancelBeforeDeposit(orderNumber: string, raw: { reason?: string } = {}) {
+export async function cancelBeforeDeposit(
+  orderNumber: string,
+  raw: { reason?: string } = {},
+) {
   const input = cancelOrderSchema.parse(raw);
-  const { order, actor, actorRole, userId } = await resolveBuyerAccess(orderNumber);
+  const { order, actor, actorRole, userId } =
+    await resolveBuyerAccess(orderNumber);
   return db.transaction(async (tx) => {
-    const updated = await transition(tx, order, "CANCEL_BEFORE_DEPOSIT", actor, {
-      userId,
-      actorRole,
-      set: { cancelReason: input.reason || "구매자 취소 (입금 전)" },
-    });
+    const updated = await transition(
+      tx,
+      order,
+      "CANCEL_BEFORE_DEPOSIT",
+      actor,
+      {
+        userId,
+        actorRole,
+        set: { cancelReason: input.reason || "구매자 취소 (입금 전)" },
+      },
+    );
     await setProductStatus(tx, order.productId, "RESERVED", "ON_SALE");
     return updated;
   });
 }
 
 /** 입금 후 취소 요청 (판매자 승인 필요) */
-export async function requestCancel(orderNumber: string, raw: { reason?: string } = {}) {
+export async function requestCancel(
+  orderNumber: string,
+  raw: { reason?: string } = {},
+) {
   const input = cancelOrderSchema.parse(raw);
-  const { order, actor, actorRole, userId } = await resolveBuyerAccess(orderNumber);
+  const { order, actor, actorRole, userId } =
+    await resolveBuyerAccess(orderNumber);
   return db.transaction(async (tx) =>
     transition(tx, order, "REQUEST_CANCEL", actor, {
       userId,
       actorRole,
-      set: { cancelReason: input.reason || null, statusBeforeRequest: order.status },
+      set: {
+        cancelReason: input.reason || null,
+        statusBeforeRequest: order.status,
+      },
     }),
   );
 }
 
-export async function requestRefund(orderNumber: string, raw: RefundRequestInput) {
+export async function requestRefund(
+  orderNumber: string,
+  raw: RefundRequestInput,
+) {
   const input = refundRequestSchema.parse(raw);
-  const { order, actor, actorRole, userId } = await resolveBuyerAccess(orderNumber);
+  const { order, actor, actorRole, userId } =
+    await resolveBuyerAccess(orderNumber);
   return db.transaction(async (tx) => {
     const updated = await transition(tx, order, "REQUEST_REFUND", actor, {
       userId,
@@ -456,8 +517,11 @@ export async function requestRefund(orderNumber: string, raw: RefundRequestInput
 }
 
 export async function withdrawRefund(orderNumber: string) {
-  const { order, actor, actorRole, userId } = await resolveBuyerAccess(orderNumber);
-  const active = order.refundRequests.find((r) => ["REQUESTED", "REJECTED"].includes(r.status));
+  const { order, actor, actorRole, userId } =
+    await resolveBuyerAccess(orderNumber);
+  const active = order.refundRequests.find((r) =>
+    ["REQUESTED", "REJECTED"].includes(r.status),
+  );
   return db.transaction(async (tx) => {
     const updated = await transition(tx, order, "WITHDRAW_REFUND", actor, {
       userId,
@@ -477,8 +541,11 @@ export async function withdrawRefund(orderNumber: string) {
 
 /** 구매자: 환불금 입금 확인 → REFUNDED */
 export async function confirmRefund(orderNumber: string) {
-  const { order, actor, actorRole, userId } = await resolveBuyerAccess(orderNumber);
-  const active = order.refundRequests.find((r) => r.status === "SELLER_REFUNDED");
+  const { order, actor, actorRole, userId } =
+    await resolveBuyerAccess(orderNumber);
+  const active = order.refundRequests.find(
+    (r) => r.status === "SELLER_REFUNDED",
+  );
   if (!active && actor !== "ADMIN") {
     throw conflict("판매자가 아직 환불완료 처리를 하지 않았습니다.");
   }
@@ -502,7 +569,8 @@ export async function confirmRefund(orderNumber: string) {
 
 export async function openDispute(orderNumber: string, raw: DisputeOpenInput) {
   const input = disputeOpenSchema.parse(raw);
-  const { order, actor, actorRole, userId } = await resolveBuyerAccess(orderNumber);
+  const { order, actor, actorRole, userId } =
+    await resolveBuyerAccess(orderNumber);
   if (order.disputes.some((d) => d.status !== "RESOLVED")) {
     throw conflict("이미 진행 중인 분쟁이 있습니다.");
   }
@@ -539,9 +607,13 @@ export async function openDispute(orderNumber: string, raw: DisputeOpenInput) {
 
 /** 구매자: 배송 받았습니다 */
 export async function buyerMarkDelivered(orderNumber: string) {
-  const { order, actor, actorRole, userId } = await resolveBuyerAccess(orderNumber);
+  const { order, actor, actorRole, userId } =
+    await resolveBuyerAccess(orderNumber);
   return db.transaction(async (tx) => {
-    const updated = await transition(tx, order, "MARK_DELIVERED", actor, { userId, actorRole });
+    const updated = await transition(tx, order, "MARK_DELIVERED", actor, {
+      userId,
+      actorRole,
+    });
     await tx
       .update(phoneShipments)
       .set({ deliveredAt: new Date() })
@@ -552,7 +624,8 @@ export async function buyerMarkDelivered(orderNumber: string) {
 
 /** 구매자: 구매확정. MVP 에서는 돈과 연결되지 않는 상태 기록. */
 export async function completeOrder(orderNumber: string) {
-  const { order, actor, actorRole, userId } = await resolveBuyerAccess(orderNumber);
+  const { order, actor, actorRole, userId } =
+    await resolveBuyerAccess(orderNumber);
   return db.transaction(async (tx) => {
     const updated = await transition(tx, order, "COMPLETE", actor, {
       userId,
@@ -574,14 +647,19 @@ export async function completeOrder(orderNumber: string) {
 async function resolveSellerOrder(orderId: string) {
   const { user, seller } = await requireApprovedSeller();
   const order = await findOrderById(orderId);
-  if (!order || order.sellerId !== seller.id) throw notFound("주문을 찾을 수 없습니다.");
+  if (!order || order.sellerId !== seller.id)
+    throw notFound("주문을 찾을 수 없습니다.");
   return { user, seller, order };
 }
 
 export async function listSellerOrders(status?: OrderStatus | OrderStatus[]) {
   const { seller } = await requireApprovedSeller();
   await expireStaleReservations().catch(() => undefined);
-  const statuses = status ? (Array.isArray(status) ? status : [status]) : undefined;
+  const statuses = status
+    ? Array.isArray(status)
+      ? status
+      : [status]
+    : undefined;
   return db.query.phoneOrders.findMany({
     where: and(
       eq(phoneOrders.sellerId, seller.id),
@@ -592,14 +670,18 @@ export async function listSellerOrders(status?: OrderStatus | OrderStatus[]) {
     with: {
       product: {
         columns: { imei: false },
-        with: { images: { orderBy: [asc(phoneProductImages.sortOrder)], limit: 1 } },
+        with: {
+          images: { orderBy: [asc(phoneProductImages.sortOrder)], limit: 1 },
+        },
       },
       transferReport: true,
       shipment: true,
     },
   });
 }
-export type SellerOrderRow = Awaited<ReturnType<typeof listSellerOrders>>[number];
+export type SellerOrderRow = Awaited<
+  ReturnType<typeof listSellerOrders>
+>[number];
 
 export async function getSellerOrderView(orderId: string) {
   const { order } = await resolveSellerOrder(orderId);
@@ -659,7 +741,10 @@ export async function sellerUnconfirmDeposit(orderId: string) {
 export async function sellerStartPreparing(orderId: string) {
   const { user, order } = await resolveSellerOrder(orderId);
   return db.transaction(async (tx) =>
-    transition(tx, order, "START_PREPARING", "SELLER", { userId: user.id, actorRole: "SELLER" }),
+    transition(tx, order, "START_PREPARING", "SELLER", {
+      userId: user.id,
+      actorRole: "SELLER",
+    }),
   );
 }
 
@@ -683,7 +768,11 @@ export async function sellerShip(orderId: string, raw: ShipmentInput) {
       })
       .onConflictDoUpdate({
         target: phoneShipments.orderId,
-        set: { carrier: input.carrier, trackingNumber: input.trackingNumber, shippedAt },
+        set: {
+          carrier: input.carrier,
+          trackingNumber: input.trackingNumber,
+          shippedAt,
+        },
       });
     return updated;
   });
@@ -705,14 +794,23 @@ export async function sellerMarkDelivered(orderId: string) {
 }
 
 /** 판매자: 입금 전 주문을 판매자가 취소 (예: 재고 문제) */
-export async function sellerCancelBeforeDeposit(orderId: string, reason?: string) {
+export async function sellerCancelBeforeDeposit(
+  orderId: string,
+  reason?: string,
+) {
   const { user, order } = await resolveSellerOrder(orderId);
   return db.transaction(async (tx) => {
-    const updated = await transition(tx, order, "CANCEL_BEFORE_DEPOSIT", "SELLER", {
-      userId: user.id,
-      actorRole: "SELLER",
-      set: { cancelReason: reason?.trim() || "판매자 취소" },
-    });
+    const updated = await transition(
+      tx,
+      order,
+      "CANCEL_BEFORE_DEPOSIT",
+      "SELLER",
+      {
+        userId: user.id,
+        actorRole: "SELLER",
+        set: { cancelReason: reason?.trim() || "판매자 취소" },
+      },
+    );
     await setProductStatus(tx, order.productId, "RESERVED", "ON_SALE");
     return updated;
   });
@@ -727,7 +825,12 @@ export async function sellerApproveCancel(orderId: string) {
       actorRole: "SELLER",
       set: { statusBeforeRequest: null },
     });
-    await setProductStatus(tx, order.productId, ["SOLD", "RESERVED"], "ON_SALE");
+    await setProductStatus(
+      tx,
+      order.productId,
+      ["SOLD", "RESERVED"],
+      "ON_SALE",
+    );
     return updated;
   });
 }
@@ -752,8 +855,11 @@ export async function sellerDecideRefund(
 ) {
   const input = sellerRefundDecisionSchema.parse(raw);
   const { user, order } = await resolveSellerOrder(orderId);
-  if (order.status !== "REFUND_REQUESTED") throw conflict("환불 요청 상태의 주문이 아닙니다.");
-  const active = order.refundRequests.find((r) => ["REQUESTED", "REJECTED"].includes(r.status));
+  if (order.status !== "REFUND_REQUESTED")
+    throw conflict("환불 요청 상태의 주문이 아닙니다.");
+  const active = order.refundRequests.find((r) =>
+    ["REQUESTED", "REJECTED"].includes(r.status),
+  );
   if (!active) throw notFound("처리할 환불 요청이 없습니다.");
 
   const [rr] = await db
@@ -769,7 +875,10 @@ export async function sellerDecideRefund(
   await logAudit({
     userId: user.id,
     actorRole: "SELLER",
-    action: input.decision === "REFUNDED" ? "REFUND_SELLER_COMPLETED" : "REFUND_SELLER_REJECTED",
+    action:
+      input.decision === "REFUNDED"
+        ? "REFUND_SELLER_COMPLETED"
+        : "REFUND_SELLER_REJECTED",
     entityType: "refund_request",
     entityId: rr.id,
     oldValue: { status: active.status },
@@ -778,14 +887,21 @@ export async function sellerDecideRefund(
   return rr;
 }
 
-export async function sellerReplyDispute(orderId: string, raw: { reply: string }) {
+export async function sellerReplyDispute(
+  orderId: string,
+  raw: { reply: string },
+) {
   const input = disputeSellerReplySchema.parse(raw);
   const { user, order } = await resolveSellerOrder(orderId);
   const open = order.disputes.find((d) => d.status !== "RESOLVED");
   if (!open) throw notFound("진행 중인 분쟁이 없습니다.");
   const [d] = await db
     .update(phoneDisputes)
-    .set({ sellerReply: input.reply, sellerRepliedAt: new Date(), status: "SELLER_REPLIED" })
+    .set({
+      sellerReply: input.reply,
+      sellerRepliedAt: new Date(),
+      status: "SELLER_REPLIED",
+    })
     .where(eq(phoneDisputes.id, open.id))
     .returning();
   await logAudit({
@@ -810,7 +926,15 @@ export async function adminListOrders(status?: OrderStatus) {
     limit: 300,
     columns: { accessTokenHash: false, buyerPasswordHash: false },
     with: {
-      product: { columns: { id: true, brand: true, model: true, storage: true, color: true } },
+      product: {
+        columns: {
+          id: true,
+          brand: true,
+          model: true,
+          storage: true,
+          color: true,
+        },
+      },
       seller: { columns: { id: true, businessName: true } },
     },
   });
@@ -826,7 +950,9 @@ export async function adminGetOrder(orderId: string) {
 }
 export type AdminOrderView = Awaited<ReturnType<typeof adminGetOrder>>;
 
-export async function adminListDisputes(status?: "OPEN" | "SELLER_REPLIED" | "RESOLVED") {
+export async function adminListDisputes(
+  status?: "OPEN" | "SELLER_REPLIED" | "RESOLVED",
+) {
   await requireAdmin();
   return db.query.phoneDisputes.findMany({
     where: status ? eq(phoneDisputes.status, status) : undefined,
@@ -836,18 +962,24 @@ export async function adminListDisputes(status?: "OPEN" | "SELLER_REPLIED" | "RE
       order: {
         columns: { accessTokenHash: false, buyerPasswordHash: false },
         with: {
-          product: { columns: { id: true, brand: true, model: true, storage: true } },
+          product: {
+            columns: { id: true, brand: true, model: true, storage: true },
+          },
           seller: { columns: { id: true, businessName: true } },
         },
       },
     },
   });
 }
-export type AdminDisputeRow = Awaited<ReturnType<typeof adminListDisputes>>[number];
+export type AdminDisputeRow = Awaited<
+  ReturnType<typeof adminListDisputes>
+>[number];
 
 export async function adminGetDispute(disputeId: string) {
   await requireAdmin();
-  const dispute = await db.query.phoneDisputes.findFirst({ where: eq(phoneDisputes.id, disputeId) });
+  const dispute = await db.query.phoneDisputes.findFirst({
+    where: eq(phoneDisputes.id, disputeId),
+  });
   if (!dispute) throw notFound("분쟁을 찾을 수 없습니다.");
   const order = await findOrderById(dispute.orderId);
   if (!order) throw notFound("주문을 찾을 수 없습니다.");
@@ -863,7 +995,9 @@ export async function adminResolveDispute(
 ) {
   const admin = await requireAdmin();
   const input = disputeResolveSchema.parse(raw);
-  const dispute = await db.query.phoneDisputes.findFirst({ where: eq(phoneDisputes.id, disputeId) });
+  const dispute = await db.query.phoneDisputes.findFirst({
+    where: eq(phoneDisputes.id, disputeId),
+  });
   if (!dispute) throw notFound("분쟁을 찾을 수 없습니다.");
   if (dispute.status === "RESOLVED") throw conflict("이미 처리된 분쟁입니다.");
   const order = await findOrderById(dispute.orderId);
@@ -877,7 +1011,8 @@ export async function adminResolveDispute(
       adminChoice: resolution,
       set: {
         statusBeforeRequest: null,
-        completedAt: resolution === "COMPLETED" ? new Date() : order.completedAt,
+        completedAt:
+          resolution === "COMPLETED" ? new Date() : order.completedAt,
       },
       note: { disputeId, adminNote: input.adminNote },
     });
@@ -901,14 +1036,28 @@ export async function adminResolveDispute(
       .where(
         and(
           eq(phoneRefundRequests.orderId, order.id),
-          inArray(phoneRefundRequests.status, ["REQUESTED", "SELLER_REFUNDED", "REJECTED"]),
+          inArray(phoneRefundRequests.status, [
+            "REQUESTED",
+            "SELLER_REFUNDED",
+            "REJECTED",
+          ]),
         ),
       );
 
     if (resolution === "REFUNDED") {
-      await setProductStatus(tx, order.productId, ["SOLD", "RESERVED"], "STOPPED");
+      await setProductStatus(
+        tx,
+        order.productId,
+        ["SOLD", "RESERVED"],
+        "STOPPED",
+      );
     } else if (resolution === "CANCELLED") {
-      await setProductStatus(tx, order.productId, ["SOLD", "RESERVED"], "ON_SALE");
+      await setProductStatus(
+        tx,
+        order.productId,
+        ["SOLD", "RESERVED"],
+        "ON_SALE",
+      );
     }
 
     await logAudit(
@@ -928,7 +1077,11 @@ export async function adminResolveDispute(
 }
 
 /** 관리자가 특정 주문에 대해 임의 전이 (판매자 대행 등) */
-export async function adminTransition(orderId: string, key: TransitionKey, extra?: { adminChoice?: OrderStatus; note?: string }) {
+export async function adminTransition(
+  orderId: string,
+  key: TransitionKey,
+  extra?: { adminChoice?: OrderStatus; note?: string },
+) {
   const admin = await requireAdmin();
   const order = await findOrderById(orderId);
   if (!order) throw notFound("주문을 찾을 수 없습니다.");
@@ -948,7 +1101,12 @@ export async function adminTransition(orderId: string, key: TransitionKey, extra
         .where(eq(phoneBankTransferReports.orderId, order.id));
     }
     if (["CANCEL_BEFORE_DEPOSIT", "EXPIRE", "APPROVE_CANCEL"].includes(key)) {
-      await setProductStatus(tx, order.productId, ["RESERVED", "SOLD"], "ON_SALE");
+      await setProductStatus(
+        tx,
+        order.productId,
+        ["RESERVED", "SOLD"],
+        "ON_SALE",
+      );
     }
     if (key === "CONFIRM_REFUND") {
       await setProductStatus(tx, order.productId, "SOLD", "STOPPED");
@@ -963,30 +1121,39 @@ export async function adminDashboardStats() {
   const todayStart = new Date();
   todayStart.setHours(0, 0, 0, 0);
 
-  const [[sellerRow], [productRow], [todayProductRow], orderRows, [disputeRow]] =
-    await Promise.all([
-      db
-        .select({ count: sql<number>`count(*)::int` })
-        .from(sellers)
-        .where(eq(sellers.status, "APPROVED")),
-      db
-        .select({ count: sql<number>`count(*)::int` })
-        .from(phoneProducts)
-        .where(eq(phoneProducts.status, "ON_SALE")),
-      db
-        .select({ count: sql<number>`count(*)::int` })
-        .from(phoneProducts)
-        .where(sql`${phoneProducts.createdAt} >= ${todayStart}`),
-      db
-        .select({
-          status: phoneOrders.status,
-          count: sql<number>`count(*)::int`,
-          amount: sql<number>`coalesce(sum(${phoneOrders.price}), 0)::bigint`,
-        })
-        .from(phoneOrders)
-        .groupBy(phoneOrders.status),
-      db.select({ count: sql<number>`count(distinct ${phoneDisputes.orderId})::int` }).from(phoneDisputes),
-    ]);
+  const [
+    [sellerRow],
+    [productRow],
+    [todayProductRow],
+    orderRows,
+    [disputeRow],
+  ] = await Promise.all([
+    db
+      .select({ count: sql<number>`count(*)::int` })
+      .from(sellers)
+      .where(eq(sellers.status, "APPROVED")),
+    db
+      .select({ count: sql<number>`count(*)::int` })
+      .from(phoneProducts)
+      .where(eq(phoneProducts.status, "ON_SALE")),
+    db
+      .select({ count: sql<number>`count(*)::int` })
+      .from(phoneProducts)
+      .where(sql`${phoneProducts.createdAt} >= ${todayStart}`),
+    db
+      .select({
+        status: phoneOrders.status,
+        count: sql<number>`count(*)::int`,
+        amount: sql<number>`coalesce(sum(${phoneOrders.price}), 0)::bigint`,
+      })
+      .from(phoneOrders)
+      .groupBy(phoneOrders.status),
+    db
+      .select({
+        count: sql<number>`count(distinct ${phoneDisputes.orderId})::int`,
+      })
+      .from(phoneDisputes),
+  ]);
 
   const byStatus = new Map(orderRows.map((r) => [r.status, r]));
   const totalOrders = orderRows.reduce((a, r) => a + r.count, 0);
@@ -1017,9 +1184,12 @@ export async function adminDashboardStats() {
     depositConfirmed,
     completed,
     gmv,
-    disputeRate: totalOrders > 0 ? Math.round((disputedOrders / totalOrders) * 1000) / 10 : 0,
-    byStatus: Object.fromEntries(orderRows.map((r) => [r.status, r.count])) as Partial<
-      Record<OrderStatus, number>
-    >,
+    disputeRate:
+      totalOrders > 0
+        ? Math.round((disputedOrders / totalOrders) * 1000) / 10
+        : 0,
+    byStatus: Object.fromEntries(
+      orderRows.map((r) => [r.status, r.count]),
+    ) as Partial<Record<OrderStatus, number>>,
   };
 }

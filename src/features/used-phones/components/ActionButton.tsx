@@ -50,9 +50,16 @@ export function ActionButton({
       return;
     }
     startTransition(async () => {
-      const res = promptValue !== null && onPrompt ? await onPrompt(promptValue) : await action();
+      const res =
+        promptValue !== null && onPrompt
+          ? await onPrompt(promptValue)
+          : await action();
       if (res.ok === false) {
-        toast({ title: "처리 실패", description: res.error, variant: "destructive" });
+        toast({
+          title: "처리 실패",
+          description: res.error,
+          variant: "destructive",
+        });
         return;
       }
       setDone(true);
@@ -63,7 +70,12 @@ export function ActionButton({
   };
 
   return (
-    <Button type="button" onClick={run} disabled={disabled || pending || done} {...rest}>
+    <Button
+      type="button"
+      onClick={run}
+      disabled={disabled || pending || done}
+      {...rest}
+    >
       {pending && <Spinner className="mr-2 h-4 w-4 animate-spin" />}
       {children}
     </Button>

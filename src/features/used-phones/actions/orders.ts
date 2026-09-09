@@ -40,7 +40,10 @@ export async function createOrderAction(
     const { order, token, reservationMinutes } = await createOrder(input);
     setOrderAccessCookie(order.orderNumber, token);
     revalidateOrder(order.orderNumber, order.productId);
-    return { ok: true, data: { orderNumber: order.orderNumber, reservationMinutes } };
+    return {
+      ok: true,
+      data: { orderNumber: order.orderNumber, reservationMinutes },
+    };
   } catch (err) {
     return toActionError(err);
   }
@@ -58,9 +61,13 @@ export async function lookupOrderAction(
   }
 }
 
-type SimpleAction = (orderNumber: string) => Promise<ActionResult<{ status: string }>>;
+type SimpleAction = (
+  orderNumber: string,
+) => Promise<ActionResult<{ status: string }>>;
 
-function wrap(fn: (orderNumber: string) => Promise<{ status: string; productId: string }>): SimpleAction {
+function wrap(
+  fn: (orderNumber: string) => Promise<{ status: string; productId: string }>,
+): SimpleAction {
   return async (orderNumber) => {
     try {
       const o = await fn(orderNumber);

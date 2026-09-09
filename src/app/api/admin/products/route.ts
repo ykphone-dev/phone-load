@@ -1,4 +1,7 @@
-import { handle, searchParamsToObject } from "@/features/used-phones/server/api";
+import {
+  handle,
+  searchParamsToObject,
+} from "@/features/used-phones/server/api";
 import { adminListProducts } from "@/features/used-phones/server/products";
 import type { NextRequest } from "next/server";
 

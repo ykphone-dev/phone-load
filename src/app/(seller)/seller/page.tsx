@@ -13,10 +13,17 @@ import {
   SectionTitle,
   StatCard,
 } from "@/features/used-phones/components";
-import { listSellerOrders, sellerOrderStats } from "@/features/used-phones/server/orders";
+import {
+  listSellerOrders,
+  sellerOrderStats,
+} from "@/features/used-phones/server/orders";
 import { sellerProductStats } from "@/features/used-phones/server/products";
 import { guardSellerPage } from "@/features/used-phones/server/seller-guard";
-import { formatDateTime, formatKRW, productTitle } from "@/features/used-phones/utils";
+import {
+  formatDateTime,
+  formatKRW,
+  productTitle,
+} from "@/features/used-phones/utils";
 import Link from "next/link";
 
 export const dynamic = "force-dynamic";
@@ -64,7 +71,11 @@ export default async function SellerDashboardPage() {
 
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
         <StatCard label="판매중 상품" value={productStats.ON_SALE ?? 0} />
-        <StatCard label="주문 진행중" value={sum(orderStats, IN_PROGRESS)} hint="입금대기~배송완료" />
+        <StatCard
+          label="주문 진행중"
+          value={sum(orderStats, IN_PROGRESS)}
+          hint="입금대기~배송완료"
+        />
         <StatCard
           label="입금확인 대기"
           value={orderStats.DEPOSIT_REPORTED ?? 0}
@@ -81,7 +92,10 @@ export default async function SellerDashboardPage() {
       <section>
         <SectionTitle
           right={
-            <Link href="/seller/orders" className="text-sm text-zinc-500 underline-offset-4 hover:underline">
+            <Link
+              href="/seller/orders"
+              className="text-sm text-zinc-500 underline-offset-4 hover:underline"
+            >
               전체 주문 보기
             </Link>
           }
@@ -89,7 +103,10 @@ export default async function SellerDashboardPage() {
           처리가 필요한 주문
         </SectionTitle>
         {todo.length === 0 ? (
-          <EmptyState title="처리할 주문이 없습니다" description="입금확인, 배송, 취소·환불·분쟁 요청이 여기에 표시됩니다." />
+          <EmptyState
+            title="처리할 주문이 없습니다"
+            description="입금확인, 배송, 취소·환불·분쟁 요청이 여기에 표시됩니다."
+          />
         ) : (
           <div className="overflow-x-auto border">
             <Table>
@@ -107,14 +124,20 @@ export default async function SellerDashboardPage() {
               <TableBody>
                 {todo.map((o) => (
                   <TableRow key={o.id}>
-                    <TableCell className="font-mono text-xs">{o.orderNumber}</TableCell>
+                    <TableCell className="font-mono text-xs">
+                      {o.orderNumber}
+                    </TableCell>
                     <TableCell>{productTitle(o.product)}</TableCell>
                     <TableCell>{o.buyerName}</TableCell>
-                    <TableCell className="text-right">{formatKRW(o.price)}</TableCell>
+                    <TableCell className="text-right">
+                      {formatKRW(o.price)}
+                    </TableCell>
                     <TableCell>
                       <OrderStatusBadge status={o.status} />
                     </TableCell>
-                    <TableCell className="whitespace-nowrap text-xs text-zinc-500">{formatDateTime(o.createdAt)}</TableCell>
+                    <TableCell className="whitespace-nowrap text-xs text-zinc-500">
+                      {formatDateTime(o.createdAt)}
+                    </TableCell>
                     <TableCell className="text-right">
                       <Button asChild size="sm" variant="outline">
                         <Link href={`/seller/orders/${o.id}`}>처리</Link>

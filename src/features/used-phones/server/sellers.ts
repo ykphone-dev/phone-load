@@ -1,6 +1,10 @@
 import "server-only";
 import db from "@/lib/supabase/db";
-import { phoneProducts, sellers, type SelectSeller } from "@/lib/supabase/schema";
+import {
+  phoneProducts,
+  sellers,
+  type SelectSeller,
+} from "@/lib/supabase/schema";
 import { and, desc, eq, inArray, sql } from "drizzle-orm";
 import { normalizeBusinessNumber, normalizePhone } from "../utils";
 import {
@@ -76,7 +80,11 @@ export async function registerSeller(raw: SellerRegisterInput) {
   };
 
   const [row] = existing
-    ? await db.update(sellers).set(values).where(eq(sellers.id, existing.id)).returning()
+    ? await db
+        .update(sellers)
+        .set(values)
+        .where(eq(sellers.id, existing.id))
+        .returning()
     : await db.insert(sellers).values(values).returning();
 
   await logAudit({
@@ -85,7 +93,10 @@ export async function registerSeller(raw: SellerRegisterInput) {
     action: existing ? "SELLER_REAPPLIED" : "SELLER_APPLIED",
     entityType: "seller",
     entityId: row.id,
-    newValue: { businessName: row.businessName, businessNumber: row.businessNumber },
+    newValue: {
+      businessName: row.businessName,
+      businessNumber: row.businessNumber,
+    },
   });
   return row;
 }
@@ -141,12 +152,21 @@ export async function adminListSellers(status?: SelectSeller["status"]) {
     where: status ? eq(sellers.status, status) : undefined,
     orderBy: [desc(sellers.createdAt)],
   });
-  if (rows.length === 0) return [] as (SelectSeller & { productCount: number })[];
+  if (rows.length === 0)
+    return [] as (SelectSeller & { productCount: number })[];
 
   const counts = await db
-    .select({ sellerId: phoneProducts.sellerId, count: sql<number>`count(*)::int` })
+    .select({
+      sellerId: phoneProducts.sellerId,
+      count: sql<number>`count(*)::int`,
+    })
     .from(phoneProducts)
-    .where(inArray(phoneProducts.sellerId, rows.map((r) => r.id)))
+    .where(
+      inArray(
+        phoneProducts.sellerId,
+        rows.map((r) => r.id),
+      ),
+    )
     .groupBy(phoneProducts.sellerId);
   const countMap = new Map(counts.map((c) => [c.sellerId, c.count]));
   return rows.map((r) => ({ ...r, productCount: countMap.get(r.id) ?? 0 }));
@@ -154,18 +174,26 @@ export async function adminListSellers(status?: SelectSeller["status"]) {
 
 export async function adminGetSeller(sellerId: string) {
   await requireAdmin();
-  const seller = await db.query.sellers.findFirst({ where: eq(sellers.id, sellerId) });
+  const seller = await db.query.sellers.findFirst({
+    where: eq(sellers.id, sellerId),
+  });
   if (!seller) throw notFound("판매자를 찾을 수 없습니다.");
-  const [businessLicenseSignedUrl, mailOrderLicenseSignedUrl] = await Promise.all([
-    signPrivateDocument(seller.businessLicenseUrl),
-    signPrivateDocument(seller.mailOrderLicenseUrl),
-  ]);
+  const [businessLicenseSignedUrl, mailOrderLicenseSignedUrl] =
+    await Promise.all([
+      signPrivateDocument(seller.businessLicenseUrl),
+      signPrivateDocument(seller.mailOrderLicenseUrl),
+    ]);
   const products = await db.query.phoneProducts.findMany({
     where: eq(phoneProducts.sellerId, sellerId),
     orderBy: [desc(phoneProducts.createdAt)],
     limit: 50,
   });
-  return { seller, businessLicenseSignedUrl, mailOrderLicenseSignedUrl, products };
+  return {
+    seller,
+    businessLicenseSignedUrl,
+    mailOrderLicenseSignedUrl,
+    products,
+  };
 }
 
 async function adminSetSellerStatus(
@@ -175,7 +203,9 @@ async function adminSetSellerStatus(
   extra: Partial<SelectSeller> = {},
 ) {
   const admin = await requireAdmin();
-  const seller = await db.query.sellers.findFirst({ where: eq(sellers.id, sellerId) });
+  const seller = await db.query.sellers.findFirst({
+    where: eq(sellers.id, sellerId),
+  });
   if (!seller) throw notFound("판매자를 찾을 수 없습니다.");
 
   const [row] = await db
@@ -212,14 +242,22 @@ export async function adminRejectSeller(sellerId: string, reason: string) {
 
 /** 정지 시 판매중 상품을 모두 판매중지 처리 */
 export async function adminSuspendSeller(sellerId: string, reason?: string) {
-  const row = await adminSetSellerStatus(sellerId, "SUSPENDED", "SELLER_SUSPENDED", {
-    rejectReason: reason?.trim() || null,
-  });
+  const row = await adminSetSellerStatus(
+    sellerId,
+    "SUSPENDED",
+    "SELLER_SUSPENDED",
+    {
+      rejectReason: reason?.trim() || null,
+    },
+  );
   await db
     .update(phoneProducts)
     .set({ status: "STOPPED", updatedAt: new Date() })
     .where(
-      and(eq(phoneProducts.sellerId, sellerId), eq(phoneProducts.status, "ON_SALE")),
+      and(
+        eq(phoneProducts.sellerId, sellerId),
+        eq(phoneProducts.status, "ON_SALE"),
+      ),
     );
   return row;
 }

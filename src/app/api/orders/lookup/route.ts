@@ -8,7 +8,9 @@ export const dynamic = "force-dynamic";
 /** 비회원 주문조회: { orderNumber, buyerPhone, password } */
 export async function POST(request: NextRequest) {
   return handle(async () => {
-    const { orderNumber, token } = await lookupGuestOrder(await readJson(request));
+    const { orderNumber, token } = await lookupGuestOrder(
+      await readJson(request),
+    );
     setOrderAccessCookie(orderNumber, token);
     return { orderNumber };
   });

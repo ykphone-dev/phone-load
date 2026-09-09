@@ -7,7 +7,18 @@ import {
   phoneProducts,
   type SelectPhoneProduct,
 } from "@/lib/supabase/schema";
-import { and, asc, desc, eq, gte, ilike, inArray, lte, ne, sql } from "drizzle-orm";
+import {
+  and,
+  asc,
+  desc,
+  eq,
+  gte,
+  ilike,
+  inArray,
+  lte,
+  ne,
+  sql,
+} from "drizzle-orm";
 import type { ProductStatus } from "../constants";
 import { maskImei } from "../utils";
 import {
@@ -26,7 +37,9 @@ const PUBLIC_STATUSES: ProductStatus[] = ["ON_SALE", "RESERVED", "SOLD"];
 
 // ───────────────────────────── 소비자 ─────────────────────────────
 
-export async function listPublicProducts(rawQuery: Partial<ProductListQuery> = {}) {
+export async function listPublicProducts(
+  rawQuery: Partial<ProductListQuery> = {},
+) {
   const q = productListQuerySchema.parse(rawQuery);
   await expireStaleReservations().catch(() => undefined);
 
@@ -78,7 +91,10 @@ export async function listPublicProducts(rawQuery: Partial<ProductListQuery> = {
 export async function getPublicProduct(productId: string) {
   await expireStaleReservations().catch(() => undefined);
   const product = await db.query.phoneProducts.findFirst({
-    where: and(eq(phoneProducts.id, productId), inArray(phoneProducts.status, PUBLIC_STATUSES)),
+    where: and(
+      eq(phoneProducts.id, productId),
+      inArray(phoneProducts.status, PUBLIC_STATUSES),
+    ),
     with: {
       images: { orderBy: [asc(phoneProductImages.sortOrder)] },
       inspection: true,
@@ -115,11 +131,13 @@ function toProductValues(input: ProductFormInput, sellerId: string) {
     frameCondition: input.frameCondition,
     backCondition: input.backCondition,
     batteryHealth: input.brand === "APPLE" ? input.batteryHealth ?? null : null,
-    batteryStatus: input.brand === "SAMSUNG" ? input.batteryStatus ?? null : null,
+    batteryStatus:
+      input.brand === "SAMSUNG" ? input.batteryStatus ?? null : null,
     repairHistory: input.repairHistory,
     repairNote: input.repairHistory === "YES" ? input.repairNote || null : null,
     partsReplacement: input.partsReplacement,
-    partsNote: input.partsReplacement === "YES" ? input.partsNote || null : null,
+    partsNote:
+      input.partsReplacement === "YES" ? input.partsNote || null : null,
     notLostOrStolen: input.notLostOrStolen,
     normalTermination: input.normalTermination,
     contractDiscount: input.contractDiscount,
@@ -142,7 +160,9 @@ export async function createProduct(raw: ProductFormInput) {
       })
       .returning();
 
-    await tx.insert(phoneProductInspections).values({ productId: p.id, ...input.inspection });
+    await tx
+      .insert(phoneProductInspections)
+      .values({ productId: p.id, ...input.inspection });
 
     if (input.images.length > 0) {
       await tx.insert(phoneProductImages).values(
@@ -174,7 +194,11 @@ export async function createProduct(raw: ProductFormInput) {
 export async function getSellerProduct(productId: string) {
   const { seller } = await requireApprovedSeller();
   const product = await db.query.phoneProducts.findFirst({
-    where: and(eq(phoneProducts.id, productId), eq(phoneProducts.sellerId, seller.id), ne(phoneProducts.status, "DELETED")),
+    where: and(
+      eq(phoneProducts.id, productId),
+      eq(phoneProducts.sellerId, seller.id),
+      ne(phoneProducts.status, "DELETED"),
+    ),
     with: {
       images: { orderBy: [asc(phoneProductImages.sortOrder)] },
       inspection: true,
@@ -190,7 +214,9 @@ export async function updateProduct(productId: string, raw: ProductFormInput) {
   const existing = await getSellerProduct(productId);
 
   if (["RESERVED", "SOLD"].includes(existing.status)) {
-    throw conflict("주문이 진행 중이거나 판매완료된 상품은 수정할 수 없습니다.");
+    throw conflict(
+      "주문이 진행 중이거나 판매완료된 상품은 수정할 수 없습니다.",
+    );
   }
 
   // 수정 시 상태: 발행이면 ON_SALE, 아니면 기존이 DRAFT 면 DRAFT 유지, STOPPED 면 STOPPED 유지
@@ -215,7 +241,9 @@ export async function updateProduct(productId: string, raw: ProductFormInput) {
         set: { ...input.inspection },
       });
 
-    await tx.delete(phoneProductImages).where(eq(phoneProductImages.productId, productId));
+    await tx
+      .delete(phoneProductImages)
+      .where(eq(phoneProductImages.productId, productId));
     if (input.images.length > 0) {
       await tx.insert(phoneProductImages).values(
         input.images.map((img, i) => ({
@@ -254,15 +282,22 @@ export async function setSellerProductStatus(
 
   let next: ProductStatus;
   if (action === "STOP") {
-    if (existing.status !== "ON_SALE") throw conflict("판매중인 상품만 중지할 수 있습니다.");
+    if (existing.status !== "ON_SALE")
+      throw conflict("판매중인 상품만 중지할 수 있습니다.");
     next = "STOPPED";
   } else if (action === "RESUME") {
-    if (!["STOPPED", "DRAFT"].includes(existing.status)) throw conflict("판매중지 또는 작성중 상품만 재개할 수 있습니다.");
-    if (!existing.notLostOrStolen) throw new AppError("분실·도난 확인이 필요합니다. 상품을 수정해주세요.");
-    if (existing.images.length < 1) throw new AppError("사진이 최소 1장 있어야 판매를 시작할 수 있습니다. 상품을 수정해주세요.");
+    if (!["STOPPED", "DRAFT"].includes(existing.status))
+      throw conflict("판매중지 또는 작성중 상품만 재개할 수 있습니다.");
+    if (!existing.notLostOrStolen)
+      throw new AppError("분실·도난 확인이 필요합니다. 상품을 수정해주세요.");
+    if (existing.images.length < 1)
+      throw new AppError(
+        "사진이 최소 1장 있어야 판매를 시작할 수 있습니다. 상품을 수정해주세요.",
+      );
     next = "ON_SALE";
   } else {
-    if (existing.status === "RESERVED") throw conflict("주문이 진행 중인 상품은 삭제할 수 없습니다.");
+    if (existing.status === "RESERVED")
+      throw conflict("주문이 진행 중인 상품은 삭제할 수 없습니다.");
     next = "DELETED";
   }
 
@@ -289,10 +324,14 @@ export async function listSellerProducts(status?: ProductStatus) {
   return db.query.phoneProducts.findMany({
     where: and(
       eq(phoneProducts.sellerId, seller.id),
-      status ? eq(phoneProducts.status, status) : ne(phoneProducts.status, "DELETED"),
+      status
+        ? eq(phoneProducts.status, status)
+        : ne(phoneProducts.status, "DELETED"),
     ),
     orderBy: [desc(phoneProducts.createdAt)],
-    with: { images: { orderBy: [asc(phoneProductImages.sortOrder)], limit: 1 } },
+    with: {
+      images: { orderBy: [asc(phoneProductImages.sortOrder)], limit: 1 },
+    },
   });
 }
 
@@ -303,9 +342,9 @@ export async function sellerProductStats() {
     .from(phoneProducts)
     .where(eq(phoneProducts.sellerId, seller.id))
     .groupBy(phoneProducts.status);
-  const byStatus = Object.fromEntries(rows.map((r) => [r.status, r.count])) as Partial<
-    Record<ProductStatus, number>
-  >;
+  const byStatus = Object.fromEntries(
+    rows.map((r) => [r.status, r.count]),
+  ) as Partial<Record<ProductStatus, number>>;
   return byStatus;
 }
 
@@ -343,9 +382,14 @@ export async function adminGetProduct(productId: string) {
 }
 
 /** 관리자 강제 판매중지 */
-export async function adminForceStopProduct(productId: string, reason?: string) {
+export async function adminForceStopProduct(
+  productId: string,
+  reason?: string,
+) {
   const admin = await requireAdmin();
-  const existing = await db.query.phoneProducts.findFirst({ where: eq(phoneProducts.id, productId) });
+  const existing = await db.query.phoneProducts.findFirst({
+    where: eq(phoneProducts.id, productId),
+  });
   if (!existing) throw notFound("상품을 찾을 수 없습니다.");
   if (existing.status === "RESERVED") {
     throw conflict("주문이 진행 중인 상품입니다. 주문을 먼저 처리하세요.");
@@ -367,8 +411,14 @@ export async function adminForceStopProduct(productId: string, reason?: string) 
   return p;
 }
 
-export type SellerProductRow = Awaited<ReturnType<typeof listSellerProducts>>[number];
-export type PublicProductRow = Awaited<ReturnType<typeof listPublicProducts>>["items"][number];
-export type PublicProductDetail = NonNullable<Awaited<ReturnType<typeof getPublicProduct>>>;
+export type SellerProductRow = Awaited<
+  ReturnType<typeof listSellerProducts>
+>[number];
+export type PublicProductRow = Awaited<
+  ReturnType<typeof listPublicProducts>
+>["items"][number];
+export type PublicProductDetail = NonNullable<
+  Awaited<ReturnType<typeof getPublicProduct>>
+>;
 export type SellerProductDetail = Awaited<ReturnType<typeof getSellerProduct>>;
 export type { SelectPhoneProduct };

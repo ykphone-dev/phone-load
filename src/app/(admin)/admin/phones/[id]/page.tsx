@@ -20,10 +20,17 @@ import {
   SectionTitle,
 } from "@/features/used-phones/components";
 import { ForceStopProductButton } from "@/features/used-phones/components/admin";
-import { BRAND_LABEL, PRODUCT_STATUS_LABEL } from "@/features/used-phones/constants";
+import {
+  BRAND_LABEL,
+  PRODUCT_STATUS_LABEL,
+} from "@/features/used-phones/constants";
 import { AppError } from "@/features/used-phones/server/errors";
 import { adminGetProduct } from "@/features/used-phones/server/products";
-import { formatDateTime, formatKRW, productTitle } from "@/features/used-phones/utils";
+import {
+  formatDateTime,
+  formatKRW,
+  productTitle,
+} from "@/features/used-phones/utils";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
@@ -56,12 +63,18 @@ export default async function AdminPhoneDetailPage({ params }: Props) {
         <div className="flex items-center gap-3">
           <ProductStatusBadge status={product.status} />
           <GradeBadge grade={product.conditionGrade} />
-          <span className="text-sm text-zinc-500">등록일 {formatDateTime(product.createdAt)}</span>
+          <span className="text-sm text-zinc-500">
+            등록일 {formatDateTime(product.createdAt)}
+          </span>
         </div>
         <div className="flex items-center gap-2">
-          {product.status === "ON_SALE" && <ForceStopProductButton productId={product.id} size="default" />}
+          {product.status === "ON_SALE" && (
+            <ForceStopProductButton productId={product.id} size="default" />
+          )}
           {product.status !== "ON_SALE" && (
-            <span className="text-xs text-zinc-500">판매중 상품만 강제 판매중지할 수 있습니다.</span>
+            <span className="text-xs text-zinc-500">
+              판매중 상품만 강제 판매중지할 수 있습니다.
+            </span>
           )}
         </div>
       </section>
@@ -76,11 +89,21 @@ export default async function AdminPhoneDetailPage({ params }: Props) {
             <SectionTitle>기본 정보</SectionTitle>
             <KeyValueList
               items={[
-                { label: "브랜드", value: BRAND_LABEL[product.brand] ?? product.brand },
+                {
+                  label: "브랜드",
+                  value: BRAND_LABEL[product.brand] ?? product.brand,
+                },
                 { label: "모델", value: product.model },
                 { label: "용량", value: product.storage },
                 { label: "색상", value: product.color },
-                { label: "판매가", value: <span className="font-semibold">{formatKRW(product.price)}</span> },
+                {
+                  label: "판매가",
+                  value: (
+                    <span className="font-semibold">
+                      {formatKRW(product.price)}
+                    </span>
+                  ),
+                },
                 {
                   label: "IMEI",
                   value: product.imei ? (
@@ -95,22 +118,33 @@ export default async function AdminPhoneDetailPage({ params }: Props) {
                 {
                   label: "판매자",
                   value: (
-                    <Link href={`/admin/sellers/${product.seller.id}`} className="underline">
+                    <Link
+                      href={`/admin/sellers/${product.seller.id}`}
+                      className="underline"
+                    >
                       {product.seller.businessName}
                     </Link>
                   ),
                 },
                 { label: "판매자 연락처", value: product.seller.contactPhone },
-                { label: "최근 수정", value: formatDateTime(product.updatedAt) },
+                {
+                  label: "최근 수정",
+                  value: formatDateTime(product.updatedAt),
+                },
               ]}
             />
-            <p className="mt-2 text-xs text-zinc-500">IMEI 전체 번호는 관리자와 판매자에게만 표시됩니다. 소비자 화면에서는 마스킹됩니다.</p>
+            <p className="mt-2 text-xs text-zinc-500">
+              IMEI 전체 번호는 관리자와 판매자에게만 표시됩니다. 소비자
+              화면에서는 마스킹됩니다.
+            </p>
           </div>
 
           <div>
             <SectionTitle>상품 설명</SectionTitle>
             {product.description ? (
-              <p className="whitespace-pre-wrap border p-3 text-sm">{product.description}</p>
+              <p className="whitespace-pre-wrap border p-3 text-sm">
+                {product.description}
+              </p>
             ) : (
               <p className="text-sm text-zinc-400">등록된 설명이 없습니다.</p>
             )}
@@ -124,7 +158,13 @@ export default async function AdminPhoneDetailPage({ params }: Props) {
       </section>
 
       <section className="mt-10">
-        <SectionTitle right={<span className="text-sm text-zinc-500">{orders.length}건</span>}>이 상품의 주문</SectionTitle>
+        <SectionTitle
+          right={
+            <span className="text-sm text-zinc-500">{orders.length}건</span>
+          }
+        >
+          이 상품의 주문
+        </SectionTitle>
         {orders.length === 0 ? (
           <EmptyState title="주문 내역이 없습니다." />
         ) : (
@@ -144,21 +184,35 @@ export default async function AdminPhoneDetailPage({ params }: Props) {
                 {orders.map((o) => (
                   <TableRow key={o.id}>
                     <TableCell className="font-mono text-xs">
-                      <Link href={`/admin/phone-orders/${o.id}`} className="hover:underline">
+                      <Link
+                        href={`/admin/phone-orders/${o.id}`}
+                        className="hover:underline"
+                      >
                         {o.orderNumber}
                       </Link>
                     </TableCell>
                     <TableCell>
                       {o.buyerName}
-                      <span className="ml-1 text-xs text-zinc-500">{o.buyerPhone}</span>
+                      <span className="ml-1 text-xs text-zinc-500">
+                        {o.buyerPhone}
+                      </span>
                     </TableCell>
-                    <TableCell className="text-right tabular-nums">{formatKRW(o.price)}</TableCell>
+                    <TableCell className="text-right tabular-nums">
+                      {formatKRW(o.price)}
+                    </TableCell>
                     <TableCell>
                       <OrderStatusBadge status={o.status} />
                     </TableCell>
-                    <TableCell className="whitespace-nowrap text-zinc-500">{formatDateTime(o.createdAt)}</TableCell>
+                    <TableCell className="whitespace-nowrap text-zinc-500">
+                      {formatDateTime(o.createdAt)}
+                    </TableCell>
                     <TableCell>
-                      <Link href={`/admin/phone-orders/${o.id}`} className={cn(buttonVariants({ variant: "outline", size: "sm" }))}>
+                      <Link
+                        href={`/admin/phone-orders/${o.id}`}
+                        className={cn(
+                          buttonVariants({ variant: "outline", size: "sm" }),
+                        )}
+                      >
                         상세
                       </Link>
                     </TableCell>

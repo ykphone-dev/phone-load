@@ -41,7 +41,10 @@ export function ImageUploader({
   const upload = async (files: FileList | null) => {
     if (!files || files.length === 0) return;
     if (value.length + files.length > max) {
-      toast({ title: `최대 ${max}개까지 업로드할 수 있습니다`, variant: "destructive" });
+      toast({
+        title: `최대 ${max}개까지 업로드할 수 있습니다`,
+        variant: "destructive",
+      });
       return;
     }
     setUploading(true);
@@ -55,7 +58,11 @@ export function ImageUploader({
       if (!res.ok || !json.ok) throw new Error(json.error ?? "업로드 실패");
       onChange([...value, ...(json.data.urls as string[])]);
     } catch (err) {
-      toast({ title: "업로드 실패", description: (err as Error).message, variant: "destructive" });
+      toast({
+        title: "업로드 실패",
+        description: (err as Error).message,
+        variant: "destructive",
+      });
     } finally {
       setUploading(false);
       if (inputRef.current) inputRef.current.value = "";
@@ -66,9 +73,18 @@ export function ImageUploader({
     <div className="space-y-2">
       <div className="flex flex-wrap gap-2">
         {value.map((url, i) => (
-          <div key={url + i} className="relative h-20 w-20 overflow-hidden border bg-zinc-50">
+          <div
+            key={url + i}
+            className="relative h-20 w-20 overflow-hidden border bg-zinc-50"
+          >
             {preview ? (
-              <Image src={url} alt="" fill sizes="80px" className="object-cover" />
+              <Image
+                src={url}
+                alt=""
+                fill
+                sizes="80px"
+                className="object-cover"
+              />
             ) : (
               <div className="flex h-full items-center justify-center p-1 text-center text-[10px] text-zinc-500">
                 파일 {i + 1}

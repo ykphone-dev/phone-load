@@ -80,7 +80,11 @@ export const AVAILABILITY_LABEL: Record<AvailabilityState, string> = {
   NEED_CHECK: "확인필요",
 };
 
-export const BATTERY_STATUSES = ["GOOD", "NORMAL", "REPLACE_RECOMMENDED"] as const;
+export const BATTERY_STATUSES = [
+  "GOOD",
+  "NORMAL",
+  "REPLACE_RECOMMENDED",
+] as const;
 export type BatteryStatus = (typeof BATTERY_STATUSES)[number];
 export const BATTERY_STATUS_LABEL: Record<BatteryStatus, string> = {
   GOOD: "좋음",

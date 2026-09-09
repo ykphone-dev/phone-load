@@ -36,7 +36,15 @@ export type SellerOrderActionsProps = {
   openDispute: { id: string; sellerReply: string | null } | null;
 };
 
-function Box({ title, desc, children }: { title: string; desc?: string; children: React.ReactNode }) {
+function Box({
+  title,
+  desc,
+  children,
+}: {
+  title: string;
+  desc?: string;
+  children: React.ReactNode;
+}) {
   return (
     <div className="space-y-3 border p-4">
       <div>
@@ -48,7 +56,12 @@ function Box({ title, desc, children }: { title: string; desc?: string; children
   );
 }
 
-export function SellerOrderActions({ orderId, status, activeRefund, openDispute }: SellerOrderActionsProps) {
+export function SellerOrderActions({
+  orderId,
+  status,
+  activeRefund,
+  openDispute,
+}: SellerOrderActionsProps) {
   switch (status) {
     case "WAITING_DEPOSIT":
     case "DEPOSIT_REPORTED":
@@ -90,7 +103,10 @@ export function SellerOrderActions({ orderId, status, activeRefund, openDispute 
     case "DEPOSIT_CONFIRMED":
       return (
         <div className="space-y-3">
-          <Box title="배송 준비" desc="상품 포장 등 준비 단계로 변경하거나, 바로 송장을 등록할 수 있습니다.">
+          <Box
+            title="배송 준비"
+            desc="상품 포장 등 준비 단계로 변경하거나, 바로 송장을 등록할 수 있습니다."
+          >
             <ActionButton
               variant="outline"
               action={() => sellerStartPreparingAction(orderId)}
@@ -108,7 +124,10 @@ export function SellerOrderActions({ orderId, status, activeRefund, openDispute 
 
     case "SHIPPED":
       return (
-        <Box title="배송 완료" desc="택배 추적에서 배송완료가 확인되면 처리해주세요. 구매자도 직접 처리할 수 있습니다.">
+        <Box
+          title="배송 완료"
+          desc="택배 추적에서 배송완료가 확인되면 처리해주세요. 구매자도 직접 처리할 수 있습니다."
+        >
           <ActionButton
             action={() => sellerMarkDeliveredAction(orderId)}
             confirmMessage="배송완료로 처리하시겠습니까?"
@@ -147,7 +166,10 @@ export function SellerOrderActions({ orderId, status, activeRefund, openDispute 
     case "REFUND_REQUESTED":
       if (!activeRefund) {
         return (
-          <Box title="환불 요청" desc="처리할 환불 요청이 없습니다. 구매자의 환불금 확인을 기다리는 중일 수 있습니다.">
+          <Box
+            title="환불 요청"
+            desc="처리할 환불 요청이 없습니다. 구매자의 환불금 확인을 기다리는 중일 수 있습니다."
+          >
             <span />
           </Box>
         );
@@ -158,7 +180,9 @@ export function SellerOrderActions({ orderId, status, activeRefund, openDispute 
           desc={`환불 계좌: ${activeRefund.refundBankName} ${activeRefund.refundAccount} (${activeRefund.refundHolder}). 환불금을 직접 송금한 뒤 '환불 완료'를 누르면 구매자 확인을 기다립니다.`}
         >
           <ActionButton
-            action={() => sellerDecideRefundAction(orderId, { decision: "REFUNDED" })}
+            action={() =>
+              sellerDecideRefundAction(orderId, { decision: "REFUNDED" })
+            }
             confirmMessage="구매자 계좌로 환불금을 보내셨습니까?"
             successMessage="환불 완료로 표시했습니다. 구매자 확인을 기다립니다."
           >
@@ -166,9 +190,13 @@ export function SellerOrderActions({ orderId, status, activeRefund, openDispute 
           </ActionButton>
           <ActionButton
             variant="outline"
-            action={() => sellerDecideRefundAction(orderId, { decision: "REJECTED" })}
+            action={() =>
+              sellerDecideRefundAction(orderId, { decision: "REJECTED" })
+            }
             promptMessage="환불 거절 사유를 입력하세요 (구매자에게 표시됩니다)"
-            onPrompt={(note) => sellerDecideRefundAction(orderId, { decision: "REJECTED", note })}
+            onPrompt={(note) =>
+              sellerDecideRefundAction(orderId, { decision: "REJECTED", note })
+            }
             successMessage="환불 요청을 거절했습니다"
           >
             환불 거절
@@ -182,13 +210,20 @@ export function SellerOrderActions({ orderId, status, activeRefund, openDispute 
     default:
       return (
         <div className="border p-4 text-sm text-zinc-500">
-          현재 상태(<b>{ORDER_STATUS_LABEL[status] ?? status}</b>)에서는 판매자가 처리할 작업이 없습니다.
+          현재 상태(<b>{ORDER_STATUS_LABEL[status] ?? status}</b>)에서는
+          판매자가 처리할 작업이 없습니다.
         </div>
       );
   }
 }
 
-function DisputeReply({ orderId, openDispute }: { orderId: string; openDispute: SellerOrderActionsProps["openDispute"] }) {
+function DisputeReply({
+  orderId,
+  openDispute,
+}: {
+  orderId: string;
+  openDispute: SellerOrderActionsProps["openDispute"];
+}) {
   const router = useRouter();
   const { toast } = useToast();
   const [pending, startTransition] = useTransition();
@@ -196,14 +231,22 @@ function DisputeReply({ orderId, openDispute }: { orderId: string; openDispute: 
   const [error, setError] = useState<string | null>(null);
 
   if (!openDispute) {
-    return <div className="border p-4 text-sm text-zinc-500">진행 중인 분쟁이 없습니다.</div>;
+    return (
+      <div className="border p-4 text-sm text-zinc-500">
+        진행 중인 분쟁이 없습니다.
+      </div>
+    );
   }
   if (openDispute.sellerReply) {
     return (
       <div className="space-y-2 border p-4 text-sm">
         <p className="font-medium">분쟁 답변 완료</p>
-        <p className="whitespace-pre-wrap text-zinc-700">{openDispute.sellerReply}</p>
-        <p className="text-xs text-zinc-500">관리자가 양측 의견을 검토한 뒤 처리 결과를 결정합니다.</p>
+        <p className="whitespace-pre-wrap text-zinc-700">
+          {openDispute.sellerReply}
+        </p>
+        <p className="text-xs text-zinc-500">
+          관리자가 양측 의견을 검토한 뒤 처리 결과를 결정합니다.
+        </p>
       </div>
     );
   }
@@ -219,7 +262,11 @@ function DisputeReply({ orderId, openDispute }: { orderId: string; openDispute: 
     startTransition(async () => {
       const res = await sellerReplyDisputeAction(orderId, data);
       if (res.ok === false) {
-        toast({ title: "답변 등록 실패", description: res.error, variant: "destructive" });
+        toast({
+          title: "답변 등록 실패",
+          description: res.error,
+          variant: "destructive",
+        });
         return;
       }
       toast({ title: "분쟁 답변이 등록되었습니다" });
@@ -232,10 +279,17 @@ function DisputeReply({ orderId, openDispute }: { orderId: string; openDispute: 
       <div>
         <p className="text-sm font-medium">분쟁 답변</p>
         <p className="mt-1 text-xs text-zinc-500">
-          구매자가 문제가 해결되지 않았다고 신고했습니다. 사실관계와 판매자 입장을 구체적으로 적어주세요. 관리자가 최종 판단합니다.
+          구매자가 문제가 해결되지 않았다고 신고했습니다. 사실관계와 판매자
+          입장을 구체적으로 적어주세요. 관리자가 최종 판단합니다.
         </p>
       </div>
-      <Textarea rows={5} value={reply} onChange={(e) => setReply(e.target.value)} placeholder="답변 내용" maxLength={3000} />
+      <Textarea
+        rows={5}
+        value={reply}
+        onChange={(e) => setReply(e.target.value)}
+        placeholder="답변 내용"
+        maxLength={3000}
+      />
       {error && <p className="text-xs text-rose-600">{error}</p>}
       <div className="flex justify-end">
         <Button type="button" onClick={submit} disabled={pending}>

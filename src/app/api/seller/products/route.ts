@@ -1,5 +1,12 @@
-import { handle, readJson, searchParamsToObject } from "@/features/used-phones/server/api";
-import { createProduct, listSellerProducts } from "@/features/used-phones/server/products";
+import {
+  handle,
+  readJson,
+  searchParamsToObject,
+} from "@/features/used-phones/server/api";
+import {
+  createProduct,
+  listSellerProducts,
+} from "@/features/used-phones/server/products";
 import type { NextRequest } from "next/server";
 
 export const dynamic = "force-dynamic";

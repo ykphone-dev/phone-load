@@ -10,7 +10,13 @@ export const PUBLIC_BUCKET = "phone-images";
 /** 비공개 버킷: 사업자등록증, 통신판매업 신고증 */
 export const PRIVATE_BUCKET = "seller-documents";
 
-const IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp", "image/heic", "image/heif"];
+const IMAGE_TYPES = [
+  "image/jpeg",
+  "image/png",
+  "image/webp",
+  "image/heic",
+  "image/heif",
+];
 const DOC_TYPES = [...IMAGE_TYPES, "application/pdf"];
 const MAX_IMAGE_BYTES = 15 * 1024 * 1024;
 const MAX_DOC_BYTES = 20 * 1024 * 1024;
@@ -33,7 +39,12 @@ export async function uploadPublicImage(file: File, folder: string) {
   const input = Buffer.from(await file.arrayBuffer());
   const output = await sharp(input)
     .rotate()
-    .resize({ width: 1600, height: 1600, fit: "inside", withoutEnlargement: true })
+    .resize({
+      width: 1600,
+      height: 1600,
+      fit: "inside",
+      withoutEnlargement: true,
+    })
     .webp({ quality: 82 })
     .toBuffer();
 
@@ -56,7 +67,8 @@ export async function uploadPrivateDocument(file: File, folder: string) {
   if (file.size > MAX_DOC_BYTES) {
     throw new AppError("파일 용량은 20MB 이하여야 합니다.");
   }
-  const ext = file.type === "application/pdf" ? "pdf" : file.type.split("/")[1] || "bin";
+  const ext =
+    file.type === "application/pdf" ? "pdf" : file.type.split("/")[1] || "bin";
   const path = `${folder}/${nanoid()}.${ext}`;
   const supabase = createAdminClient();
   const { error } = await supabase.storage

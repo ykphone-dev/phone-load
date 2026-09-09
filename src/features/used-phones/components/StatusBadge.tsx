@@ -43,25 +43,64 @@ const SELLER_COLORS: Record<string, string> = {
 
 const NEUTRAL = "bg-zinc-100 text-zinc-800";
 
-export function OrderStatusBadge({ status, className }: { status: string; className?: string }) {
+export function OrderStatusBadge({
+  status,
+  className,
+}: {
+  status: string;
+  className?: string;
+}) {
   return (
-    <Badge variant="outline" className={cn("border-transparent rounded-sm whitespace-nowrap", ORDER_COLORS[status as OrderStatus] ?? NEUTRAL, className)}>
+    <Badge
+      variant="outline"
+      className={cn(
+        "border-transparent rounded-sm whitespace-nowrap",
+        ORDER_COLORS[status as OrderStatus] ?? NEUTRAL,
+        className,
+      )}
+    >
       {ORDER_STATUS_LABEL[status as OrderStatus] ?? status}
     </Badge>
   );
 }
 
-export function ProductStatusBadge({ status, className }: { status: string; className?: string }) {
+export function ProductStatusBadge({
+  status,
+  className,
+}: {
+  status: string;
+  className?: string;
+}) {
   return (
-    <Badge variant="outline" className={cn("border-transparent rounded-sm whitespace-nowrap", PRODUCT_COLORS[status as ProductStatus] ?? NEUTRAL, className)}>
+    <Badge
+      variant="outline"
+      className={cn(
+        "border-transparent rounded-sm whitespace-nowrap",
+        PRODUCT_COLORS[status as ProductStatus] ?? NEUTRAL,
+        className,
+      )}
+    >
       {PRODUCT_STATUS_LABEL[status as ProductStatus] ?? status}
     </Badge>
   );
 }
 
-export function SellerStatusBadge({ status, className }: { status: string; className?: string }) {
+export function SellerStatusBadge({
+  status,
+  className,
+}: {
+  status: string;
+  className?: string;
+}) {
   return (
-    <Badge variant="outline" className={cn("border-transparent rounded-sm whitespace-nowrap", SELLER_COLORS[status] ?? NEUTRAL, className)}>
+    <Badge
+      variant="outline"
+      className={cn(
+        "border-transparent rounded-sm whitespace-nowrap",
+        SELLER_COLORS[status] ?? NEUTRAL,
+        className,
+      )}
+    >
       {SELLER_STATUS_LABEL[status] ?? status}
     </Badge>
   );
@@ -69,26 +108,55 @@ export function SellerStatusBadge({ status, className }: { status: string; class
 
 export function RefundStatusBadge({ status }: { status: string }) {
   return (
-    <Badge variant="outline" className={cn("border-transparent rounded-sm whitespace-nowrap", NEUTRAL)}>
+    <Badge
+      variant="outline"
+      className={cn("border-transparent rounded-sm whitespace-nowrap", NEUTRAL)}
+    >
       {REFUND_STATUS_LABEL[status] ?? status}
     </Badge>
   );
 }
 
 export function DisputeStatusBadge({ status }: { status: string }) {
-  const color = status === "RESOLVED" ? "bg-emerald-100 text-emerald-900" : status === "OPEN" ? "bg-red-100 text-red-900" : "bg-amber-100 text-amber-900";
+  const color =
+    status === "RESOLVED"
+      ? "bg-emerald-100 text-emerald-900"
+      : status === "OPEN"
+        ? "bg-red-100 text-red-900"
+        : "bg-amber-100 text-amber-900";
   return (
-    <Badge variant="outline" className={cn("border-transparent rounded-sm whitespace-nowrap", color)}>
+    <Badge
+      variant="outline"
+      className={cn("border-transparent rounded-sm whitespace-nowrap", color)}
+    >
       {DISPUTE_STATUS_LABEL[status] ?? status}
     </Badge>
   );
 }
 
-export function GradeBadge({ grade, className }: { grade: string; className?: string }) {
+export function GradeBadge({
+  grade,
+  className,
+}: {
+  grade: string;
+  className?: string;
+}) {
   const color =
-    grade === "S" ? "bg-violet-600 text-white" : grade === "A" ? "bg-blue-600 text-white" : grade === "B" ? "bg-emerald-600 text-white" : "bg-zinc-600 text-white";
+    grade === "S"
+      ? "bg-violet-600 text-white"
+      : grade === "A"
+        ? "bg-blue-600 text-white"
+        : grade === "B"
+          ? "bg-emerald-600 text-white"
+          : "bg-zinc-600 text-white";
   return (
-    <span className={cn("inline-flex items-center justify-center rounded-sm px-2 py-0.5 text-xs font-bold", color, className)}>
+    <span
+      className={cn(
+        "inline-flex items-center justify-center rounded-sm px-2 py-0.5 text-xs font-bold",
+        color,
+        className,
+      )}
+    >
       {grade}등급
     </span>
   );

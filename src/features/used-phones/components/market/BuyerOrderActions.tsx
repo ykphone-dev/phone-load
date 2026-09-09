@@ -26,7 +26,13 @@ type Props = {
 };
 
 /** 소비자 주문 상세의 상태별 액션 버튼 */
-export function BuyerOrderActions({ orderNumber, status, buyerName, sellerRefunded, hasOpenDispute }: Props) {
+export function BuyerOrderActions({
+  orderNumber,
+  status,
+  buyerName,
+  sellerRefunded,
+  hasOpenDispute,
+}: Props) {
   const cancelNow = (
     <ActionButton
       variant="outline"
@@ -42,14 +48,21 @@ export function BuyerOrderActions({ orderNumber, status, buyerName, sellerRefund
     case "WAITING_DEPOSIT":
       return (
         <div className="flex flex-wrap gap-2">
-          <Link href={`/order/${orderNumber}/payment`} className={cn(buttonVariants())}>계좌 안내 / 입금했습니다</Link>
+          <Link
+            href={`/order/${orderNumber}/payment`}
+            className={cn(buttonVariants())}
+          >
+            계좌 안내 / 입금했습니다
+          </Link>
           {cancelNow}
         </div>
       );
     case "DEPOSIT_REPORTED":
       return (
         <div className="space-y-2">
-          <p className="text-sm text-zinc-600">판매자가 입금을 확인하면 배송이 시작됩니다.</p>
+          <p className="text-sm text-zinc-600">
+            판매자가 입금을 확인하면 배송이 시작됩니다.
+          </p>
           {cancelNow}
         </div>
       );
@@ -69,10 +82,19 @@ export function BuyerOrderActions({ orderNumber, status, buyerName, sellerRefund
     case "SHIPPED":
       return (
         <div className="flex flex-wrap gap-2">
-          <ActionButton variant="outline" action={() => buyerMarkDeliveredAction(orderNumber)} confirmMessage="상품을 받으셨습니까?" successMessage="배송완료로 표시했습니다">
+          <ActionButton
+            variant="outline"
+            action={() => buyerMarkDeliveredAction(orderNumber)}
+            confirmMessage="상품을 받으셨습니까?"
+            successMessage="배송완료로 표시했습니다"
+          >
             배송 받았습니다
           </ActionButton>
-          <ActionButton action={() => completeOrderAction(orderNumber)} confirmMessage="구매를 확정하시겠습니까? 확정 후에는 환불 요청만 가능합니다." successMessage="구매가 확정되었습니다">
+          <ActionButton
+            action={() => completeOrderAction(orderNumber)}
+            confirmMessage="구매를 확정하시겠습니까? 확정 후에는 환불 요청만 가능합니다."
+            successMessage="구매가 확정되었습니다"
+          >
             구매확정
           </ActionButton>
           <RefundRequestForm orderNumber={orderNumber} buyerName={buyerName} />
@@ -81,7 +103,11 @@ export function BuyerOrderActions({ orderNumber, status, buyerName, sellerRefund
     case "DELIVERED":
       return (
         <div className="flex flex-wrap gap-2">
-          <ActionButton action={() => completeOrderAction(orderNumber)} confirmMessage="구매를 확정하시겠습니까?" successMessage="구매가 확정되었습니다">
+          <ActionButton
+            action={() => completeOrderAction(orderNumber)}
+            confirmMessage="구매를 확정하시겠습니까?"
+            successMessage="구매가 확정되었습니다"
+          >
             구매확정
           </ActionButton>
           <RefundRequestForm orderNumber={orderNumber} buyerName={buyerName} />
@@ -99,17 +125,31 @@ export function BuyerOrderActions({ orderNumber, status, buyerName, sellerRefund
       return (
         <div className="space-y-3">
           {sellerRefunded ? (
-            <p className="text-sm text-emerald-700">판매자가 환불완료 처리했습니다. 환불금을 받으셨다면 확인 버튼을 눌러주세요.</p>
+            <p className="text-sm text-emerald-700">
+              판매자가 환불완료 처리했습니다. 환불금을 받으셨다면 확인 버튼을
+              눌러주세요.
+            </p>
           ) : (
-            <p className="text-sm text-zinc-600">판매자가 환불 요청을 확인 중입니다.</p>
+            <p className="text-sm text-zinc-600">
+              판매자가 환불 요청을 확인 중입니다.
+            </p>
           )}
           <div className="flex flex-wrap gap-2">
             {sellerRefunded && (
-              <ActionButton action={() => confirmRefundAction(orderNumber)} confirmMessage="환불금 입금을 확인하셨습니까?" successMessage="환불이 완료되었습니다">
+              <ActionButton
+                action={() => confirmRefundAction(orderNumber)}
+                confirmMessage="환불금 입금을 확인하셨습니까?"
+                successMessage="환불이 완료되었습니다"
+              >
                 환불금 확인
               </ActionButton>
             )}
-            <ActionButton variant="outline" action={() => withdrawRefundAction(orderNumber)} confirmMessage="환불 요청을 철회하시겠습니까?" successMessage="환불 요청을 철회했습니다">
+            <ActionButton
+              variant="outline"
+              action={() => withdrawRefundAction(orderNumber)}
+              confirmMessage="환불 요청을 철회하시겠습니까?"
+              successMessage="환불 요청을 철회했습니다"
+            >
               요청 철회
             </ActionButton>
             <DisputeForm orderNumber={orderNumber} />
@@ -119,12 +159,20 @@ export function BuyerOrderActions({ orderNumber, status, buyerName, sellerRefund
     case "CANCEL_REQUESTED":
       return (
         <div className="space-y-3">
-          <p className="text-sm text-zinc-600">판매자가 취소 요청을 확인 중입니다. 판매자가 환불 후 취소를 승인합니다.</p>
+          <p className="text-sm text-zinc-600">
+            판매자가 취소 요청을 확인 중입니다. 판매자가 환불 후 취소를
+            승인합니다.
+          </p>
           <DisputeForm orderNumber={orderNumber} />
         </div>
       );
     case "DISPUTED":
-      return <p className="text-sm text-rose-700">분쟁이 접수되어 옆커폰 관리자가 처리 중입니다. 처리 결과는 이 페이지에서 확인할 수 있습니다.</p>;
+      return (
+        <p className="text-sm text-rose-700">
+          분쟁이 접수되어 옆커폰 관리자가 처리 중입니다. 처리 결과는 이
+          페이지에서 확인할 수 있습니다.
+        </p>
+      );
     case "CANCELLED":
     case "REFUNDED":
       return <p className="text-sm text-zinc-500">종료된 주문입니다.</p>;

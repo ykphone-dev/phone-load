@@ -35,7 +35,11 @@ export function SettingsForm({ initialMinutes }: Props) {
     startTransition(async () => {
       const res = await updateSettingsAction({ reservationMinutes: n });
       if (res.ok === false) {
-        toast({ title: "저장 실패", description: res.error, variant: "destructive" });
+        toast({
+          title: "저장 실패",
+          description: res.error,
+          variant: "destructive",
+        });
         return;
       }
       toast({ title: "설정을 저장했습니다." });
@@ -60,8 +64,9 @@ export function SettingsForm({ initialMinutes }: Props) {
           required
         />
         <p className="text-xs text-zinc-500">
-          주문 후 이 시간 안에 구매자가 입금완료 표시를 하지 않으면 주문이 자동취소되고 상품은 판매중으로
-          돌아갑니다. ({MIN}분 ~ {MAX}분, 현재 {initialMinutes}분)
+          주문 후 이 시간 안에 구매자가 입금완료 표시를 하지 않으면 주문이
+          자동취소되고 상품은 판매중으로 돌아갑니다. ({MIN}분 ~ {MAX}분, 현재{" "}
+          {initialMinutes}분)
         </p>
       </div>
       <Button type="submit" disabled={pending}>

@@ -11,7 +11,10 @@ type Props = {
 /** 목록 상단 상태 필터 링크 (서버 컴포넌트 안전) */
 export function StatusFilterLinks({ basePath, options, current }: Props) {
   return (
-    <nav className="mb-4 flex flex-wrap gap-1 border-b pb-3" aria-label="상태 필터">
+    <nav
+      className="mb-4 flex flex-wrap gap-1 border-b pb-3"
+      aria-label="상태 필터"
+    >
       {options.map((o) => {
         const active = (o.value ?? "") === (current ?? "");
         return (
@@ -20,7 +23,9 @@ export function StatusFilterLinks({ basePath, options, current }: Props) {
             href={o.value ? `${basePath}?status=${o.value}` : basePath}
             className={cn(
               "rounded-sm px-3 py-1 text-sm",
-              active ? "bg-zinc-900 text-white" : "text-zinc-600 hover:bg-zinc-100",
+              active
+                ? "bg-zinc-900 text-white"
+                : "text-zinc-600 hover:bg-zinc-100",
             )}
           >
             {o.label}

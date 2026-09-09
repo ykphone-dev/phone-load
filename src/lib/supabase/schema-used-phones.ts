@@ -231,7 +231,9 @@ export const phoneProducts = pgTable(
     /** Samsung: 배터리 상태 */
     batteryStatus: batteryStatusEnum("battery_status"),
 
-    repairHistory: historyStateEnum("repair_history").notNull().default("UNKNOWN"),
+    repairHistory: historyStateEnum("repair_history")
+      .notNull()
+      .default("UNKNOWN"),
     repairNote: text("repair_note"),
     partsReplacement: historyStateEnum("parts_replacement")
       .notNull()
@@ -286,8 +288,12 @@ export const phoneProductImages = pgTable(
   }),
 );
 
-export type SelectPhoneProductImage = InferSelectModel<typeof phoneProductImages>;
-export type InsertPhoneProductImage = InferInsertModel<typeof phoneProductImages>;
+export type SelectPhoneProductImage = InferSelectModel<
+  typeof phoneProductImages
+>;
+export type InsertPhoneProductImage = InferInsertModel<
+  typeof phoneProductImages
+>;
 
 export const phoneProductInspections = pgTable("phone_product_inspections", {
   id: text("id")
@@ -300,7 +306,9 @@ export const phoneProductInspections = pgTable("phone_product_inspections", {
     .references(() => phoneProducts.id, { onDelete: "cascade" }),
 
   camera: inspectionResultEnum("camera").notNull().default("UNKNOWN"),
-  frontCamera: inspectionResultEnum("front_camera").notNull().default("UNKNOWN"),
+  frontCamera: inspectionResultEnum("front_camera")
+    .notNull()
+    .default("UNKNOWN"),
   biometric: inspectionResultEnum("biometric").notNull().default("UNKNOWN"),
   speaker: inspectionResultEnum("speaker").notNull().default("UNKNOWN"),
   microphone: inspectionResultEnum("microphone").notNull().default("UNKNOWN"),
@@ -367,7 +375,10 @@ export const phoneOrders = pgTable(
       withTimezone: true,
       mode: "date",
     }),
-    completedAt: timestamp("completed_at", { withTimezone: true, mode: "date" }),
+    completedAt: timestamp("completed_at", {
+      withTimezone: true,
+      mode: "date",
+    }),
     ...timestamps,
   },
   (t) => ({
@@ -453,7 +464,10 @@ export const phoneRefundRequests = pgTable(
       .defaultNow()
       .notNull(),
     refundedAt: timestamp("refunded_at", { withTimezone: true, mode: "date" }),
-    confirmedAt: timestamp("confirmed_at", { withTimezone: true, mode: "date" }),
+    confirmedAt: timestamp("confirmed_at", {
+      withTimezone: true,
+      mode: "date",
+    }),
   },
   (t) => ({
     orderIdx: index("phone_refund_requests_order_idx").on(t.orderId),

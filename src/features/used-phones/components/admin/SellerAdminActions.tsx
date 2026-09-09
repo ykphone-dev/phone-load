@@ -43,7 +43,9 @@ export function SellerAdminActions({ sellerId, status }: Props) {
           variant="destructive"
           action={() => suspendSellerAction(sellerId)}
           promptMessage="정지 사유를 입력하세요. 정지 시 판매중인 상품은 모두 판매중지 처리됩니다. (선택)"
-          onPrompt={(reason) => suspendSellerAction(sellerId, reason || undefined)}
+          onPrompt={(reason) =>
+            suspendSellerAction(sellerId, reason || undefined)
+          }
           successMessage="판매자를 정지했습니다."
         >
           정지

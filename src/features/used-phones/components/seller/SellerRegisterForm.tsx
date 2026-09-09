@@ -26,7 +26,10 @@ import { useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { registerSellerAction } from "../../actions/sellers";
 import { BANKS, PLATFORM_NAME } from "../../constants";
-import { sellerRegisterSchema, type SellerRegisterInput } from "../../validations";
+import {
+  sellerRegisterSchema,
+  type SellerRegisterInput,
+} from "../../validations";
 import { ImageUploader } from "../ImageUploader";
 
 type Props = {
@@ -64,10 +67,17 @@ export function SellerRegisterForm({ defaultValues }: Props) {
     startTransition(async () => {
       const res = await registerSellerAction(values);
       if (res.ok === false) {
-        toast({ title: "입점 신청 실패", description: res.error, variant: "destructive" });
+        toast({
+          title: "입점 신청 실패",
+          description: res.error,
+          variant: "destructive",
+        });
         return;
       }
-      toast({ title: "입점 신청이 접수되었습니다", description: "관리자 승인 후 판매를 시작할 수 있습니다." });
+      toast({
+        title: "입점 신청이 접수되었습니다",
+        description: "관리자 승인 후 판매를 시작할 수 있습니다.",
+      });
       router.push("/seller/pending");
       router.refresh();
     });
@@ -75,7 +85,10 @@ export function SellerRegisterForm({ defaultValues }: Props) {
 
   return (
     <Form {...form}>
-      <form onSubmit={(...args) => void form.handleSubmit(onSubmit)(...args)} className="space-y-8">
+      <form
+        onSubmit={(...args) => void form.handleSubmit(onSubmit)(...args)}
+        className="space-y-8"
+      >
         <section className="space-y-4">
           <h3 className="font-semibold">사업자 정보</h3>
           <div className="grid gap-4 sm:grid-cols-2">
@@ -112,7 +125,11 @@ export function SellerRegisterForm({ defaultValues }: Props) {
                 <FormItem>
                   <FormLabel>사업자등록번호</FormLabel>
                   <FormControl>
-                    <Input placeholder="000-00-00000" inputMode="numeric" {...field} />
+                    <Input
+                      placeholder="000-00-00000"
+                      inputMode="numeric"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -152,7 +169,11 @@ export function SellerRegisterForm({ defaultValues }: Props) {
               <FormItem>
                 <FormLabel>상세주소</FormLabel>
                 <FormControl>
-                  <Input placeholder="동/호수 등 (선택)" {...field} value={field.value ?? ""} />
+                  <Input
+                    placeholder="동/호수 등 (선택)"
+                    {...field}
+                    value={field.value ?? ""}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -183,7 +204,11 @@ export function SellerRegisterForm({ defaultValues }: Props) {
                 <FormItem>
                   <FormLabel>담당자 휴대폰</FormLabel>
                   <FormControl>
-                    <Input placeholder="010-0000-0000" inputMode="tel" {...field} />
+                    <Input
+                      placeholder="010-0000-0000"
+                      inputMode="tel"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -195,8 +220,9 @@ export function SellerRegisterForm({ defaultValues }: Props) {
         <section className="space-y-4">
           <h3 className="font-semibold">입금 계좌</h3>
           <div className="rounded-md border bg-zinc-50 p-3 text-sm text-zinc-600">
-            판매대금은 소비자가 이 계좌로 <b>직접 입금</b>합니다. {PLATFORM_NAME}은 통신판매중개 플랫폼으로서
-            판매대금을 보관하거나 정산하지 않습니다. 계좌 정보는 주문 후 구매자에게 공개됩니다.
+            판매대금은 소비자가 이 계좌로 <b>직접 입금</b>합니다.{" "}
+            {PLATFORM_NAME}은 통신판매중개 플랫폼으로서 판매대금을 보관하거나
+            정산하지 않습니다. 계좌 정보는 주문 후 구매자에게 공개됩니다.
           </div>
           <div className="grid gap-4 sm:grid-cols-3">
             <FormField
@@ -205,7 +231,10 @@ export function SellerRegisterForm({ defaultValues }: Props) {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>입금 은행</FormLabel>
-                  <Select onValueChange={field.onChange} value={field.value || undefined}>
+                  <Select
+                    onValueChange={field.onChange}
+                    value={field.value || undefined}
+                  >
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue placeholder="은행 선택" />
@@ -230,7 +259,11 @@ export function SellerRegisterForm({ defaultValues }: Props) {
                 <FormItem>
                   <FormLabel>계좌번호</FormLabel>
                   <FormControl>
-                    <Input placeholder="숫자와 하이픈만" inputMode="numeric" {...field} />
+                    <Input
+                      placeholder="숫자와 하이픈만"
+                      inputMode="numeric"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -272,7 +305,10 @@ export function SellerRegisterForm({ defaultValues }: Props) {
                       onChange={(urls) => field.onChange(urls[0] ?? "")}
                     />
                   </FormControl>
-                  <FormDescription>이미지 또는 PDF. 관리자 검토용으로만 사용되며 외부에 공개되지 않습니다.</FormDescription>
+                  <FormDescription>
+                    이미지 또는 PDF. 관리자 검토용으로만 사용되며 외부에
+                    공개되지 않습니다.
+                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}

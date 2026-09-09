@@ -11,7 +11,13 @@ export type AuditInput = {
   userId?: string | null;
   actorRole: AuditActorRole;
   action: string;
-  entityType: "seller" | "phone_product" | "phone_order" | "refund_request" | "dispute" | "setting";
+  entityType:
+    | "seller"
+    | "phone_product"
+    | "phone_order"
+    | "refund_request"
+    | "dispute"
+    | "setting";
   entityId: string;
   oldValue?: unknown;
   newValue?: unknown;

@@ -10,7 +10,10 @@ import { getSessionContext } from "./auth";
  *  - 판매자 미등록 → 입점 신청
  *  - 승인 전/반려/정지 → 상태 안내 페이지
  */
-export async function guardSellerPage(): Promise<{ user: User; seller: SelectSeller }> {
+export async function guardSellerPage(): Promise<{
+  user: User;
+  seller: SelectSeller;
+}> {
   const ctx = await getSessionContext();
   if (!ctx.user) redirect("/sign-in?from=/seller");
   if (!ctx.seller) redirect("/seller/register");

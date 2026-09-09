@@ -44,17 +44,27 @@ export function ShipmentForm({ orderId }: { orderId: string }) {
     startTransition(async () => {
       const res = await sellerShipAction(orderId, values);
       if (res.ok === false) {
-        toast({ title: "송장 등록 실패", description: res.error, variant: "destructive" });
+        toast({
+          title: "송장 등록 실패",
+          description: res.error,
+          variant: "destructive",
+        });
         return;
       }
-      toast({ title: "송장이 등록되었습니다", description: "주문이 배송중으로 변경되었습니다." });
+      toast({
+        title: "송장이 등록되었습니다",
+        description: "주문이 배송중으로 변경되었습니다.",
+      });
       router.refresh();
     });
   };
 
   return (
     <Form {...form}>
-      <form onSubmit={(...args) => void form.handleSubmit(onSubmit)(...args)} className="space-y-3 border p-4">
+      <form
+        onSubmit={(...args) => void form.handleSubmit(onSubmit)(...args)}
+        className="space-y-3 border p-4"
+      >
         <p className="text-sm font-medium">송장 등록</p>
         <div className="grid gap-3 sm:grid-cols-3">
           <FormField
@@ -63,7 +73,10 @@ export function ShipmentForm({ orderId }: { orderId: string }) {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>택배사</FormLabel>
-                <Select value={field.value ?? undefined} onValueChange={field.onChange}>
+                <Select
+                  value={field.value ?? undefined}
+                  onValueChange={field.onChange}
+                >
                   <FormControl>
                     <SelectTrigger>
                       <SelectValue placeholder="택배사 선택" />
@@ -103,7 +116,9 @@ export function ShipmentForm({ orderId }: { orderId: string }) {
                 <FormControl>
                   <Input type="date" {...field} value={field.value ?? ""} />
                 </FormControl>
-                <FormDescription>비우면 오늘 날짜로 기록됩니다.</FormDescription>
+                <FormDescription>
+                  비우면 오늘 날짜로 기록됩니다.
+                </FormDescription>
                 <FormMessage />
               </FormItem>
             )}

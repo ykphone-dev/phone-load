@@ -37,7 +37,10 @@ export async function approveSellerAction(sellerId: string): Promise<Result> {
   }
 }
 
-export async function rejectSellerAction(sellerId: string, reason: string): Promise<Result> {
+export async function rejectSellerAction(
+  sellerId: string,
+  reason: string,
+): Promise<Result> {
   try {
     const s = await adminRejectSeller(sellerId, reason);
     revalidateSellers(sellerId);
@@ -47,7 +50,10 @@ export async function rejectSellerAction(sellerId: string, reason: string): Prom
   }
 }
 
-export async function suspendSellerAction(sellerId: string, reason?: string): Promise<Result> {
+export async function suspendSellerAction(
+  sellerId: string,
+  reason?: string,
+): Promise<Result> {
   try {
     const s = await adminSuspendSeller(sellerId, reason);
     revalidateSellers(sellerId);
@@ -58,7 +64,9 @@ export async function suspendSellerAction(sellerId: string, reason?: string): Pr
   }
 }
 
-export async function reactivateSellerAction(sellerId: string): Promise<Result> {
+export async function reactivateSellerAction(
+  sellerId: string,
+): Promise<Result> {
   try {
     const s = await adminReactivateSeller(sellerId);
     revalidateSellers(sellerId);
@@ -68,7 +76,10 @@ export async function reactivateSellerAction(sellerId: string): Promise<Result> 
   }
 }
 
-export async function forceStopProductAction(productId: string, reason?: string): Promise<Result> {
+export async function forceStopProductAction(
+  productId: string,
+  reason?: string,
+): Promise<Result> {
   try {
     const p = await adminForceStopProduct(productId, reason);
     revalidatePath("/admin/phones");
@@ -126,7 +137,10 @@ export async function updateSettingsAction(input: {
   try {
     const admin = await requireAdmin();
     const parsed = settingsSchema.parse(input);
-    await setSetting(SETTING_KEYS.RESERVATION_MINUTES, String(parsed.reservationMinutes));
+    await setSetting(
+      SETTING_KEYS.RESERVATION_MINUTES,
+      String(parsed.reservationMinutes),
+    );
     await logAudit({
       userId: admin.id,
       actorRole: "ADMIN",

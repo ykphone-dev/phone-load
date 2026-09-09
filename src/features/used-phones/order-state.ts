@@ -166,11 +166,19 @@ export function nextStatus(
   }
   const rule = TRANSITIONS[key];
   if (rule.to === "RESTORE") {
-    return opts.restoreTo ?? (key === "WITHDRAW_REFUND" ? "DELIVERED" : "DEPOSIT_CONFIRMED");
+    return (
+      opts.restoreTo ??
+      (key === "WITHDRAW_REFUND" ? "DELIVERED" : "DEPOSIT_CONFIRMED")
+    );
   }
   if (rule.to === "ADMIN_CHOICE") {
     if (!opts.adminChoice) {
-      throw new OrderTransitionError(key, from, actor, "관리자 처리 결과 상태가 필요합니다.");
+      throw new OrderTransitionError(
+        key,
+        from,
+        actor,
+        "관리자 처리 결과 상태가 필요합니다.",
+      );
     }
     return opts.adminChoice;
   }
@@ -200,6 +208,7 @@ export const PROGRESS_STEPS: OrderStatus[] = [
 ];
 
 export function progressIndex(status: OrderStatus) {
-  if (status === "PREPARING") return PROGRESS_STEPS.indexOf("DEPOSIT_CONFIRMED");
+  if (status === "PREPARING")
+    return PROGRESS_STEPS.indexOf("DEPOSIT_CONFIRMED");
   return PROGRESS_STEPS.indexOf(status);
 }

@@ -14,7 +14,8 @@ export default async function SellerRegisterPage() {
   try {
     ({ seller } = await getMySeller());
   } catch (err) {
-    if (err instanceof AppError && err.status === 401) redirect("/sign-in?from=/seller/register");
+    if (err instanceof AppError && err.status === 401)
+      redirect("/sign-in?from=/seller/register");
     throw err;
   }
 
@@ -28,7 +29,9 @@ export default async function SellerRegisterPage() {
         <Alert variant="destructive">
           <AlertTitle>판매자 계정이 정지되었습니다</AlertTitle>
           <AlertDescription>
-            {seller.rejectReason ? <p className="mb-1">사유: {seller.rejectReason}</p> : null}
+            {seller.rejectReason ? (
+              <p className="mb-1">사유: {seller.rejectReason}</p>
+            ) : null}
             정지 상태에서는 재신청할 수 없습니다. 고객센터에 문의해주세요.{" "}
             <Link href="/seller/pending" className="underline">
               상태 확인
@@ -63,7 +66,8 @@ export default async function SellerRegisterPage() {
       <div>
         <SectionTitle>판매자 입점 신청</SectionTitle>
         <p className="text-sm text-zinc-500">
-          사업자 회원만 입점할 수 있습니다. 신청 후 관리자 승인이 완료되면 상품을 등록할 수 있습니다.
+          사업자 회원만 입점할 수 있습니다. 신청 후 관리자 승인이 완료되면
+          상품을 등록할 수 있습니다.
         </p>
       </div>
 
@@ -71,7 +75,9 @@ export default async function SellerRegisterPage() {
         <Alert variant="destructive">
           <AlertTitle>입점 신청이 반려되었습니다</AlertTitle>
           <AlertDescription>
-            <p className="whitespace-pre-wrap">반려 사유: {seller.rejectReason ?? "사유가 등록되지 않았습니다."}</p>
+            <p className="whitespace-pre-wrap">
+              반려 사유: {seller.rejectReason ?? "사유가 등록되지 않았습니다."}
+            </p>
             <p className="mt-1">아래 내용을 수정한 뒤 다시 신청해주세요.</p>
           </AlertDescription>
         </Alert>

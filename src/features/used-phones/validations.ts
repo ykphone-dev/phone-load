@@ -27,7 +27,10 @@ export const sellerRegisterSchema = z.object({
   businessNumber: z
     .string()
     .trim()
-    .regex(businessNumberRegex, "사업자등록번호 형식이 올바르지 않습니다 (000-00-00000)"),
+    .regex(
+      businessNumberRegex,
+      "사업자등록번호 형식이 올바르지 않습니다 (000-00-00000)",
+    ),
   mailOrderNumber: z
     .string()
     .trim()
@@ -61,7 +64,9 @@ export const sellerProfileUpdateSchema = sellerRegisterSchema.pick({
   address: true,
   addressDetail: true,
 });
-export type SellerProfileUpdateInput = z.infer<typeof sellerProfileUpdateSchema>;
+export type SellerProfileUpdateInput = z.infer<
+  typeof sellerProfileUpdateSchema
+>;
 
 // ───────────────────────────── 상품 ─────────────────────────────
 
@@ -105,7 +110,13 @@ export const productFormSchema = z
     frameCondition: z.enum(FRAME_CONDITIONS),
     backCondition: z.enum(BACK_CONDITIONS),
 
-    batteryHealth: z.coerce.number().int().min(1).max(100).optional().nullable(),
+    batteryHealth: z.coerce
+      .number()
+      .int()
+      .min(1)
+      .max(100)
+      .optional()
+      .nullable(),
     batteryStatus: z.enum(BATTERY_STATUSES).optional().nullable(),
 
     repairHistory: z.enum(HISTORY_STATES).default("UNKNOWN"),
@@ -128,13 +139,19 @@ export const productFormSchema = z
     inspection: inspectionSchema,
     images: z
       .array(productImageSchema)
-      .max(MAX_PRODUCT_IMAGES, `사진은 최대 ${MAX_PRODUCT_IMAGES}장까지 등록할 수 있습니다`),
+      .max(
+        MAX_PRODUCT_IMAGES,
+        `사진은 최대 ${MAX_PRODUCT_IMAGES}장까지 등록할 수 있습니다`,
+      ),
 
     /** true 면 ON_SALE 로 등록, false 면 DRAFT 저장 */
     publish: z.boolean().default(true),
   })
   .superRefine((data, ctx) => {
-    if (data.brand === "APPLE" && (data.batteryHealth == null || Number.isNaN(data.batteryHealth))) {
+    if (
+      data.brand === "APPLE" &&
+      (data.batteryHealth == null || Number.isNaN(data.batteryHealth))
+    ) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         path: ["batteryHealth"],
@@ -174,7 +191,8 @@ export const productFormSchema = z
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           path: ["images"],
-          message: "판매 등록에는 사진이 최소 1장 필요합니다 (전면·후면·좌측·우측·액정 5장 권장)",
+          message:
+            "판매 등록에는 사진이 최소 1장 필요합니다 (전면·후면·좌측·우측·액정 5장 권장)",
         });
       }
     }
@@ -205,7 +223,12 @@ export const createOrderSchema = z.object({
     .regex(phoneRegex, "휴대폰 번호 형식이 올바르지 않습니다"),
   shippingPostalCode: z.string().trim().max(10).optional().or(z.literal("")),
   shippingAddress: z.string().trim().min(1, "배송주소를 입력하세요").max(200),
-  shippingAddressDetail: z.string().trim().max(200).optional().or(z.literal("")),
+  shippingAddressDetail: z
+    .string()
+    .trim()
+    .max(200)
+    .optional()
+    .or(z.literal("")),
   shippingMemo: z.string().trim().max(200).optional().or(z.literal("")),
   /** 비회원 주문 조회 비밀번호. 회원이면 생략 가능. */
   password: z
@@ -215,7 +238,9 @@ export const createOrderSchema = z.object({
     .optional()
     .or(z.literal("")),
   agreeNotParty: z.literal(true, {
-    errorMap: () => ({ message: "판매계약 당사자 고지에 동의해야 주문할 수 있습니다" }),
+    errorMap: () => ({
+      message: "판매계약 당사자 고지에 동의해야 주문할 수 있습니다",
+    }),
   }),
 });
 export type CreateOrderInput = z.infer<typeof createOrderSchema>;
@@ -225,7 +250,10 @@ export const orderLookupSchema = z.object({
     .string()
     .trim()
     .regex(/^ORDER-\d{8}-\d{6}$/, "주문번호 형식이 올바르지 않습니다"),
-  buyerPhone: z.string().trim().regex(phoneRegex, "휴대폰 번호 형식이 올바르지 않습니다"),
+  buyerPhone: z
+    .string()
+    .trim()
+    .regex(phoneRegex, "휴대폰 번호 형식이 올바르지 않습니다"),
   password: z.string().min(1, "비밀번호를 입력하세요"),
 });
 export type OrderLookupInput = z.infer<typeof orderLookupSchema>;
@@ -250,7 +278,11 @@ export const refundRequestSchema = z.object({
   reason: z.enum(REFUND_REASONS),
   description: z.string().trim().max(2000).optional().or(z.literal("")),
   imageUrls: z.array(z.string().url()).max(10).default([]),
-  refundBankName: z.string().trim().min(1, "환불받을 은행을 선택하세요").max(50),
+  refundBankName: z
+    .string()
+    .trim()
+    .min(1, "환불받을 은행을 선택하세요")
+    .max(50),
   refundAccount: z
     .string()
     .trim()
@@ -277,9 +309,7 @@ export const disputeSellerReplySchema = z.object({
 
 export const disputeResolveSchema = z.object({
   adminNote: z.string().trim().min(1, "처리 메모를 입력하세요").max(3000),
-  resolutionStatus: z.enum(
-    DISPUTE_RESOLUTIONS as [string, ...string[]],
-  ),
+  resolutionStatus: z.enum(DISPUTE_RESOLUTIONS as [string, ...string[]]),
 });
 
 // ───────────────────────────── 관리자 ─────────────────────────────
@@ -289,5 +319,9 @@ export const sellerRejectSchema = z.object({
 });
 
 export const settingsSchema = z.object({
-  reservationMinutes: z.coerce.number().int().min(5).max(24 * 60),
+  reservationMinutes: z.coerce
+    .number()
+    .int()
+    .min(5)
+    .max(24 * 60),
 });

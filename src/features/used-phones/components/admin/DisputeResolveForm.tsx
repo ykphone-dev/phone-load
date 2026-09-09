@@ -25,9 +25,12 @@ const RESOLUTION_LABEL: Record<string, string> = {
 };
 
 const RESOLUTION_HELP: Record<string, string> = {
-  COMPLETED: "구매자 주장이 받아들여지지 않은 경우. 주문은 거래완료가 되고 상품은 판매완료 상태를 유지합니다.",
-  REFUNDED: "판매자가 환불한 것으로 종결. 주문은 환불완료가 되고 상품은 판매중지로 변경됩니다.",
-  CANCELLED: "거래 자체를 취소. 주문은 취소완료가 되고 상품은 판매중으로 복귀합니다.",
+  COMPLETED:
+    "구매자 주장이 받아들여지지 않은 경우. 주문은 거래완료가 되고 상품은 판매완료 상태를 유지합니다.",
+  REFUNDED:
+    "판매자가 환불한 것으로 종결. 주문은 환불완료가 되고 상품은 판매중지로 변경됩니다.",
+  CANCELLED:
+    "거래 자체를 취소. 주문은 취소완료가 되고 상품은 판매중으로 복귀합니다.",
 };
 
 type Props = { disputeId: string };
@@ -63,7 +66,11 @@ export function DisputeResolveForm({ disputeId }: Props) {
         resolutionStatus: resolution,
       });
       if (res.ok === false) {
-        toast({ title: "처리 실패", description: res.error, variant: "destructive" });
+        toast({
+          title: "처리 실패",
+          description: res.error,
+          variant: "destructive",
+        });
         return;
       }
       setDone(true);
@@ -106,8 +113,14 @@ export function DisputeResolveForm({ disputeId }: Props) {
         </Select>
         <ul className="space-y-1 text-xs text-zinc-500">
           {DISPUTE_RESOLUTIONS.map((r) => (
-            <li key={r} className={resolution === r ? "font-medium text-zinc-900" : undefined}>
-              <span className="font-medium">{RESOLUTION_LABEL[r]}</span>: {RESOLUTION_HELP[r]}
+            <li
+              key={r}
+              className={
+                resolution === r ? "font-medium text-zinc-900" : undefined
+              }
+            >
+              <span className="font-medium">{RESOLUTION_LABEL[r]}</span>:{" "}
+              {RESOLUTION_HELP[r]}
             </li>
           ))}
         </ul>
@@ -116,7 +129,9 @@ export function DisputeResolveForm({ disputeId }: Props) {
         {pending && <Spinner className="mr-2 h-4 w-4" />}
         분쟁 처리 확정
       </Button>
-      <p className="text-xs text-zinc-500">관리자 처리 내역은 모두 감사로그에 기록됩니다.</p>
+      <p className="text-xs text-zinc-500">
+        관리자 처리 내역은 모두 감사로그에 기록됩니다.
+      </p>
     </div>
   );
 }

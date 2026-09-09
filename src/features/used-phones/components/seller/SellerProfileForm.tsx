@@ -25,9 +25,16 @@ import { useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { updateSellerProfileAction } from "../../actions/sellers";
 import { BANKS } from "../../constants";
-import { sellerProfileUpdateSchema, type SellerProfileUpdateInput } from "../../validations";
+import {
+  sellerProfileUpdateSchema,
+  type SellerProfileUpdateInput,
+} from "../../validations";
 
-export function SellerProfileForm({ defaultValues }: { defaultValues: SellerProfileUpdateInput }) {
+export function SellerProfileForm({
+  defaultValues,
+}: {
+  defaultValues: SellerProfileUpdateInput;
+}) {
   const router = useRouter();
   const { toast } = useToast();
   const [pending, startTransition] = useTransition();
@@ -42,12 +49,22 @@ export function SellerProfileForm({ defaultValues }: { defaultValues: SellerProf
       values.bankName !== defaultValues.bankName ||
       values.bankAccount !== defaultValues.bankAccount ||
       values.bankHolder !== defaultValues.bankHolder;
-    if (bankChanged && !window.confirm("입금 계좌를 변경하시겠습니까? 변경 내역은 감사 로그에 기록됩니다.")) return;
+    if (
+      bankChanged &&
+      !window.confirm(
+        "입금 계좌를 변경하시겠습니까? 변경 내역은 감사 로그에 기록됩니다.",
+      )
+    )
+      return;
 
     startTransition(async () => {
       const res = await updateSellerProfileAction(values);
       if (res.ok === false) {
-        toast({ title: "저장 실패", description: res.error, variant: "destructive" });
+        toast({
+          title: "저장 실패",
+          description: res.error,
+          variant: "destructive",
+        });
         return;
       }
       toast({ title: "판매자 정보가 저장되었습니다" });
@@ -58,7 +75,10 @@ export function SellerProfileForm({ defaultValues }: { defaultValues: SellerProf
 
   return (
     <Form {...form}>
-      <form onSubmit={(...args) => void form.handleSubmit(onSubmit)(...args)} className="space-y-6">
+      <form
+        onSubmit={(...args) => void form.handleSubmit(onSubmit)(...args)}
+        className="space-y-6"
+      >
         <section className="space-y-3">
           <h3 className="font-semibold">담당자 / 연락처</h3>
           <div className="grid gap-4 sm:grid-cols-2">
@@ -82,7 +102,11 @@ export function SellerProfileForm({ defaultValues }: { defaultValues: SellerProf
                 <FormItem>
                   <FormLabel>담당자 휴대폰</FormLabel>
                   <FormControl>
-                    <Input placeholder="010-0000-0000" inputMode="tel" {...field} />
+                    <Input
+                      placeholder="010-0000-0000"
+                      inputMode="tel"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -124,7 +148,8 @@ export function SellerProfileForm({ defaultValues }: { defaultValues: SellerProf
         <section className="space-y-3">
           <h3 className="font-semibold">입금 계좌</h3>
           <p className="text-xs text-zinc-500">
-            소비자가 직접 입금하는 계좌입니다. 계좌 변경 내역은 감사 로그에 기록되며, 변경 후 생성되는 주문부터 적용됩니다.
+            소비자가 직접 입금하는 계좌입니다. 계좌 변경 내역은 감사 로그에
+            기록되며, 변경 후 생성되는 주문부터 적용됩니다.
           </p>
           <div className="grid gap-4 sm:grid-cols-3">
             <FormField
@@ -133,7 +158,10 @@ export function SellerProfileForm({ defaultValues }: { defaultValues: SellerProf
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>은행</FormLabel>
-                  <Select onValueChange={field.onChange} value={field.value || undefined}>
+                  <Select
+                    onValueChange={field.onChange}
+                    value={field.value || undefined}
+                  >
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue placeholder="은행 선택" />
@@ -145,9 +173,12 @@ export function SellerProfileForm({ defaultValues }: { defaultValues: SellerProf
                           {b}
                         </SelectItem>
                       ))}
-                      {field.value && !(BANKS as readonly string[]).includes(field.value) && (
-                        <SelectItem value={field.value}>{field.value}</SelectItem>
-                      )}
+                      {field.value &&
+                        !(BANKS as readonly string[]).includes(field.value) && (
+                          <SelectItem value={field.value}>
+                            {field.value}
+                          </SelectItem>
+                        )}
                     </SelectContent>
                   </Select>
                   <FormMessage />

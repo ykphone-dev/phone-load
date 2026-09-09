@@ -7,11 +7,22 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { EmptyState, OrderStatusBadge, SectionTitle } from "@/features/used-phones/components";
-import { ORDER_STATUSES, type OrderStatus } from "@/features/used-phones/constants";
+import {
+  EmptyState,
+  OrderStatusBadge,
+  SectionTitle,
+} from "@/features/used-phones/components";
+import {
+  ORDER_STATUSES,
+  type OrderStatus,
+} from "@/features/used-phones/constants";
 import { listSellerOrders } from "@/features/used-phones/server/orders";
 import { guardSellerPage } from "@/features/used-phones/server/seller-guard";
-import { formatDateTime, formatKRW, productTitle } from "@/features/used-phones/utils";
+import {
+  formatDateTime,
+  formatKRW,
+  productTitle,
+} from "@/features/used-phones/utils";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 
@@ -38,7 +49,9 @@ export default async function SellerOrdersPage({
 }) {
   await guardSellerPage();
   const raw = searchParams?.status;
-  const status = ORDER_STATUSES.includes(raw as OrderStatus) ? (raw as OrderStatus) : undefined;
+  const status = ORDER_STATUSES.includes(raw as OrderStatus)
+    ? (raw as OrderStatus)
+    : undefined;
   const orders = await listSellerOrders(status);
 
   return (
@@ -51,10 +64,14 @@ export default async function SellerOrdersPage({
           return (
             <Link
               key={f.label}
-              href={f.value ? `/seller/orders?status=${f.value}` : "/seller/orders"}
+              href={
+                f.value ? `/seller/orders?status=${f.value}` : "/seller/orders"
+              }
               className={cn(
                 "-mb-px whitespace-nowrap border-b-2 px-3 py-2 text-sm",
-                active ? "border-black font-medium text-black" : "border-transparent text-zinc-500 hover:text-black",
+                active
+                  ? "border-black font-medium text-black"
+                  : "border-transparent text-zinc-500 hover:text-black",
               )}
             >
               {f.label}
@@ -64,7 +81,14 @@ export default async function SellerOrdersPage({
       </nav>
 
       {orders.length === 0 ? (
-        <EmptyState title="주문이 없습니다" description={status ? "해당 상태의 주문이 없습니다." : "아직 들어온 주문이 없습니다."} />
+        <EmptyState
+          title="주문이 없습니다"
+          description={
+            status
+              ? "해당 상태의 주문이 없습니다."
+              : "아직 들어온 주문이 없습니다."
+          }
+        />
       ) : (
         <div className="overflow-x-auto border">
           <Table>
@@ -83,22 +107,32 @@ export default async function SellerOrdersPage({
             <TableBody>
               {orders.map((o) => (
                 <TableRow key={o.id}>
-                  <TableCell className="whitespace-nowrap font-mono text-xs">{o.orderNumber}</TableCell>
+                  <TableCell className="whitespace-nowrap font-mono text-xs">
+                    {o.orderNumber}
+                  </TableCell>
                   <TableCell>
                     <div className="font-medium">{productTitle(o.product)}</div>
-                    <div className="text-xs text-zinc-500">{o.product.color}</div>
+                    <div className="text-xs text-zinc-500">
+                      {o.product.color}
+                    </div>
                   </TableCell>
                   <TableCell>
                     <div>{o.buyerName}</div>
                     <div className="text-xs text-zinc-500">{o.buyerPhone}</div>
                   </TableCell>
-                  <TableCell className="whitespace-nowrap text-right">{formatKRW(o.price)}</TableCell>
+                  <TableCell className="whitespace-nowrap text-right">
+                    {formatKRW(o.price)}
+                  </TableCell>
                   <TableCell>
                     <OrderStatusBadge status={o.status} />
                   </TableCell>
-                  <TableCell className="whitespace-nowrap text-xs text-zinc-500">{formatDateTime(o.createdAt)}</TableCell>
                   <TableCell className="whitespace-nowrap text-xs text-zinc-500">
-                    {o.transferReport?.buyerReportedAt ? formatDateTime(o.transferReport.buyerReportedAt) : "-"}
+                    {formatDateTime(o.createdAt)}
+                  </TableCell>
+                  <TableCell className="whitespace-nowrap text-xs text-zinc-500">
+                    {o.transferReport?.buyerReportedAt
+                      ? formatDateTime(o.transferReport.buyerReportedAt)
+                      : "-"}
                   </TableCell>
                   <TableCell className="text-right">
                     <Button asChild size="sm" variant="outline">

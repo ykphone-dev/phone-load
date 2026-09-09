@@ -26,14 +26,16 @@ const BUTTONS: ButtonDef[] = [
   {
     key: "CANCEL_BEFORE_DEPOSIT",
     label: "주문 취소",
-    confirm: "입금 전 주문을 취소합니다. 상품은 다시 판매중으로 돌아갑니다. 진행하시겠습니까?",
+    confirm:
+      "입금 전 주문을 취소합니다. 상품은 다시 판매중으로 돌아갑니다. 진행하시겠습니까?",
     success: "주문을 취소했습니다.",
     destructive: true,
   },
   {
     key: "EXPIRE",
     label: "기한만료 취소",
-    confirm: "입금기한 만료로 주문을 취소합니다. 상품은 다시 판매중으로 돌아갑니다. 진행하시겠습니까?",
+    confirm:
+      "입금기한 만료로 주문을 취소합니다. 상품은 다시 판매중으로 돌아갑니다. 진행하시겠습니까?",
     success: "기한만료 취소 처리했습니다.",
     destructive: true,
   },
@@ -62,7 +64,8 @@ const BUTTONS: ButtonDef[] = [
   {
     key: "COMPLETE",
     label: "거래완료 처리",
-    confirm: "구매자를 대신해 거래를 완료 처리합니다. 이후에는 환불 요청만 가능합니다. 진행하시겠습니까?",
+    confirm:
+      "구매자를 대신해 거래를 완료 처리합니다. 이후에는 환불 요청만 가능합니다. 진행하시겠습니까?",
     success: "거래완료 처리했습니다.",
   },
 ];
@@ -73,7 +76,9 @@ export function AdminOrderActions({ orderId, status }: Props) {
   return (
     <div className="space-y-2">
       {visible.length === 0 ? (
-        <p className="text-sm text-zinc-500">현재 상태에서 관리자가 처리할 수 있는 항목이 없습니다.</p>
+        <p className="text-sm text-zinc-500">
+          현재 상태에서 관리자가 처리할 수 있는 항목이 없습니다.
+        </p>
       ) : (
         <div className="flex flex-wrap gap-2">
           {visible.map((b) => (
@@ -90,7 +95,9 @@ export function AdminOrderActions({ orderId, status }: Props) {
           ))}
         </div>
       )}
-      <p className="text-xs text-zinc-500">관리자 처리 내역은 모두 감사로그에 기록됩니다.</p>
+      <p className="text-xs text-zinc-500">
+        관리자 처리 내역은 모두 감사로그에 기록됩니다.
+      </p>
     </div>
   );
 }

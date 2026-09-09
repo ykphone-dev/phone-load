@@ -24,16 +24,40 @@ export type ActionResult<T = undefined> =
 
 export function toActionError(err: unknown): ActionResult<never> {
   if (err instanceof AppError) {
-    return { ok: false, error: err.message, code: err.code, status: err.status };
+    return {
+      ok: false,
+      error: err.message,
+      code: err.code,
+      status: err.status,
+    };
   }
-  if (err && typeof err === "object" && "name" in err && (err as any).name === "OrderTransitionError") {
-    return { ok: false, error: (err as Error).message, code: "INVALID_TRANSITION", status: 409 };
+  if (
+    err &&
+    typeof err === "object" &&
+    "name" in err &&
+    (err as any).name === "OrderTransitionError"
+  ) {
+    return {
+      ok: false,
+      error: (err as Error).message,
+      code: "INVALID_TRANSITION",
+      status: 409,
+    };
   }
   if (err && typeof err === "object" && "issues" in err) {
     // zod
     const issues = (err as any).issues as { message: string }[];
-    return { ok: false, error: issues?.[0]?.message ?? "입력값이 올바르지 않습니다.", code: "VALIDATION", status: 400 };
+    return {
+      ok: false,
+      error: issues?.[0]?.message ?? "입력값이 올바르지 않습니다.",
+      code: "VALIDATION",
+      status: 400,
+    };
   }
   console.error("[used-phones] unexpected error", err);
-  return { ok: false, error: "처리 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.", status: 500 };
+  return {
+    ok: false,
+    error: "처리 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.",
+    status: 500,
+  };
 }

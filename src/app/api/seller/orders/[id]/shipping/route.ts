@@ -1,5 +1,8 @@
 import { handle, readJson } from "@/features/used-phones/server/api";
-import { sellerMarkDelivered, sellerShip } from "@/features/used-phones/server/orders";
+import {
+  sellerMarkDelivered,
+  sellerShip,
+} from "@/features/used-phones/server/orders";
 import type { NextRequest } from "next/server";
 
 export const dynamic = "force-dynamic";

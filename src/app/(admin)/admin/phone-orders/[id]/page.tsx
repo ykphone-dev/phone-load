@@ -18,7 +18,11 @@ import {
 } from "@/features/used-phones/constants";
 import { AppError } from "@/features/used-phones/server/errors";
 import { adminGetOrder } from "@/features/used-phones/server/orders";
-import { formatDateTime, formatKRW, productTitle } from "@/features/used-phones/utils";
+import {
+  formatDateTime,
+  formatKRW,
+  productTitle,
+} from "@/features/used-phones/utils";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
@@ -29,12 +33,25 @@ export const dynamic = "force-dynamic";
 type Props = { params: { id: string } };
 
 function Thumbs({ urls, alt }: { urls: string[]; alt: string }) {
-  if (!urls || urls.length === 0) return <span className="text-zinc-400">첨부 사진 없음</span>;
+  if (!urls || urls.length === 0)
+    return <span className="text-zinc-400">첨부 사진 없음</span>;
   return (
     <div className="flex flex-wrap gap-2">
       {urls.map((u, i) => (
-        <a key={u + i} href={u} target="_blank" rel="noreferrer" className="relative block h-20 w-20 overflow-hidden border bg-zinc-100">
-          <Image src={u} alt={`${alt} ${i + 1}`} fill sizes="80px" className="object-cover" />
+        <a
+          key={u + i}
+          href={u}
+          target="_blank"
+          rel="noreferrer"
+          className="relative block h-20 w-20 overflow-hidden border bg-zinc-100"
+        >
+          <Image
+            src={u}
+            alt={`${alt} ${i + 1}`}
+            fill
+            sizes="80px"
+            className="object-cover"
+          />
         </a>
       ))}
     </div>
@@ -53,7 +70,14 @@ export default async function AdminPhoneOrderDetailPage({ params }: Props) {
     throw err;
   }
 
-  const { product, seller, transferReport, shipment, refundRequests, disputes } = order;
+  const {
+    product,
+    seller,
+    transferReport,
+    shipment,
+    refundRequests,
+    disputes,
+  } = order;
 
   return (
     <AdminShell
@@ -66,7 +90,9 @@ export default async function AdminPhoneOrderDetailPage({ params }: Props) {
       </section>
 
       <section className="mb-8 border p-4">
-        <SectionTitle right={<OrderStatusBadge status={order.status} />}>관리자 처리</SectionTitle>
+        <SectionTitle right={<OrderStatusBadge status={order.status} />}>
+          관리자 처리
+        </SectionTitle>
         <AdminOrderActions orderId={order.id} status={order.status} />
       </section>
 
@@ -84,17 +110,32 @@ export default async function AdminPhoneOrderDetailPage({ params }: Props) {
                   </span>
                 ),
               },
-              { label: "상태", value: <OrderStatusBadge status={order.status} /> },
+              {
+                label: "상태",
+                value: <OrderStatusBadge status={order.status} />,
+              },
               {
                 label: "요청 전 상태",
-                value: order.statusBeforeRequest ? ORDER_STATUS_LABEL[order.statusBeforeRequest] : "-",
+                value: order.statusBeforeRequest
+                  ? ORDER_STATUS_LABEL[order.statusBeforeRequest]
+                  : "-",
               },
-              { label: "결제금액", value: <span className="font-semibold">{formatKRW(order.price)}</span> },
+              {
+                label: "결제금액",
+                value: (
+                  <span className="font-semibold">
+                    {formatKRW(order.price)}
+                  </span>
+                ),
+              },
               { label: "주문일시", value: formatDateTime(order.createdAt) },
               { label: "입금기한", value: formatDateTime(order.reservedUntil) },
               { label: "거래완료", value: formatDateTime(order.completedAt) },
               { label: "취소 사유", value: order.cancelReason || "-" },
-              { label: "주문 유형", value: order.buyerId ? "회원 주문" : "비회원 주문" },
+              {
+                label: "주문 유형",
+                value: order.buyerId ? "회원 주문" : "비회원 주문",
+              },
             ]}
           />
         </section>
@@ -104,9 +145,17 @@ export default async function AdminPhoneOrderDetailPage({ params }: Props) {
           <div className="flex gap-4">
             <div className="relative h-24 w-24 shrink-0 overflow-hidden bg-zinc-100">
               {product.images[0]?.imageUrl ? (
-                <Image src={product.images[0].imageUrl} alt={product.model} fill sizes="96px" className="object-cover" />
+                <Image
+                  src={product.images[0].imageUrl}
+                  alt={product.model}
+                  fill
+                  sizes="96px"
+                  className="object-cover"
+                />
               ) : (
-                <span className="flex h-full w-full items-center justify-center text-[10px] text-zinc-400">사진 없음</span>
+                <span className="flex h-full w-full items-center justify-center text-[10px] text-zinc-400">
+                  사진 없음
+                </span>
               )}
             </div>
             <div className="min-w-0 flex-1">
@@ -115,12 +164,18 @@ export default async function AdminPhoneOrderDetailPage({ params }: Props) {
                   {
                     label: "상품",
                     value: (
-                      <Link href={`/admin/phones/${product.id}`} className="font-medium underline">
+                      <Link
+                        href={`/admin/phones/${product.id}`}
+                        className="font-medium underline"
+                      >
                         {productTitle(product)}
                       </Link>
                     ),
                   },
-                  { label: "색상 / 등급", value: `${product.color} · ${product.conditionGrade}등급` },
+                  {
+                    label: "색상 / 등급",
+                    value: `${product.color} · ${product.conditionGrade}등급`,
+                  },
                   { label: "현재 판매가", value: formatKRW(product.price) },
                 ]}
               />
@@ -135,12 +190,18 @@ export default async function AdminPhoneOrderDetailPage({ params }: Props) {
               {
                 label: "상호",
                 value: (
-                  <Link href={`/admin/sellers/${seller.id}`} className="font-medium underline">
+                  <Link
+                    href={`/admin/sellers/${seller.id}`}
+                    className="font-medium underline"
+                  >
                     {seller.businessName}
                   </Link>
                 ),
               },
-              { label: "담당자", value: `${seller.contactName} (${seller.contactPhone})` },
+              {
+                label: "담당자",
+                value: `${seller.contactName} (${seller.contactPhone})`,
+              },
               {
                 label: "입금 계좌",
                 value: `${seller.bankName} ${seller.bankAccount} (${seller.bankHolder})`,
@@ -158,7 +219,9 @@ export default async function AdminPhoneOrderDetailPage({ params }: Props) {
               { label: "우편번호", value: order.shippingPostalCode || "-" },
               {
                 label: "배송주소",
-                value: [order.shippingAddress, order.shippingAddressDetail].filter(Boolean).join(" "),
+                value: [order.shippingAddress, order.shippingAddressDetail]
+                  .filter(Boolean)
+                  .join(" "),
               },
               { label: "배송 메모", value: order.shippingMemo || "-" },
             ]}
@@ -170,8 +233,14 @@ export default async function AdminPhoneOrderDetailPage({ params }: Props) {
           {transferReport ? (
             <KeyValueList
               items={[
-                { label: "입금자명", value: transferReport.depositorName || "-" },
-                { label: "구매자 입금 표시", value: formatDateTime(transferReport.buyerReportedAt) },
+                {
+                  label: "입금자명",
+                  value: transferReport.depositorName || "-",
+                },
+                {
+                  label: "구매자 입금 표시",
+                  value: formatDateTime(transferReport.buyerReportedAt),
+                },
                 {
                   label: "판매자 입금 확인",
                   value: transferReport.sellerConfirmedAt ? (
@@ -197,13 +266,18 @@ export default async function AdminPhoneOrderDetailPage({ params }: Props) {
                   label: "송장번호",
                   value: (
                     <span className="inline-flex items-center gap-2">
-                      <span className="font-mono">{shipment.trackingNumber}</span>
+                      <span className="font-mono">
+                        {shipment.trackingNumber}
+                      </span>
                       <CopyButton value={shipment.trackingNumber} />
                     </span>
                   ),
                 },
                 { label: "발송일", value: formatDateTime(shipment.shippedAt) },
-                { label: "배송완료", value: formatDateTime(shipment.deliveredAt) },
+                {
+                  label: "배송완료",
+                  value: formatDateTime(shipment.deliveredAt),
+                },
               ]}
             />
           ) : (
@@ -213,7 +287,15 @@ export default async function AdminPhoneOrderDetailPage({ params }: Props) {
       </div>
 
       <section className="mt-10">
-        <SectionTitle right={<span className="text-sm text-zinc-500">{refundRequests.length}건</span>}>환불 요청</SectionTitle>
+        <SectionTitle
+          right={
+            <span className="text-sm text-zinc-500">
+              {refundRequests.length}건
+            </span>
+          }
+        >
+          환불 요청
+        </SectionTitle>
         {refundRequests.length === 0 ? (
           <EmptyState title="환불 요청이 없습니다." />
         ) : (
@@ -223,21 +305,53 @@ export default async function AdminPhoneOrderDetailPage({ params }: Props) {
                 <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
                   <div className="flex items-center gap-2">
                     <RefundStatusBadge status={r.status} />
-                    <span className="text-sm font-medium">{REFUND_REASON_LABEL[r.reason as RefundReason] ?? r.reason}</span>
+                    <span className="text-sm font-medium">
+                      {REFUND_REASON_LABEL[r.reason as RefundReason] ??
+                        r.reason}
+                    </span>
                   </div>
-                  <span className="text-xs text-zinc-500">요청 {formatDateTime(r.requestedAt)}</span>
+                  <span className="text-xs text-zinc-500">
+                    요청 {formatDateTime(r.requestedAt)}
+                  </span>
                 </div>
                 <KeyValueList
                   items={[
-                    { label: "상세 설명", value: r.description ? <span className="whitespace-pre-wrap">{r.description}</span> : "-" },
-                    { label: "첨부 사진", value: <Thumbs urls={r.imageUrls} alt="환불 사진" /> },
+                    {
+                      label: "상세 설명",
+                      value: r.description ? (
+                        <span className="whitespace-pre-wrap">
+                          {r.description}
+                        </span>
+                      ) : (
+                        "-"
+                      ),
+                    },
+                    {
+                      label: "첨부 사진",
+                      value: <Thumbs urls={r.imageUrls} alt="환불 사진" />,
+                    },
                     {
                       label: "환불 계좌",
                       value: `${r.refundBankName} ${r.refundAccount} (${r.refundHolder})`,
                     },
-                    { label: "판매자 메모", value: r.sellerNote ? <span className="whitespace-pre-wrap">{r.sellerNote}</span> : "-" },
-                    { label: "판매자 환불", value: formatDateTime(r.refundedAt) },
-                    { label: "구매자 확인", value: formatDateTime(r.confirmedAt) },
+                    {
+                      label: "판매자 메모",
+                      value: r.sellerNote ? (
+                        <span className="whitespace-pre-wrap">
+                          {r.sellerNote}
+                        </span>
+                      ) : (
+                        "-"
+                      ),
+                    },
+                    {
+                      label: "판매자 환불",
+                      value: formatDateTime(r.refundedAt),
+                    },
+                    {
+                      label: "구매자 확인",
+                      value: formatDateTime(r.confirmedAt),
+                    },
                   ]}
                 />
               </div>
@@ -247,25 +361,42 @@ export default async function AdminPhoneOrderDetailPage({ params }: Props) {
       </section>
 
       <section className="mt-10">
-        <SectionTitle right={<span className="text-sm text-zinc-500">{disputes.length}건</span>}>분쟁</SectionTitle>
+        <SectionTitle
+          right={
+            <span className="text-sm text-zinc-500">{disputes.length}건</span>
+          }
+        >
+          분쟁
+        </SectionTitle>
         {disputes.length === 0 ? (
           <EmptyState title="분쟁 내역이 없습니다." />
         ) : (
           <div className="space-y-3">
             {disputes.map((d) => (
-              <div key={d.id} className="flex flex-wrap items-center justify-between gap-3 border p-4">
+              <div
+                key={d.id}
+                className="flex flex-wrap items-center justify-between gap-3 border p-4"
+              >
                 <div className="min-w-0 space-y-1">
                   <div className="flex items-center gap-2">
                     <DisputeStatusBadge status={d.status} />
-                    <span className="truncate text-sm font-medium">{d.reason}</span>
+                    <span className="truncate text-sm font-medium">
+                      {d.reason}
+                    </span>
                   </div>
                   <p className="text-xs text-zinc-500">
                     접수 {formatDateTime(d.createdAt)}
                     {d.resolvedAt && ` · 처리 ${formatDateTime(d.resolvedAt)}`}
-                    {d.resolutionStatus && ` · 결과: ${ORDER_STATUS_LABEL[d.resolutionStatus]}`}
+                    {d.resolutionStatus &&
+                      ` · 결과: ${ORDER_STATUS_LABEL[d.resolutionStatus]}`}
                   </p>
                 </div>
-                <Link href={`/admin/disputes/${d.id}`} className={cn(buttonVariants({ variant: "outline", size: "sm" }))}>
+                <Link
+                  href={`/admin/disputes/${d.id}`}
+                  className={cn(
+                    buttonVariants({ variant: "outline", size: "sm" }),
+                  )}
+                >
                   분쟁 상세
                 </Link>
               </div>

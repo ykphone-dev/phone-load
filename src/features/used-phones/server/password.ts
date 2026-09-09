@@ -8,7 +8,10 @@ export function hashPassword(password: string) {
   return `scrypt$${salt}$${hash}`;
 }
 
-export function verifyPassword(password: string, stored: string | null | undefined) {
+export function verifyPassword(
+  password: string,
+  stored: string | null | undefined,
+) {
   if (!stored) return false;
   const [algo, salt, hash] = stored.split("$");
   if (algo !== "scrypt" || !salt || !hash) return false;
@@ -27,7 +30,10 @@ export function hashToken(token: string) {
   return createHash("sha256").update(token).digest("hex");
 }
 
-export function tokenMatches(token: string | undefined | null, storedHash: string) {
+export function tokenMatches(
+  token: string | undefined | null,
+  storedHash: string,
+) {
   if (!token) return false;
   const a = Buffer.from(hashToken(token));
   const b = Buffer.from(storedHash);
