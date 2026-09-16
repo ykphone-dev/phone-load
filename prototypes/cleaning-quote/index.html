@@ -1,0 +1,619 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>청소견적 비교 MVP 프로토타입</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F2F6F5; --card:#FFFFFF; --ink:#141A19; --ink2:#5B6663; --line:#DCE3E0;
+  --main:#12556A; --main-ink:#FFFFFF; --acc:#3CC7B4; --acc-ink:#0B1F1C;
+  --good:#1F7A4D; --good-bg:#E3F2EA; --warn:#B4541E; --warn-bg:#F9EBE2; --field:#E9EFEC;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0E1514; --card:#182120; --ink:#ECF1EF; --ink2:#98A5A1; --line:#293431;
+    --main:#4ED1BE; --main-ink:#0B1F1C; --acc:#4ED1BE; --acc-ink:#0B1F1C;
+    --good:#5CC898; --good-bg:#17301F; --warn:#E5814A; --warn-bg:#3A2418; --field:#212B29;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0E1514; --card:#182120; --ink:#ECF1EF; --ink2:#98A5A1; --line:#293431;
+  --main:#4ED1BE; --main-ink:#0B1F1C; --acc:#4ED1BE; --acc-ink:#0B1F1C;
+  --good:#5CC898; --good-bg:#17301F; --warn:#E5814A; --warn-bg:#3A2418; --field:#212B29;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--ink);font-family:"Noto Sans KR",-apple-system,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased}
+.app{max-width:480px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column}
+.top{display:flex;align-items:center;gap:8px;padding:14px 16px 8px;position:sticky;top:env(safe-area-inset-top,0px);background:var(--bg);z-index:5}
+.top button{background:none;border:0;color:var(--ink);font-size:22px;line-height:1;padding:4px 8px 4px 0;cursor:pointer;font-family:inherit}
+.top .t{font-weight:700;font-size:16px}
+.top .step{margin-left:auto;font-size:13px;color:var(--ink2);font-variant-numeric:tabular-nums}
+.top .lnk{margin-left:auto;font-size:13px;color:var(--ink2);text-decoration:underline;background:none;border:0;padding:0;cursor:pointer}
+.screen{display:none;flex:1;flex-direction:column}.screen.on{display:flex}
+.body{padding:12px 20px 130px;flex:1}
+h1{font-size:32px;line-height:1.2;font-weight:900;letter-spacing:-0.02em;word-break:keep-all;text-wrap:balance}
+h2{font-size:22px;line-height:1.3;font-weight:700;letter-spacing:-0.01em;word-break:keep-all;text-wrap:balance}
+h3{font-size:17px;font-weight:700;margin-top:24px;word-break:keep-all}
+p.sub{color:var(--ink2);font-size:15px;word-break:keep-all;margin-top:8px}
+.eyebrow{display:inline-block;font-size:12px;font-weight:700;letter-spacing:.04em;color:var(--main);background:var(--card);border:1px solid var(--line);border-radius:999px;padding:4px 10px;margin-bottom:14px}
+.bottom{position:fixed;left:0;right:0;bottom:0;padding:12px 20px calc(12px + env(safe-area-inset-bottom,0px));background:linear-gradient(to top,var(--bg) 70%,transparent);pointer-events:none;z-index:4}
+.bottom>*{max-width:440px;margin:0 auto;pointer-events:auto}
+.btn{display:block;width:100%;border:0;border-radius:14px;padding:17px;font:inherit;font-weight:700;font-size:17px;cursor:pointer;background:var(--main);color:var(--main-ink);text-align:center}
+.btn.acc{background:var(--acc);color:var(--acc-ink)}
+.btn:disabled{opacity:.4;cursor:default}
+.btn.ghost{background:var(--card);color:var(--ink);border:1.5px solid var(--line);margin-top:8px}
+.btn:focus-visible,input:focus-visible,textarea:focus-visible,button:focus-visible,summary:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+label.f{display:block;margin-top:18px;font-size:14px;font-weight:500;color:var(--ink2)}
+input,textarea,select{width:100%;margin-top:6px;border:0;background:var(--field);color:var(--ink);border-radius:12px;padding:14px;font:inherit;font-size:17px;color-scheme:light dark}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.chip{border:1.5px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:9px 14px;font:inherit;font-size:14px;cursor:pointer}
+.chip.sel{border-color:var(--main);background:var(--main);color:var(--main-ink)}
+.chip em{font-style:normal;font-size:12px;color:var(--ink2);margin-left:2px}.chip.sel em{color:inherit;opacity:.85}
+.opts{margin-top:4px}
+.opt{display:block;width:100%;text-align:left;border:1.5px solid var(--line);background:var(--card);color:var(--ink);border-radius:14px;padding:14px 16px;margin-top:10px;font:inherit;cursor:pointer}
+.opt.sel{border-color:var(--acc);box-shadow:inset 0 0 0 1px var(--acc)}
+.opt b{display:block;font-size:16px}.opt span{display:block;font-size:13px;color:var(--ink2);margin-top:2px;word-break:keep-all}
+.panel{background:var(--card);border-radius:18px;padding:20px;margin-top:16px;border:1px solid var(--line)}
+.panel .k{font-size:13px;color:var(--ink2)}
+.panel .v{font-size:20px;font-weight:700;margin-top:2px}
+.panel.fix{border-color:var(--main)}
+.spec{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+.spec div{background:var(--field);border-radius:12px;padding:12px}
+.spec b{display:block;font-size:19px;font-variant-numeric:tabular-nums;letter-spacing:-0.01em}.spec span{font-size:12px;color:var(--ink2)}
+.money{font-size:30px;font-weight:900;letter-spacing:-0.03em;font-variant-numeric:tabular-nums;line-height:1.15}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin-top:12px}
+.card.best{border-color:var(--acc);box-shadow:inset 0 0 0 1px var(--acc)}
+.card .hd{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+.card .nm{font-weight:700;font-size:16px}.card .nm small{display:block;font-weight:400;font-size:13px;color:var(--ink2)}
+.card .fee{font-size:24px;font-weight:900;font-variant-numeric:tabular-nums;letter-spacing:-0.02em;white-space:nowrap}
+.card .fee em{font-style:normal;font-size:12px;color:var(--ink2);font-weight:500;display:block;text-align:right}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:12px}
+.stats div{background:var(--field);border-radius:10px;padding:8px 4px;text-align:center}
+.stats b{display:block;font-size:14px;font-variant-numeric:tabular-nums}.stats span{font-size:11px;color:var(--ink2)}
+.stats.six{grid-template-columns:repeat(3,1fr)}
+.pill{display:inline-block;background:var(--good-bg);color:var(--good);font-weight:700;font-size:12px;border-radius:8px;padding:3px 8px}
+.pill.w{background:var(--warn-bg);color:var(--warn)}.pill.a{background:var(--acc);color:var(--acc-ink)}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}.tags span{font-size:12px;border:1px solid var(--line);border-radius:6px;padding:3px 8px;color:var(--ink2)}
+.msg{font-size:14px;margin-top:10px;word-break:keep-all;line-height:1.55}
+.note{font-size:13px;color:var(--ink2);margin-top:14px;word-break:keep-all;line-height:1.55}
+.acts{display:flex;gap:8px;margin-top:12px}
+.acts button{flex:1;border:1.5px solid var(--line);background:none;color:var(--ink);border-radius:10px;padding:11px;font:inherit;font-size:14px;cursor:pointer}
+.acts button.pri{background:var(--main);color:var(--main-ink);border-color:var(--main);font-weight:700}
+.sortbar{display:flex;gap:6px;margin-top:12px;overflow-x:auto;padding-bottom:4px}.sortbar .chip{white-space:nowrap;padding:7px 12px;font-size:13px}
+.ctx{margin-top:12px;background:var(--field);border-radius:12px;padding:12px 14px;font-size:14px}
+.ctx div{display:flex;justify-content:space-between;gap:12px;padding:3px 0;font-variant-numeric:tabular-nums}
+.tl{margin-top:16px;border-left:2px solid var(--line);padding-left:16px}
+.tl div{position:relative;padding:6px 0 14px;color:var(--ink2);font-size:15px}
+.tl div::before{content:"";position:absolute;left:-23px;top:12px;width:10px;height:10px;border-radius:50%;background:var(--line)}
+.tl div.done{color:var(--ink);font-weight:500}.tl div.done::before{background:var(--good)}
+.tl div.now{color:var(--ink);font-weight:700}.tl div.now::before{background:var(--acc);box-shadow:0 0 0 4px color-mix(in srgb,var(--acc) 30%,transparent)}
+.sum dl{display:grid;grid-template-columns:1fr auto;gap:10px 16px;font-size:15px}
+.sum dt{color:var(--ink2)}.sum dd{text-align:right;font-weight:700;font-variant-numeric:tabular-nums}.sum dd.big{font-size:24px;font-weight:900}
+.toast{position:fixed;top:calc(14px + env(safe-area-inset-top,0px));left:50%;transform:translate(-50%,-90px);background:var(--ink);color:var(--bg);padding:12px 18px;border-radius:12px;font-size:14px;max-width:360px;width:calc(100% - 40px);box-shadow:0 8px 30px rgba(0,0,0,.25);transition:transform .35s;z-index:20;word-break:keep-all}
+.toast.show{transform:translate(-50%,0)}
+.hero{padding:36px 0 10px}
+.ex{margin-top:28px;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px 18px;font-size:14px}
+.ex .k{font-size:12px;color:var(--ink2);margin-bottom:6px}
+.ex .row{display:flex;justify-content:space-between;gap:12px;padding:6px 0;border-bottom:1px dashed var(--line);font-variant-numeric:tabular-nums}
+.ex .row:last-child{border:0}.ex b{font-size:16px;white-space:nowrap}
+.three{margin-top:22px}
+.three div{display:grid;grid-template-columns:96px 1fr;gap:10px;align-items:baseline;padding:10px 0;border-top:1px solid var(--line)}
+.three b{font-size:14px}.three span{font-size:13px;color:var(--ink2);word-break:keep-all}
+.owner{margin-top:20px;font-size:13px;color:var(--ink2);text-align:center;word-break:keep-all}
+.mode{display:flex;background:var(--field);border-radius:12px;padding:4px;margin-top:10px}
+.mode button{flex:1;border:0;background:none;color:var(--ink2);border-radius:9px;padding:9px;font:inherit;font-size:14px;cursor:pointer}
+.mode button.on{background:var(--card);color:var(--ink);font-weight:700;box-shadow:0 1px 3px rgba(0,0,0,.1)}
+.unitrow{display:flex;gap:8px;align-items:stretch;margin-top:6px}
+.unitrow input{margin-top:0;flex:1;min-width:0}
+.mode.small{margin-top:0;width:112px;flex:none}
+.steppers{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
+.steppers>div{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px;text-align:center}
+.steppers span{font-size:12px;color:var(--ink2);display:block}
+.stp{display:flex;align-items:center;justify-content:space-between;margin-top:6px}
+.stp button{width:32px;height:32px;border-radius:50%;border:1.5px solid var(--line);background:var(--field);color:var(--ink);font-size:18px;line-height:1;cursor:pointer;font-family:inherit}
+.stp b{font-size:20px;font-variant-numeric:tabular-nums}
+.photos{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px}
+.ph{aspect-ratio:1;max-width:100%;border-radius:12px;background:linear-gradient(135deg,hsl(var(--h,170) 30% 82%),hsl(var(--h,170) 25% 62%));display:flex;align-items:flex-end;padding:6px 8px;font-size:12px;color:#10201C;font-weight:500}
+.ph.add{background:var(--card);border:1.5px dashed var(--line);color:var(--ink2);align-items:center;justify-content:center;text-align:center;cursor:pointer;font:inherit;font-size:12px;padding:6px;word-break:keep-all}
+dl.rq{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;margin-top:12px;font-size:14px}
+dl.rq dt{color:var(--ink2)}dl.rq dd{font-weight:500;word-break:keep-all}
+.checks{list-style:none;display:grid;grid-template-columns:1fr 1fr;gap:6px 10px;margin-top:10px;font-size:14px}
+.checks li.n{color:var(--ink2)}.checks li small{display:block;font-size:12px}
+.conds{margin:8px 0 0 18px;font-size:14px}.conds li{padding:2px 0}
+.kpi{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.kpi div{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px}
+.kpi b{display:block;font-size:22px;font-weight:900;font-variant-numeric:tabular-nums;letter-spacing:-0.02em}
+.kpi span{font-size:12px;color:var(--ink2);display:block;word-break:keep-all}
+.kpi div.hi{border-color:var(--acc);box-shadow:inset 0 0 0 1px var(--acc)}
+.wt{margin-top:10px;font-size:14px}.wt div{display:grid;grid-template-columns:112px 1fr 36px;gap:10px;align-items:center;padding:5px 0;font-variant-numeric:tabular-nums}
+.wt em{font-style:normal;text-align:right;color:var(--ink2)}
+.bar{height:8px;background:var(--field);border-radius:5px;overflow:hidden}.bar i{display:block;height:100%;background:var(--acc)}
+.calc{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
+.calc label{font-size:12px;color:var(--ink2);display:block;word-break:keep-all}
+.calc input{margin-top:4px;padding:10px;font-size:15px;min-width:0}
+details.why{margin-top:14px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 16px}
+details.why summary{cursor:pointer;font-weight:700;font-size:14px}
+.tbl{overflow-x:auto;margin-top:12px;border:1px solid var(--line);border-radius:14px;background:var(--card)}
+table{border-collapse:collapse;width:100%;font-size:13px;font-variant-numeric:tabular-nums;white-space:nowrap}
+th,td{padding:9px 12px;text-align:right;border-bottom:1px solid var(--line)}th:first-child,td:first-child{text-align:left;color:var(--ink2)}
+thead th{font-weight:700;color:var(--ink)}tr:last-child td{border:0}
+table a{color:var(--main);font-weight:700}
+.err{color:var(--warn);font-size:13px;margin-top:8px}
+@media (prefers-reduced-motion: reduce){*{transition:none!important}}
+</style>
+
+<div class="app">
+
+<!-- ===== 소비자 0 홈 ===== -->
+<section class="screen on" id="s-home">
+  <div class="top"><span class="t">청소견적 비교</span><button class="lnk" onclick="go('s-biz')">청소업체 사장님이신가요?</button></div>
+  <div class="body hero">
+    <span class="eyebrow">전국 서비스 · 입주청소부터</span>
+    <h1>우리 집 청소비,<br>얼마가 적당할까요?</h1>
+    <p class="sub">주소와 평수만 입력하면 여러 청소업체의 총 견적을 같은 기준으로 비교할 수 있습니다. 현장에서 돈이 더 붙지 않도록 견적확정 조건까지 함께 봅니다.</p>
+    <div class="ex">
+      <div class="k">최근 견적 (예시)</div>
+      <div class="row"><span>송파구 아파트 34평 · 입주청소</span><b>38~47만원</b></div>
+      <div class="row"><span>수성구 아파트 25평 · 이사청소</span><b>26~31만원</b></div>
+      <div class="row"><span>해운대구 사무실 60평 · 사무실청소</span><b>54~66만원</b></div>
+    </div>
+    <div class="three">
+      <div><b>총액 견적</b><span>기본 청소비 + 추가작업 + 기타비용의 합계로만 받습니다</span></div>
+      <div><b>동일 조건 비교</b><span>업체 여러 곳이 같은 요청서를 보고 인원·범위·A/S를 제시합니다</span></div>
+      <div><b>추가금 방지</b><span>추가금이 붙을 수 있는 조건을 견적에 미리 명시하게 합니다</span></div>
+    </div>
+    <div class="owner">업체에 전화번호를 공개하지 않습니다 · 견적 비교까지 무료</div>
+  </div>
+  <div class="bottom"><button class="btn acc" onclick="go('s-basic')">견적 받기</button></div>
+</section>
+
+<!-- ===== 소비자 1 기본 정보 ===== -->
+<section class="screen" id="s-basic">
+  <div class="top"><button onclick="go('s-home')" aria-label="뒤로">‹</button><span class="t">기본 정보</span><span class="step">1 / 4</span></div>
+  <div class="body">
+    <h2>어떤 청소인가요?</h2>
+    <div class="chips" data-group="type"><button class="chip sel" type="button">입주청소</button><button class="chip" type="button">이사청소</button><button class="chip" type="button">거주청소</button><button class="chip" type="button">상가청소</button><button class="chip" type="button">사무실청소</button><button class="chip" type="button">준공청소</button></div>
+    <div class="note" id="type-note"></div>
+    <label class="f" for="addr">청소할 주소</label>
+    <input id="addr" value="서울 송파구 헬리오시티 101동" placeholder="시/도 구/군 아파트명">
+    <div class="note" id="addr-note"></div>
+    <label class="f">건물 유형</label>
+    <div class="chips" data-group="bld"><button class="chip sel" type="button">아파트</button><button class="chip" type="button">빌라·주택</button><button class="chip" type="button">오피스텔</button><button class="chip" type="button">상가·사무실</button></div>
+    <label class="f" for="area">면적</label>
+    <div class="unitrow">
+      <input id="area" inputmode="decimal" value="34" oninput="areaNote()">
+      <div class="mode small" id="unit"><button class="on" type="button" onclick="setUnit('py',this)">평</button><button type="button" onclick="setUnit('m2',this)">㎡</button></div>
+    </div>
+    <div class="note" id="area-note"></div>
+    <label class="f" for="date">청소 예정일</label>
+    <input id="date" type="date" value="2026-10-24" min="2026-09-17">
+    <div class="note">아파트는 앞으로 주소만 넣으면 전용·공급면적을 자동으로 가져올 예정입니다.</div>
+  </div>
+  <div class="bottom"><button class="btn" onclick="nextBasic()">다음</button></div>
+</section>
+
+<!-- ===== 소비자 2 추가 조건 ===== -->
+<section class="screen" id="s-cond">
+  <div class="top"><button onclick="go('s-basic')" aria-label="뒤로">‹</button><span class="t">추가 조건</span><span class="step">2 / 4</span></div>
+  <div class="body">
+    <h2>가격에 영향을 주는 것만<br>여쭤볼게요</h2>
+    <h3>현재 상태</h3>
+    <div class="opts" data-group="state">
+      <button class="opt sel" type="button"><b>신축 입주</b><span>입주 전 새 아파트 · 분진과 보양지 제거 위주</span></button>
+      <button class="opt" type="button"><b>이사 전 빈집</b><span>짐이 빠진 상태 · 생활 오염 위주</span></button>
+      <button class="opt" type="button"><b>거주 중</b><span>가구와 짐이 있는 상태 · 이동 작업이 더해져 견적이 올라갑니다</span></button>
+    </div>
+    <h3>구조</h3>
+    <div class="steppers">
+      <div><span>방</span><div class="stp"><button type="button" onclick="stp('rooms',-1)" aria-label="방 줄이기">−</button><b id="n-rooms">3</b><button type="button" onclick="stp('rooms',1)" aria-label="방 늘리기">+</button></div></div>
+      <div><span>화장실</span><div class="stp"><button type="button" onclick="stp('baths',-1)" aria-label="화장실 줄이기">−</button><b id="n-baths">2</b><button type="button" onclick="stp('baths',1)" aria-label="화장실 늘리기">+</button></div></div>
+      <div><span>베란다</span><div class="stp"><button type="button" onclick="stp('verandas',-1)" aria-label="베란다 줄이기">−</button><b id="n-verandas">1</b><button type="button" onclick="stp('verandas',1)" aria-label="베란다 늘리기">+</button></div></div>
+    </div>
+    <h3>추가 요청</h3>
+    <div class="chips multi" id="extras"></div>
+    <div class="note" style="margin-top:8px">금액은 평균 추가비용 예시입니다. 실제 금액은 업체 견적에서 확정됩니다.</div>
+    <h3>사진 (선택)</h3>
+    <p class="note" style="margin-top:4px">사진을 올리면 더 정확한 견적을 받을 수 있습니다. 없어도 요청할 수 있어요.</p>
+    <div class="photos" id="photos"><button class="ph add" id="ph-add" type="button" onclick="addPhoto()">+ 사진 추가</button></div>
+  </div>
+  <div class="bottom"><button class="btn" onclick="buildReq()">견적요청서 만들기</button></div>
+</section>
+
+<!-- ===== 소비자 3 견적요청서 ===== -->
+<section class="screen" id="s-req">
+  <div class="top"><button onclick="go('s-cond')" aria-label="뒤로">‹</button><span class="t">견적요청서</span><span class="step">3 / 4</span></div>
+  <div class="body">
+    <h2>업체에는 이렇게 보입니다</h2>
+    <p class="sub">모든 업체가 같은 요청서를 보고 총액을 제시합니다. 전화번호는 들어가지 않아요.</p>
+    <div class="card" id="req-card"></div>
+    <div class="ctx" id="req-range"></div>
+    <label class="f" for="phone">견적 도착 알림 받을 휴대전화</label>
+    <input id="phone" inputmode="tel" value="010-1234-5678">
+    <div class="note">연락처는 고객님이 업체를 선택한 뒤에 그 업체에만 공개됩니다.</div>
+  </div>
+  <div class="bottom"><button class="btn acc" onclick="requestQuotes()">견적 요청하기</button></div>
+</section>
+
+<!-- ===== 소비자 3b 대기 ===== -->
+<section class="screen" id="s-wait">
+  <div class="top"><span class="t">견적 요청 완료</span></div>
+  <div class="body">
+    <h2 id="w-title"></h2>
+    <p class="sub" id="w-sub"></p>
+    <div class="panel sum"><div class="k" style="margin-bottom:10px">요청서 <b id="w-id"></b></div><dl id="w-dl"></dl></div>
+    <div class="tl">
+      <div class="done">견적요청서 작성</div>
+      <div class="done" id="w-step2">제휴업체에 요청서 전달</div>
+      <div class="now" id="w-now">견적 도착 중 <span id="w-cnt">0</span>/3</div>
+      <div>견적 비교 · 업체 선택</div>
+      <div>청소 · 완료 확인 · 후기</div>
+    </div>
+    <div class="note" id="w-note"></div>
+  </div>
+  <div class="bottom"><button class="btn" id="w-btn" disabled onclick="go('s-cmp')">견적 비교하기</button><button class="btn ghost" id="w-home" hidden onclick="go('s-home')">확인</button></div>
+</section>
+
+<!-- ===== 소비자 4 비교 ===== -->
+<section class="screen" id="s-cmp">
+  <div class="top"><button onclick="go('s-wait')" aria-label="뒤로">‹</button><span class="t">견적 비교</span><span class="step">4 / 4</span></div>
+  <div class="body">
+    <h2 id="p-title"></h2>
+    <p class="sub">모두 총액 견적입니다. 가격만이 아니라 인원·작업범위·추가금 조건·A/S를 같은 기준으로 비교하세요.</p>
+    <div class="ctx" id="p-ctx"></div>
+    <div class="sortbar">
+      <button class="chip sel" type="button" onclick="sortBy('rec',this)">추천순</button><button class="chip" type="button" onclick="sortBy('price',this)">가격 낮은순</button><button class="chip" type="button" onclick="sortBy('as',this)">A/S 긴순</button><button class="chip" type="button" onclick="sortBy('rev',this)">후기 많은순</button>
+    </div>
+    <div id="p-cards"></div>
+    <h3>같은 기준으로 비교</h3>
+    <div class="tbl"><table id="p-tbl"></table></div>
+    <div class="note">"A 38만 / B 42만 / C 46만"만 보여주면 결국 최저가 플랫폼이 됩니다. 그래서 인원·범위·추가금 조건·A/S를 같은 표에 놓습니다. 업체끼리는 서로 가격을 볼 수 없어요.</div>
+    <details class="why">
+      <summary>추천순은 어떻게 정해지나요?</summary>
+      <div class="wt">
+        <div><span>고객 만족도</span><div class="bar"><i style="width:100%"></i></div><em>30%</em></div>
+        <div><span>클레임·재작업률</span><div class="bar"><i style="width:83%"></i></div><em>25%</em></div>
+        <div><span>견적 정확도</span><div class="bar"><i style="width:67%"></i></div><em>20%</em></div>
+        <div><span>응답속도</span><div class="bar"><i style="width:50%"></i></div><em>15%</em></div>
+        <div><span>최근 작업량</span><div class="bar"><i style="width:33%"></i></div><em>10%</em></div>
+      </div>
+      <div class="note">광고비는 추천 순위에 반영하지 않습니다. 가격도 점수에 넣지 않고 표에서 직접 비교하게 합니다.</div>
+    </details>
+  </div>
+</section>
+
+<!-- ===== 소비자 4b 견적 상세 ===== -->
+<section class="screen" id="s-detail">
+  <div class="top"><button onclick="go('s-cmp')" aria-label="뒤로">‹</button><span class="t">견적 상세 · 확정 조건</span></div>
+  <div class="body" id="d-body"></div>
+  <div class="bottom"><button class="btn acc" id="d-pick">이 업체 선택</button></div>
+</section>
+
+<!-- ===== 소비자 5 예약 ===== -->
+<section class="screen" id="s-book">
+  <div class="top"><button onclick="go('s-cmp')" aria-label="뒤로">‹</button><span class="t">예약</span></div>
+  <div class="body">
+    <h2 id="b-title"></h2>
+    <div class="panel sum"><dl id="b-dl"></dl></div>
+    <h3>방문 시간</h3>
+    <div class="chips" data-group="btime"><button class="chip" type="button">08:00</button><button class="chip sel" type="button">09:00</button><button class="chip" type="button">13:00</button></div>
+    <label class="f" for="name">이름</label>
+    <input id="name" placeholder="홍길동">
+    <div class="note">결제는 청소 완료를 확인한 뒤 합니다. 견적 금액은 예약 시점 기준으로 기록되어, 현장에서 달라지면 앱에서 바로 신고할 수 있어요.</div>
+  </div>
+  <div class="bottom"><button class="btn acc" onclick="book()">예약 요청하기</button></div>
+</section>
+
+<!-- ===== 소비자 6 완료 + 크로스셀 ===== -->
+<section class="screen" id="s-done">
+  <div class="body" style="padding-top:48px">
+    <h2>예약 요청을 보냈어요</h2>
+    <p class="sub" id="z-sub"></p>
+    <div class="panel sum"><dl id="z-dl"></dl></div>
+    <div class="tl" style="margin-top:24px"><div class="done">견적 3건 비교</div><div class="done">업체 선택 · 예약 요청</div><div class="now">업체 확인 대기</div><div>청소 작업</div><div>완료 확인 · 후기</div></div>
+    <div class="panel" style="border-color:var(--acc)">
+      <div class="k">청소일 다음 날인 <b id="x-date"></b>, 이사 예정이신가요?</div>
+      <h3 style="margin-top:6px">이사견적도 같이 받아보세요</h3>
+      <p class="msg">주소·평수·날짜를 다시 입력할 필요가 없어요. 같은 정보로 이사업체 견적도 바로 받을 수 있습니다.</p>
+      <div class="ctx"><div><span>예상 이사비</span><b id="x-move"></b></div></div>
+      <button class="btn" style="margin-top:12px" onclick="toast('이사견적 요청서가 같은 정보로 만들어졌어요 (데모)')">이사견적 같이 받기</button>
+    </div>
+    <div class="note">한 번 입력한 주소·평수·일정은 이사 → 입주청소 → 인테리어 → 인터넷·가전까지 같은 계정에서 이어집니다.</div>
+  </div>
+  <div class="bottom"><button class="btn ghost" onclick="location.reload()">처음부터 다시 해보기</button></div>
+</section>
+
+<!-- ===== 업체 ===== -->
+<section class="screen" id="s-biz">
+  <div class="top"><button onclick="go('s-home')" aria-label="뒤로">‹</button><span class="t">청소업체 입점</span></div>
+  <div class="body">
+    <h2>청소 고객을<br>보내드립니다.</h2>
+    <p class="sub">가입비 0원 · 광고비 0원. 견적요청서를 보고 총액과 작업범위만 제시하세요. 고객 연락처는 고객이 선택한 뒤 공개됩니다.</p>
+    <div class="mode" id="biz-mode"><button class="on" type="button" onclick="bizMode('join',this)">무료 입점</button><button type="button" onclick="bizMode('inbox',this)">견적 요청함</button><button type="button" onclick="bizMode('jobs',this)">예약 관리</button></div>
+
+    <div id="biz-join">
+      <label class="f" for="bz-no">사업자등록번호</label><input id="bz-no" placeholder="000-00-00000">
+      <label class="f" for="bz-name">업체명</label><input id="bz-name" placeholder="○○클린">
+      <label class="f">서비스 지역</label>
+      <div class="chips multi" id="bz-regions"></div>
+      <label class="f">가능한 청소 종류</label>
+      <div class="chips multi" id="bz-types"></div>
+      <label class="f" for="bz-crew">작업 인원 (팀 기준)</label><input id="bz-crew" inputmode="numeric" value="3">
+      <label class="f">배상책임보험</label>
+      <div class="chips" data-group="bzins"><button class="chip sel" type="button">가입</button><button class="chip" type="button">미가입</button></div>
+      <div class="note">사업자 확인이 끝나면 지역·종류가 맞는 견적요청서가 알림으로 옵니다. ERP·POS 연동은 없습니다.</div>
+    </div>
+
+    <div id="biz-inbox" hidden>
+      <h3 style="margin-top:14px">🔔 새로운 견적요청</h3>
+      <div class="card" id="biz-req"></div>
+      <h3>견적 입력 · 총액으로</h3>
+      <label class="f" for="q-base">기본 청소비 (원)</label><input id="q-base" inputmode="numeric" value="390000" oninput="bizSum()">
+      <label class="f" for="q-extra">추가작업 (원)</label><input id="q-extra" inputmode="numeric" value="50000" oninput="bizSum()">
+      <label class="f" for="q-etc">기타비용 (원)</label><input id="q-etc" inputmode="numeric" value="0" oninput="bizSum()">
+      <div class="panel" style="padding:14px 18px"><div class="k">고객에게 보이는 총 견적</div><div class="money" id="q-total">440,000원</div></div>
+      <div class="spec"><div><label class="f" for="q-crew" style="margin-top:0">예상 작업인원</label><input id="q-crew" inputmode="numeric" value="3"></div><div><label class="f" for="q-hours" style="margin-top:0">예상 작업시간</label><input id="q-hours" value="5~6시간"></div></div>
+      <label class="f">제공 서비스</label>
+      <div class="chips multi" id="q-svc"></div>
+      <label class="f">추가금 발생 가능 조건 (필수)</label>
+      <div class="chips multi" id="q-conds"></div>
+      <label class="f" for="q-excl">제외 작업 (선택)</label><input id="q-excl" placeholder="예: 새집증후군 시공은 요청 시 +80,000원">
+      <label class="f">A/S 기간</label>
+      <div class="chips" id="q-as"><button class="chip" type="button">3일</button><button class="chip sel" type="button">5일</button><button class="chip" type="button">7일</button></div>
+      <button class="btn" style="margin-top:18px" onclick="bizSend()">견적 보내기</button>
+      <div class="note">여기서 명시한 조건 외의 현장 추가금은 플랫폼이 인정하지 않습니다. 추가금 발생률이 높은 업체는 추천 순위가 내려갑니다.</div>
+    </div>
+
+    <div id="biz-jobs" hidden>
+      <h3 style="margin-top:14px">이번 주 예약</h3>
+      <div class="card"><div class="hd"><div class="nm">10월 24일 (토) 09:00<small>송파구 아파트 34평 · 입주청소 · 3명</small></div><div class="fee">440,000원</div></div><div style="margin-top:6px"><span class="pill">예약 확정</span></div><div class="acts"><button type="button" onclick="toast('고객 연락처: 010-****-5678 (선택 후 공개됨 · 예시)')">고객 연락처</button><button class="pri" type="button" onclick="toast('작업 시작을 고객에게 알렸어요 (데모)')">작업 시작</button></div></div>
+      <div class="card"><div class="hd"><div class="nm">10월 22일 (목) 08:00<small>강동구 아파트 25평 · 이사청소 · 2명</small></div><div class="fee">310,000원</div></div><div style="margin-top:6px"><span class="pill">완료 · 후기 대기</span></div></div>
+      <div class="card"><div class="hd"><div class="nm">10월 19일 (월) 13:00<small>송파구 오피스텔 12평 · 이사청소 · 2명</small></div><div class="fee">180,000원</div></div><div style="margin-top:6px"><span class="pill w">클레임 1건 · 재작업 협의</span></div><div class="msg">고객: 욕실 실리콘 곰팡이 잔여. 재작업 일정을 제안하면 클레임이 종료됩니다.</div><div class="acts"><button type="button" onclick="toast('재작업 일정 제안: 10/21 10:00 (데모)')">재작업 제안</button><button type="button" onclick="toast('운영자 중재를 요청했어요 (데모)')">운영자 중재</button></div></div>
+      <h3>정산 예정</h3>
+      <div class="ctx"><div><span>이번 주 완료 3건</span><b>930,000원</b></div><div><span>플랫폼 수수료 8%</span><span>−74,400원</span></div><div><span>입금 예정 (매주 화)</span><b>855,600원</b></div></div>
+      <div class="note">클레임이 열려 있는 건은 정산이 보류됩니다. 재작업률·추가금 발생률은 업체 프로필에 공개됩니다.</div>
+    </div>
+  </div>
+  <div class="bottom" id="biz-bottom"><button class="btn acc" onclick="toast('입점 신청이 접수됐어요. 사업자 확인 후 첫 견적요청이 발송됩니다 (예시)')">무료 입점하기</button><button class="btn ghost" onclick="go('s-admin')">운영자 화면 보기</button></div>
+</section>
+
+<!-- ===== 운영자 ===== -->
+<section class="screen" id="s-admin">
+  <div class="top"><button onclick="go('s-biz')" aria-label="뒤로">‹</button><span class="t">운영자 · 대시보드</span></div>
+  <div class="body">
+    <h2>이번 주 견적요청 1,240건</h2>
+    <p class="sub">고객 요청이 먼저 쌓이고, 그 데이터가 어느 지역 업체부터 영업할지 정합니다.</p>
+    <h3>핵심 KPI 6개 (첫 30일 · 예시)</h3>
+    <div class="kpi">
+      <div><b>8,400원</b><span>① 견적요청 CPA</span></div>
+      <div><b>64%</b><span>② 6시간 내 3개 이상 견적 수신율</span></div>
+      <div><b>27%</b><span>③ 견적 → 업체선택률</span></div>
+      <div><b>81%</b><span>④ 선택 → 실제 작업률</span></div>
+      <div class="hi"><b>3.2%</b><span>⑤ 현장 추가금 발생률 · 업계 추정 20~30%</span></div>
+      <div><b>1.9%</b><span>⑥ 클레임/재작업률</span></div>
+    </div>
+    <div class="note">⑤를 업계에서 압도적으로 낮추면 그 자체가 브랜드가 됩니다. "추가금 없는 청소견적"은 광고 카피로도 테스트합니다.</div>
+
+    <h3>지역별 수요와 공급</h3>
+    <div class="tbl"><table><thead><tr><th>지역</th><th>요청</th><th>제휴업체</th><th>6시간 내 3견적</th></tr></thead><tbody id="a-tbl"></tbody></table></div>
+
+    <h3>청소 종류별 요청</h3>
+    <div class="wt" id="a-types"></div>
+
+    <h3>제휴업체 없는 요청 (운영자 수동 대응)</h3>
+    <div class="card"><div class="hd"><div class="nm">세종시 · 준공청소 48평<small>상가 · 10월 30일 · 사진 4장</small></div><span class="pill w">제휴업체 0</span></div>
+      <div class="msg">주변 청소업체 3곳에 전화해서 총액·인원·범위를 받아 아래에 입력하면 고객에게 바로 견적이 발송됩니다.</div>
+      <div class="acts"><button type="button" onclick="toast('주변 업체 목록 열기 (예시)')">주변 업체 찾기</button><button class="pri" type="button" onclick="toast('대리 입력: 세종클린 총 620,000원 · 4명 · 7시간 → 고객에게 발송됨 (예시)')">견적 대리 입력</button></div></div>
+
+    <h3>운영 큐 (이번 주)</h3>
+    <div class="tbl"><table><thead><tr><th>단계</th><th>건수</th><th>전환</th></tr></thead><tbody>
+      <tr><td>고객 견적요청</td><td>1,240</td><td>–</td></tr>
+      <tr><td>업체 발송</td><td>1,180</td><td>95%</td></tr>
+      <tr><td>견적 도착</td><td>3,120</td><td>요청당 2.6개</td></tr>
+      <tr><td>업체 선택 · 예약</td><td>335</td><td>27%</td></tr>
+      <tr><td>작업 완료</td><td>271</td><td>81%</td></tr>
+      <tr><td>클레임</td><td>5</td><td>1.9%</td></tr>
+      <tr><td>후기</td><td>198</td><td>73%</td></tr>
+      <tr><td>정산</td><td>271</td><td>8,670만원</td></tr>
+    </tbody></table></div>
+
+    <h3>업체 추천 기준</h3>
+    <div class="wt">
+      <div><span>고객 만족도</span><div class="bar"><i style="width:100%"></i></div><em>30%</em></div>
+      <div><span>클레임·재작업률</span><div class="bar"><i style="width:83%"></i></div><em>25%</em></div>
+      <div><span>견적 정확도</span><div class="bar"><i style="width:67%"></i></div><em>20%</em></div>
+      <div><span>응답속도</span><div class="bar"><i style="width:50%"></i></div><em>15%</em></div>
+      <div><span>최근 작업량</span><div class="bar"><i style="width:33%"></i></div><em>10%</em></div>
+    </div>
+    <div class="note">광고비를 많이 낸 업체를 1위로 올리지 않습니다. 서비스 품질 데이터로 신뢰를 만드는 쪽이 장기적으로 낫습니다.</div>
+
+    <h3>수익모델 A/B 테스트</h3>
+    <div class="mode" id="rev-mode"><button class="on" type="button" onclick="revMode('A',this)">A 성사 수수료</button><button type="button" onclick="revMode('B',this)">B 업체 구독</button><button type="button" onclick="revMode('C',this)">C 혼합</button></div>
+    <div id="rev-A">
+      <div class="calc"><label>평균 청소비 (원)<input id="ra-avg" inputmode="numeric" value="400000"></label><label>수수료율 (%)<input id="ra-fee" inputmode="decimal" value="8"></label><label>월 성사 건수<input id="ra-n" inputmode="numeric" value="10000"></label></div>
+      <div class="ctx"><div><span>건당 플랫폼 매출</span><b id="ra-per"></b></div><div><span>월 매출</span><b id="ra-month"></b></div></div>
+    </div>
+    <div id="rev-B" hidden>
+      <div class="calc"><label>Basic 무료 (업체 수)<input id="rb-basic" inputmode="numeric" value="600"></label><label>Pro 99,000원 (업체 수)<input id="rb-pro" inputmode="numeric" value="250"></label><label>Business 199,000원 (업체 수)<input id="rb-biz" inputmode="numeric" value="60"></label></div>
+      <div class="ctx"><div><span>월 매출</span><b id="rb-month"></b></div><div><span>업체당 평균</span><b id="rb-arpu"></b></div></div>
+    </div>
+    <div id="rev-C" hidden>
+      <div class="calc"><label>구독 49,000원 (업체 수)<input id="rc-sub" inputmode="numeric" value="400"></label><label>수수료율 (%)<input id="rc-fee" inputmode="decimal" value="3"></label><label>월 성사 건수<input id="rc-n" inputmode="numeric" value="10000"></label></div>
+      <input id="rc-avg" type="hidden" value="400000">
+      <div class="ctx"><div><span>월 매출</span><b id="rc-month"></b></div><div><span>평균 청소비 가정</span><span>400,000원</span></div></div>
+    </div>
+    <div class="note">40만원·8%는 가설입니다. MVP에서는 수수료 모델과 구독 모델을 서로 다른 업체군에 붙여 업체 확보비용과 이탈률을 비교합니다.</div>
+  </div>
+  <div class="bottom"><button class="btn ghost" onclick="go('s-home')">소비자 화면으로</button></div>
+</section>
+
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+const $=id=>document.getElementById(id);
+const S={type:'입주청소',bld:'아파트',addr:'',sido:'서울',gu:'송파구',unit:'py',py:34,date:'2026-10-24',state:'신축 입주',rooms:3,baths:2,verandas:1,extras:['스티커/보양지 제거'],photos:0,quotes:[],sort:'rec',pick:null,btime:'09:00',est:null,bzins:'가입'};
+// 지역별 제휴업체 수 (전국 오픈 · 공급 편중을 그대로 노출)
+const REGIONS={'서울':38,'경기':31,'인천':7,'부산':9,'대구':10,'대전':5,'광주':4,'울산':2,'세종':0,'강원':1,'충북':0,'충남':2,'전북':0,'전남':0,'경북':1,'경남':3,'제주':0};
+const ALIAS={'서울특별시':'서울','경기도':'경기','인천광역시':'인천','부산광역시':'부산','대구광역시':'대구','대전광역시':'대전','광주광역시':'광주','울산광역시':'울산','세종특별자치시':'세종','강원특별자치도':'강원','강원도':'강원','충청북도':'충북','충청남도':'충남','전라북도':'전북','전북특별자치도':'전북','전라남도':'전남','경상북도':'경북','경상남도':'경남','제주특별자치도':'제주','제주도':'제주'};
+const RATE={'입주청소':10000,'이사청소':9000,'거주청소':11500,'상가청소':8500,'사무실청소':8000,'준공청소':12500};
+const STATE_MUL={'신축 입주':1,'이사 전 빈집':0.97,'거주 중':1.15};
+const EXTRAS=[['새집증후군',80000,'베이크아웃·피톤치드 시공'],['스티커/보양지 제거',50000,'창틀·바닥 보양지, 가전 스티커'],['심한 오염',60000,'기름때·찌든 때 집중 작업'],['곰팡이',40000,'욕실·베란다·실리콘 곰팡이'],['반려동물 흔적',30000,'털·냄새·오염 집중'],['가전 내부청소',40000,'냉장고·세탁기·후드 내부'],['기타',0,'요청사항에 적어주세요']];
+const VENDORS=[
+  {id:'A',name:'클린메이트',sub:'개인사업자 · 송파·강남 · 사업자 확인',mul:0.9,crew:2,hours:'5시간',as:3,rating:4.6,cnt:89,rework:2.8,acc:91,resp:42,recent:14,photos:23,inc:{창틀:1,베란다:1,붙박이장:1,가전:0,새집:0},cond:['폐기물 다량 발생','사전 고지되지 않은 심한 오염'],excl:['가전 내부 (별도 40,000원)','새집증후군 시공'],comment:'보양지 제거는 기본에 포함했습니다. 가전 내부는 현장에서 추가할 수 있어요.'},
+  {id:'B',name:'○○클린',sub:'법인 · 송파·강동 · 배상보험 가입',mul:1.0,crew:3,hours:'5~6시간',as:5,rating:4.8,cnt:127,rework:1.6,acc:97,resp:18,recent:22,photos:48,inc:{창틀:1,베란다:1,붙박이장:1,가전:1,새집:0},cond:['폐기물 다량 발생','사전 고지되지 않은 심한 오염','추가 작업 요청'],excl:['새집증후군 시공 (요청 시 +80,000원)'],comment:'신축 입주는 분진 제거 후 마감까지 3인 1팀으로 진행합니다.'},
+  {id:'C',name:'프리미엄홈케어',sub:'법인 · 서울 전역 · 배상보험 가입',mul:1.1,crew:3,hours:'6시간',as:7,rating:4.9,cnt:203,rework:1.1,acc:99,resp:65,recent:31,photos:112,inc:{창틀:1,베란다:1,붙박이장:1,가전:1,새집:1},cond:[],excl:[],comment:'추가금 없는 전액 확정 견적입니다. 새집증후군 기본 시공을 포함합니다.'},
+];
+const DEMAND=[['서울',402,38,74],['경기',336,31,66],['부산',98,9,41],['대구',84,10,55],['인천',71,7,38],['대전',52,5,29],['광주',40,4,22],['기타',157,10,11]];
+const TYPE_SHARE=[['입주청소',52],['이사청소',31],['거주청소',9],['상가·사무실',6],['준공청소',2]];
+const PHOTO_LABELS=['거실','주방','안방','욕실','베란다','현관','작은방','창틀'];
+const BZ_TYPES=['입주청소','이사청소','거주청소','상가청소','사무실청소','준공청소'];
+
+function go(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on'));$(id).classList.add('on');window.scrollTo(0,0);}
+let toastT;function toast(t){const el=$('toast');el.textContent=t;el.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>el.classList.remove('show'),2800);}
+const won=v=>Math.round(v).toLocaleString('ko-KR')+'원';
+const big=v=>v>=1e8?((v/1e8).toFixed(1).replace(/\.0$/,''))+'억원':v>=1e4?Math.round(v/1e4).toLocaleString('ko-KR')+'만원':won(v);
+const fmtDate=s=>{const d=new Date(s+'T00:00:00');if(isNaN(d))return s;return `${d.getMonth()+1}월 ${d.getDate()}일 (${'일월화수목금토'[d.getDay()]})`;};
+
+// 칩: 단일 선택(.chips[data-group] / .chips) · 다중 선택(.chips.multi)
+document.addEventListener('click',e=>{
+  const b=e.target.closest('.chip');if(!b)return;const g=b.closest('.chips');if(!g)return;
+  if(g.classList.contains('multi')){b.classList.toggle('sel');if(g.id==='extras')S.extras=[...g.querySelectorAll('.chip.sel')].map(c=>c.dataset.n);return;}
+  g.querySelectorAll('.chip').forEach(c=>c.classList.remove('sel'));b.classList.add('sel');
+  if(g.dataset.group){S[g.dataset.group]=b.textContent.trim();if(g.dataset.group==='type')typeNote();}
+});
+document.addEventListener('click',e=>{
+  const b=e.target.closest('.opt');if(!b)return;const g=b.closest('.opts[data-group]');if(!g)return;
+  g.querySelectorAll('.opt').forEach(c=>c.classList.remove('sel'));b.classList.add('sel');S[g.dataset.group]=b.querySelector('b').textContent.trim();
+});
+function mkChips(el,list,selected){list.forEach(n=>{const b=document.createElement('button');b.type='button';b.className='chip'+(selected.includes(n)?' sel':'');b.dataset.n=n;b.textContent=n;el.appendChild(b);});}
+EXTRAS.forEach(([n,p,d])=>{const b=document.createElement('button');b.type='button';b.className='chip'+(S.extras.includes(n)?' sel':'');b.dataset.n=n;b.title=d;b.innerHTML=p?`${n} <em>+${p/10000}만</em>`:n;$('extras').appendChild(b);});
+mkChips($('bz-regions'),Object.keys(REGIONS),['서울','경기']);
+mkChips($('bz-types'),BZ_TYPES,['입주청소','이사청소']);
+mkChips($('q-svc'),['주방','욕실','창틀','베란다','붙박이장 내부','가전 내부','새집증후군'],['주방','욕실','창틀','베란다','붙박이장 내부']);
+mkChips($('q-conds'),['폐기물 다량 발생','사전 고지되지 않은 심한 오염','추가 작업 요청','주차 불가 시 주차비','추가금 없음 (전액 확정)'],['폐기물 다량 발생','사전 고지되지 않은 심한 오염']);
+DEMAND.forEach(([r,q,s,p])=>{const tr=document.createElement('tr');tr.innerHTML=`<td>${r}</td><td>${q}</td><td>${s}</td><td><div style="display:flex;align-items:center;gap:8px;justify-content:flex-end"><div class="bar" style="width:70px"><i style="width:${p}%"></i></div>${p}%</div></td>`;$('a-tbl').appendChild(tr);});
+TYPE_SHARE.forEach(([n,p])=>{const d=document.createElement('div');d.innerHTML=`<span>${n}</span><div class="bar"><i style="width:${p/52*100}%"></i></div><em>${p}%</em>`;$('a-types').appendChild(d);});
+
+function typeNote(){const focus=['입주청소','이사청소'].includes(S.type);$('type-note').textContent=focus?'MVP 집중 카테고리입니다. 제휴업체에 바로 전달됩니다.':`${S.type}은 아직 제휴업체가 적어요. 요청은 받고, 운영자가 업체를 직접 확인해 견적을 만들어 드립니다.`;}
+function parseAddr(){const t=($('addr').value||'').trim().split(/\s+/);let first=t[0]||'';first=ALIAS[first]||first;const sido=Object.keys(REGIONS).find(r=>first.startsWith(r))||null;S.addr=$('addr').value.trim();S.sido=sido;S.gu=t[1]||'';return sido;}
+function addrNote(){const s=parseAddr();const n=s?REGIONS[s]:null;$('addr-note').textContent=!s?'시/도부터 입력해주세요. 예: 서울 송파구 …':n>0?`${s} 제휴 청소업체 ${n}곳에 요청됩니다.`:`${s}은 아직 제휴업체가 없어요. 그래도 요청은 받습니다. 운영자가 주변 업체에 직접 확인해 견적을 만들어 드립니다.`;}
+function areaNote(){const v=parseFloat($('area').value)||0;if(S.unit==='py'){S.py=v;$('area-note').textContent=v?`약 ${Math.round(v*3.3058)}㎡ · 아파트는 분양 평형(공급면적) 기준. 전용 84㎡ 타입 = 34평형`:'';}else{S.py=Math.round(v/3.3058*10)/10;$('area-note').textContent=v?`약 ${Math.round(v/3.3058)}평 (공급면적 기준)`:'';}}
+function setUnit(u,el){if(S.unit===u)return;const v=parseFloat($('area').value)||0;S.unit=u;document.querySelectorAll('#unit button').forEach(b=>b.classList.remove('on'));el.classList.add('on');$('area').value=u==='py'?Math.round(v/3.3058):Math.round(v*3.3058);areaNote();}
+function nextBasic(){if(!parseAddr()){toast('주소는 시/도부터 입력해주세요 (예: 서울 송파구)');return;}if(!(S.py>0)){toast('면적을 입력해주세요');return;}S.date=$('date').value||S.date;go('s-cond');}
+function stp(k,d){S[k]=Math.max(0,Math.min(9,S[k]+d));$('n-'+k).textContent=S[k];}
+function addPhoto(){if(S.photos>=8){toast('사진은 8장까지 올릴 수 있어요');return;}const t=document.createElement('div');t.className='ph';t.textContent=PHOTO_LABELS[S.photos];t.style.setProperty('--h',150+(S.photos*37)%60);S.photos++;$('photos').insertBefore(t,$('ph-add'));$('ph-add').textContent=`+ 사진 추가 (${S.photos})`;}
+
+function estimate(){const py=S.py||1;let base=py*RATE[S.type]*STATE_MUL[S.state];base+=Math.max(0,S.baths-1)*20000+S.verandas*15000+Math.max(0,S.rooms-3)*10000;const extra=S.extras.reduce((a,n)=>a+((EXTRAS.find(e=>e[0]===n)||[])[1]||0),0);return {base:Math.round(base/1000)*1000,extra};}
+function reqHTML(compact){const py=Math.round(S.py);const ex=S.extras.length?S.extras.join(', '):'없음';return `<div class="hd"><div class="nm">신규 ${S.type}<small>${S.sido||''} ${S.gu||''} · ${S.bld} / ${py}평</small></div><span class="pill">${fmtDate(S.date).split(' (')[0]}</span></div>
+<dl class="rq"><dt>구조</dt><dd>방 ${S.rooms} / 욕실 ${S.baths} / 베란다 ${S.verandas}</dd><dt>현재 상태</dt><dd>${S.state}</dd><dt>청소일</dt><dd>${fmtDate(S.date)}</dd><dt>추가요청</dt><dd>${ex}</dd><dt>사진</dt><dd>${S.photos?S.photos+'장':'없음'}</dd></dl>${compact?'<div class="note" style="margin-top:10px">고객 연락처는 고객이 견적을 선택한 뒤 공개됩니다.</div>':'<div class="note" style="margin-top:10px">고객 연락처는 포함되지 않습니다. 고객이 업체를 선택하면 공개됩니다.</div>'}`;}
+function buildReq(){S.est=estimate();$('req-card').innerHTML=reqHTML(false);const sum=S.est.base+S.est.extra;const lo=Math.round(sum*0.88/10000),hi=Math.round(sum*1.12/10000);$('req-range').innerHTML=`<div><span>같은 조건 최근 견적 범위</span><b>${lo}~${hi}만원</b></div><div><span>기준</span><span>${S.sido||'전국'} · ${S.type} · ${Math.round(S.py)}평 · 최근 90일</span></div>`;go('s-req');}
+
+function requestQuotes(){
+  if(!$('phone').value.trim()){toast('휴대전화 번호를 입력해주세요');return;}
+  const n=S.sido?REGIONS[S.sido]:0;
+  $('w-id').textContent='#C'+Math.floor(10000+Math.random()*89999);
+  $('w-dl').innerHTML=`<dt>청소</dt><dd>${S.type}</dd><dt>주소</dt><dd>${S.sido||''} ${S.gu||''}</dd><dt>면적</dt><dd>${S.bld} ${Math.round(S.py)}평</dd><dt>청소일</dt><dd>${fmtDate(S.date)}</dd><dt>추가요청</dt><dd>${S.extras.length?S.extras.length+'건':'없음'}</dd>`;
+  $('w-btn').hidden=false;$('w-home').hidden=true;$('w-btn').disabled=true;
+  if(!n){
+    $('w-title').textContent=`${S.sido} 지역 견적을 준비 중입니다`;
+    $('w-sub').textContent='현재 고객님 지역에는 제휴업체가 없어요. 운영자가 주변 청소업체에 직접 확인해 1~3개의 실제 총액 견적을 만들어 알려드릴게요.';
+    $('w-step2').textContent='운영자가 주변 업체 확인 중';$('w-step2').className='now';
+    $('w-now').textContent='견적 도착 대기 (보통 1~3시간)';$('w-now').className='';
+    $('w-note').textContent='이 요청은 버려지지 않습니다. 같은 지역 요청이 쌓이면 그 지역 업체 영업이 시작됩니다.';
+    $('w-btn').hidden=true;$('w-home').hidden=false;
+    go('s-wait');
+    setTimeout(()=>{toast('운영자가 주변 업체 확인 후 견적 2건을 입력했어요 (데모)');buildQuotes(2);$('w-now').textContent='운영자 대리 견적 2건 도착';$('w-now').className='done';$('w-step2').className='done';$('w-btn').hidden=false;$('w-btn').disabled=false;$('w-home').hidden=true;},3500);
+    return;
+  }
+  $('w-title').textContent=`${S.gu||S.sido} 청소업체 ${Math.min(n,5)}곳에 요청했어요`;
+  $('w-sub').textContent='보통 6시간 안에 3개 이상 견적이 도착합니다. 도착하면 문자로 알려드릴게요.';
+  $('w-step2').textContent='제휴업체에 요청서 전달';$('w-step2').className='done';
+  $('w-now').className='now';$('w-now').innerHTML='견적 도착 중 <span id="w-cnt">0</span>/3';$('w-note').textContent='';
+  go('s-wait');buildQuotes(3);
+  let c=0;const tick=()=>{c++;const el=$('w-cnt');if(el)el.textContent=c;if(c===1){$('w-btn').disabled=false;toast(`${S.quotes[0].name} 견적이 도착했어요`);}if(c<3)setTimeout(tick,800+Math.random()*700);else{$('w-now').textContent='견적 3건 도착';$('w-now').className='done';}};setTimeout(tick,1000);
+}
+function buildQuotes(count){
+  const e=S.est||estimate();S.est=e;
+  S.quotes=VENDORS.slice(0,count).map(v=>{const total=Math.round((e.base+e.extra)*v.mul/1000)*1000;const extra=Math.round(e.extra*v.mul/1000)*1000;const score=(v.rating/5)*30+(1-v.rework/5)*25+(v.acc/100)*20+(1-v.resp/90)*15+Math.min(1,v.recent/35)*10;return Object.assign({},v,{total,extra,basic:total-extra,score:Math.round(score*10)/10,tag:count===2?'운영자 대리 입력':'제휴업체'});});
+  renderCmp();
+}
+function sortBy(k,el){S.sort=k;document.querySelectorAll('.sortbar .chip').forEach(c=>c.classList.remove('sel'));el.classList.add('sel');renderCmp();}
+function renderCmp(){
+  const qs=[...S.quotes];
+  if(S.sort==='price')qs.sort((a,b)=>a.total-b.total);else if(S.sort==='as')qs.sort((a,b)=>b.as-a.as);else if(S.sort==='rev')qs.sort((a,b)=>b.cnt-a.cnt);else qs.sort((a,b)=>b.score-a.score);
+  const min=Math.min(...qs.map(q=>q.total));const e=S.est;const sum=e.base+e.extra;const avg=Math.round(sum*1.02/1000)*1000,reg=Math.round(sum*0.99/1000)*1000;
+  $('p-title').textContent=`${S.type} ${Math.round(S.py)}평 · 견적 ${qs.length}건`;
+  $('p-ctx').innerHTML=`<div><span>최저 견적</span><b>${won(min)}</b></div><div><span>같은 조건 최근 전국 평균</span><span>${won(avg)}</span></div><div><span>${S.sido||'지역'} 평균</span><span>${won(reg)}</span></div><div style="margin-top:4px"><span class="pill">${min<=reg?'정상 가격대 안에 있어요':'지역 평균보다 높아요'}</span></div>`;
+  $('p-cards').innerHTML=qs.map((q,i)=>`
+    <div class="card ${i===0&&S.sort==='rec'?'best':''}">
+      <div class="hd"><div class="nm">${q.name}<small>${q.sub}</small></div><div class="fee">${q.total.toLocaleString('ko-KR')}원<em>${q.total===min?'최저가':'+'+(q.total-min).toLocaleString('ko-KR')+'원'}</em></div></div>
+      <div style="margin-top:6px">${i===0&&S.sort==='rec'?'<span class="pill a">추천</span> ':''}<span class="pill ${q.tag==='제휴업체'?'':'w'}">${q.tag}</span>${q.cond.length?'':' <span class="pill">추가금 없음</span>'}</div>
+      <div class="stats"><div><b>${q.crew}명</b><span>인원</span></div><div><b>${q.hours}</b><span>예상시간</span></div><div><b>${q.rating}</b><span>후기 ${q.cnt}건</span></div><div><b>${q.as}일</b><span>A/S</span></div></div>
+      <div class="acts"><button type="button" onclick="openDetail('${q.id}')">상세 · 확정 조건</button><button class="pri" type="button" onclick="openBook('${q.id}')">이 업체 선택</button></div>
+    </div>`).join('');
+  const inc=(q,k)=>q.inc[k]?'포함':'별도';
+  const rows=[['총 견적',q=>`<b>${q.total.toLocaleString('ko-KR')}</b>`],['기본 청소비',q=>q.basic.toLocaleString('ko-KR')],['추가작업',q=>q.extra.toLocaleString('ko-KR')],['인원',q=>q.crew+'명'],['예상시간',q=>q.hours],['창틀',q=>inc(q,'창틀')],['베란다',q=>inc(q,'베란다')],['붙박이장 내부',q=>inc(q,'붙박이장')],['가전 내부',q=>inc(q,'가전')],['새집증후군',q=>inc(q,'새집')],['추가금 조건',q=>q.cond.length?`<a href="#" onclick="openDetail('${q.id}');return false">${q.cond.length}개 확인</a>`:'없음 · 전액 확정'],['A/S',q=>q.as+'일'],['재작업 요청률',q=>q.rework+'%'],['사업자 확인',()=>'✓']];
+  $('p-tbl').innerHTML=`<thead><tr><th>항목</th>${qs.map(q=>`<th>${q.name}</th>`).join('')}</tr></thead><tbody>${rows.map(([k,f])=>`<tr><td>${k}</td>${qs.map(q=>`<td>${f(q)}</td>`).join('')}</tr>`).join('')}</tbody>`;
+}
+function openDetail(id){
+  const q=S.quotes.find(x=>x.id===id);if(!q)return;S.pick=q;
+  const chk=(k,label,extraTxt)=>`<li class="${q.inc[k]?'y':'n'}">${q.inc[k]?'✓':'✗'} ${label}${!q.inc[k]&&extraTxt?`<small>${extraTxt}</small>`:''}</li>`;
+  $('d-body').innerHTML=`<h2>${q.name}</h2><p class="sub">${q.sub}</p>
+    <div class="panel"><div class="k">총 견적</div><div class="money">${won(q.total)}</div>
+      <div class="sum" style="margin-top:12px"><dl><dt>기본 청소비</dt><dd>${won(q.basic)}</dd><dt>추가작업${S.extras.length?'<br><small>'+S.extras.join(', ')+'</small>':''}</dt><dd>${won(q.extra)}</dd><dt>기타비용</dt><dd>0원</dd></dl></div>
+      <div class="spec"><div><b>${q.crew}명</b><span>예상 작업인원</span></div><div><b>${q.hours}</b><span>예상 작업시간</span></div></div></div>
+    <h3>제공 서비스</h3>
+    <ul class="checks"><li class="y">✓ 주방</li><li class="y">✓ 욕실</li>${chk('창틀','창틀')}${chk('베란다','베란다')}${chk('붙박이장','붙박이장 내부')}${chk('가전','가전 내부','별도 40,000원')}${chk('새집','새집증후군 시공','별도 80,000원')}</ul>
+    <h3>견적확정 조건</h3>
+    <div class="panel fix"><p class="msg" style="margin-top:0">고객이 입력한 현장정보가 사실과 동일한 경우, 위 작업범위 기준으로 <b>총 ${won(q.total)}</b>이 확정됩니다.</p>
+      <div class="k" style="margin-top:12px">제외 작업</div><div class="msg" style="margin-top:4px">${q.excl.length?q.excl.join(' · '):'없음'}</div>
+      <div class="k" style="margin-top:12px">추가금 발생 가능 조건</div>${q.cond.length?`<ul class="conds">${q.cond.map(c=>`<li>${c}</li>`).join('')}</ul>`:'<div class="msg" style="margin-top:6px"><span class="pill">추가금 없음 · 전액 확정</span></div>'}
+      <div class="note">위 조건 밖의 추가금은 플랫폼이 인정하지 않습니다. 현장에서 요구받으면 앱에서 바로 신고할 수 있어요.</div></div>
+    <h3>업체 신뢰도</h3>
+    <div class="stats six"><div><b>${q.cnt}건</b><span>플랫폼 작업</span></div><div><b>${q.rating}</b><span>후기 평점</span></div><div><b>${q.rework}%</b><span>재작업 요청률</span></div><div><b>${q.acc}%</b><span>견적 정확도</span></div><div><b>${q.resp}분</b><span>평균 응답</span></div><div><b>${q.photos}장</b><span>작업사진</span></div></div>
+    <div class="note">견적 정확도는 현장 추가금 없이 견적 금액 그대로 완료된 비율입니다. 사업자등록 확인 완료.</div>
+    <h3>업체 코멘트</h3><p class="msg">"${q.comment}"</p>`;
+  $('d-pick').onclick=()=>openBook(q.id);go('s-detail');
+}
+function openBook(id){const q=S.quotes.find(x=>x.id===id);if(!q)return;S.pick=q;
+  $('b-title').textContent=q.name+'에 예약할게요';
+  $('b-dl').innerHTML=`<dt>청소</dt><dd>${S.type} · ${Math.round(S.py)}평</dd><dt>주소</dt><dd>${S.sido||''} ${S.gu||''}</dd><dt>청소일</dt><dd>${fmtDate(S.date)}</dd><dt>인원 · 시간</dt><dd>${q.crew}명 · ${q.hours}</dd><dt>확정 견적</dt><dd class="big">${won(q.total)}</dd>`;
+  go('s-book');}
+function book(){const q=S.pick;if(!q)return;if(!$('name').value.trim()){toast('이름을 입력해주세요');return;}
+  $('z-sub').textContent=`${q.name}에서 확인 후 문자로 안내드립니다. 이제 이 업체에만 연락처가 공개됩니다.`;
+  $('z-dl').innerHTML=`<dt>업체</dt><dd>${q.name}</dd><dt>일시</dt><dd>${fmtDate(S.date)} ${S.btime}</dd><dt>작업범위</dt><dd>${S.type} · ${Math.round(S.py)}평</dd><dt>예약 시점 확정 견적</dt><dd class="big">${won(q.total)}</dd>`;
+  const d=new Date(S.date+'T00:00:00');d.setDate(d.getDate()+1);$('x-date').textContent=isNaN(d)?'다음 날':`${d.getMonth()+1}월 ${d.getDate()}일`;
+  const py=Math.max(10,Math.round(S.py));$('x-move').textContent=`${Math.round(py*2.0)}~${Math.round(py*2.5)}만원`;
+  go('s-done');}
+
+// 업체
+function bizMode(m,el){document.querySelectorAll('#biz-mode button').forEach(b=>b.classList.remove('on'));el.classList.add('on');$('biz-join').hidden=m!=='join';$('biz-inbox').hidden=m!=='inbox';$('biz-jobs').hidden=m!=='jobs';$('biz-bottom').hidden=m!=='join';if(m==='inbox'){$('biz-req').innerHTML=reqHTML(true);bizSum();}}
+const numv=id=>parseInt(($(id).value||'').toString().replace(/\D/g,''))||0;
+function bizSum(){const t=numv('q-base')+numv('q-extra')+numv('q-etc');$('q-total').textContent=won(t);return t;}
+function bizSend(){
+  const t=bizSum();if(!numv('q-base')){toast('기본 청소비를 입력해주세요');return;}
+  const conds=[...$('q-conds').querySelectorAll('.chip.sel')].map(c=>c.dataset.n);
+  if(!conds.length){toast('추가금 발생 가능 조건을 고르거나 "추가금 없음 (전액 확정)"을 선택해주세요');return;}
+  const svc=[...$('q-svc').querySelectorAll('.chip.sel')].map(c=>c.dataset.n);
+  const asEl=$('q-as').querySelector('.chip.sel');const as=asEl?parseInt(asEl.textContent):3;
+  toast(`고객에게 발송됨: 총 ${won(t)} · ${$('q-crew').value}명 · ${$('q-hours').value}`);
+  if(S.quotes.length){
+    const none=conds.includes('추가금 없음 (전액 확정)');
+    S.quotes.push({id:'M'+Date.now(),name:'내 업체 (방금 입력)',sub:'방금 업체 화면에서 제출한 견적',total:t,extra:numv('q-extra'),basic:numv('q-base')+numv('q-etc'),crew:parseInt($('q-crew').value)||2,hours:$('q-hours').value||'5시간',as,rating:'신규',cnt:0,rework:0,acc:0,resp:1,recent:0,photos:0,inc:{창틀:svc.includes('창틀')?1:0,베란다:svc.includes('베란다')?1:0,붙박이장:svc.includes('붙박이장 내부')?1:0,가전:svc.includes('가전 내부')?1:0,새집:svc.includes('새집증후군')?1:0},cond:none?[]:conds,excl:$('q-excl').value.trim()?[$('q-excl').value.trim()]:[],comment:'방금 업체 화면에서 입력한 견적입니다.',score:55,tag:'제휴업체'});
+    renderCmp();
+  }
+}
+
+// 운영자 · 수익모델 계산기
+function revMode(m,el){document.querySelectorAll('#rev-mode button').forEach(b=>b.classList.remove('on'));el.classList.add('on');['A','B','C'].forEach(k=>$('rev-'+k).hidden=k!==m);}
+function calc(){const n=id=>parseFloat(($(id).value||'').toString().replace(/[^\d.]/g,''))||0;
+  const per=n('ra-avg')*n('ra-fee')/100;$('ra-per').textContent=won(per);$('ra-month').textContent=big(per*n('ra-n'));
+  const b=n('rb-pro')*99000+n('rb-biz')*199000;$('rb-month').textContent=big(b);$('rb-arpu').textContent=won(b/Math.max(1,n('rb-basic')+n('rb-pro')+n('rb-biz')));
+  const c=n('rc-sub')*49000+n('rc-avg')*n('rc-fee')/100*n('rc-n');$('rc-month').textContent=big(c);}
+document.querySelectorAll('.calc input').forEach(i=>i.addEventListener('input',calc));
+$('addr').addEventListener('input',addrNote);
+
+typeNote();addrNote();areaNote();calc();
+</script>
+
+</body></html>
