@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>전화 안 오는 이사견적 — 이사정보 한 번 입력, 여러 업체 최종 견적 비교</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F6F4F0; --card:#FFFFFF; --ink:#1C1A17; --ink2:#66605A; --line:#E4E0DA;
+  --main:#2F3A4A; --main-ink:#FFFFFF; --acc:#D9622B; --acc-ink:#FFFFFF; --acc-bg:#FBE9E0; --good:#1F7A4D; --good-bg:#E4F2EA; --warn:#A2511B; --warn-bg:#F8EBDF; --field:#EEEBE5;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#15130F; --card:#1F1C18; --ink:#F1EEE9; --ink2:#A39D95; --line:#332F29;
+    --main:#E8E2D9; --main-ink:#15130F; --acc:#F0824A; --acc-ink:#15130F; --acc-bg:#3A2418; --good:#5CC898; --good-bg:#17301F; --warn:#E0954E; --warn-bg:#3A2718; --field:#2A2620;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#15130F; --card:#1F1C18; --ink:#F1EEE9; --ink2:#A39D95; --line:#332F29;
+  --main:#E8E2D9; --main-ink:#15130F; --acc:#F0824A; --acc-ink:#15130F; --acc-bg:#3A2418; --good:#5CC898; --good-bg:#17301F; --warn:#E0954E; --warn-bg:#3A2718; --field:#2A2620;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:"Noto Sans KR",-apple-system,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased}
+.app{max-width:480px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column}
+.top{display:flex;align-items:center;gap:8px;padding:14px 16px 8px;position:sticky;top:0;background:var(--bg);z-index:5}
+.top button.bk{background:none;border:0;color:var(--ink);font-size:22px;line-height:1;padding:4px 8px 4px 0;cursor:pointer}
+.top .t{font-weight:700;font-size:16px}
+.top .step{margin-left:auto;font-size:13px;color:var(--ink2);font-variant-numeric:tabular-nums}
+.top .lnk{margin-left:auto;font-size:13px;color:var(--ink2);text-decoration:underline;background:none;border:0;padding:0;cursor:pointer;font-family:inherit}
+.prog{height:3px;background:var(--line);margin:0 16px}.prog i{display:block;height:100%;background:var(--acc)}
+.screen{display:none;flex:1;flex-direction:column}.screen.on{display:flex}
+.body{padding:12px 20px 130px;flex:1}
+h1{font-size:30px;line-height:1.25;font-weight:900;letter-spacing:-0.02em;word-break:keep-all}
+h2{font-size:22px;line-height:1.3;font-weight:700;letter-spacing:-0.01em;word-break:keep-all}
+h3{font-size:16px;font-weight:700;margin-top:22px;word-break:keep-all}
+p.sub{color:var(--ink2);font-size:15px;word-break:keep-all;margin-top:8px}
+.bottom{position:fixed;left:0;right:0;bottom:0;padding:12px 20px calc(12px + env(safe-area-inset-bottom));background:linear-gradient(to top,var(--bg) 70%,transparent);pointer-events:none}
+.bottom>*{max-width:440px;margin:0 auto;pointer-events:auto}
+.btn{display:block;width:100%;border:0;border-radius:14px;padding:17px;font:inherit;font-weight:700;font-size:17px;cursor:pointer;background:var(--main);color:var(--main-ink);text-align:center}
+.btn.acc{background:var(--acc);color:var(--acc-ink)}
+.btn:disabled{opacity:.4;cursor:default}
+.btn.ghost{background:var(--card);color:var(--ink);border:1.5px solid var(--line);margin-top:8px}
+.btn:focus-visible,input:focus-visible,select:focus-visible,.chip:focus-visible,.opt:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+label.f{display:block;margin-top:16px;font-size:14px;font-weight:500;color:var(--ink2)}
+input,select{width:100%;margin-top:6px;border:0;background:var(--field);color:var(--ink);border-radius:12px;padding:14px;font:inherit;font-size:17px}
+.row2{display:flex;gap:10px}.row2>*{flex:1}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.chip{border:1.5px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:9px 14px;font:inherit;font-size:14px;cursor:pointer}
+.chip.sel{border-color:var(--main);background:var(--main);color:var(--main-ink)}
+.opt{display:block;width:100%;text-align:left;border:1.5px solid var(--line);background:var(--card);color:var(--ink);border-radius:14px;padding:13px 16px;margin-top:8px;font:inherit;cursor:pointer}
+.opt.sel{border-color:var(--acc);box-shadow:inset 0 0 0 1px var(--acc)}
+.opt b{display:block;font-size:15px}.opt span{display:block;font-size:12px;color:var(--ink2);margin-top:2px;word-break:keep-all}
+.panel{background:var(--card);border-radius:18px;padding:18px 20px;margin-top:16px;border:1px solid var(--line)}
+.panel .k{font-size:13px;color:var(--ink2)}
+.money{font-size:30px;font-weight:900;letter-spacing:-0.03em;font-variant-numeric:tabular-nums;line-height:1.15;word-break:keep-all}
+.route{display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:center;margin-top:12px}
+.route .box{background:var(--field);border-radius:12px;padding:12px;font-size:13px}
+.route .box b{display:block;font-size:14px;margin-bottom:2px}
+.route .arr{text-align:center;font-size:12px;color:var(--ink2)}.route .arr b{display:block;font-size:16px;color:var(--ink)}
+.brk div{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px dashed var(--line);font-size:14px;font-variant-numeric:tabular-nums}
+.brk div:last-child{border:0}.brk div.tot{font-weight:900;font-size:16px}
+.note{font-size:13px;color:var(--ink2);margin-top:14px;word-break:keep-all;line-height:1.55}
+.hl{margin-top:14px;background:var(--acc-bg);border-radius:12px;padding:12px 14px;font-size:13px;word-break:keep-all;line-height:1.55}
+.hl b{color:var(--acc)}
+.pill{display:inline-block;background:var(--good-bg);color:var(--good);font-weight:700;font-size:12px;border-radius:8px;padding:3px 8px}
+.pill.w{background:var(--warn-bg);color:var(--warn)}.pill.a{background:var(--acc);color:var(--acc-ink)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin-top:12px}
+.card .hd{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+.card .nm{font-weight:700;font-size:16px}.card .nm small{display:block;font-weight:400;font-size:12px;color:var(--ink2)}
+.card .fee{font-size:23px;font-weight:900;font-variant-numeric:tabular-nums;letter-spacing:-0.02em;white-space:nowrap}
+.card .fee em{font-style:normal;font-size:11px;color:var(--ink2);font-weight:500;display:block;text-align:right}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:12px}
+.stats div{background:var(--field);border-radius:10px;padding:8px 4px;text-align:center}
+.stats b{display:block;font-size:14px;font-variant-numeric:tabular-nums}.stats span{font-size:11px;color:var(--ink2)}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}.tags span{font-size:12px;border:1px solid var(--line);border-radius:6px;padding:3px 8px;color:var(--ink2)}
+.tags span.ok{border-color:var(--good);color:var(--good)}
+.msg{font-size:14px;margin-top:10px;word-break:keep-all;line-height:1.55}
+.acts{display:flex;gap:8px;margin-top:12px}
+.acts button{flex:1;border:1.5px solid var(--line);background:none;color:var(--ink);border-radius:10px;padding:10px;font:inherit;font-size:14px;cursor:pointer}
+.acts button.pri{background:var(--main);color:var(--main-ink);border-color:var(--main);font-weight:700}
+.tbl{overflow-x:auto;margin-top:12px;border:1px solid var(--line);border-radius:14px;background:var(--card)}
+table{border-collapse:collapse;width:100%;font-size:13px;font-variant-numeric:tabular-nums;white-space:nowrap}
+th,td{padding:9px 12px;text-align:right;border-bottom:1px solid var(--line)}th:first-child,td:first-child{text-align:left;position:sticky;left:0;background:var(--card)}
+thead th{font-weight:700}tr:last-child td{border:0}td.lo{color:var(--good);font-weight:700}
+.tl{margin-top:16px;border-left:2px solid var(--line);padding-left:16px}
+.tl div{position:relative;padding:6px 0 14px;color:var(--ink2);font-size:15px}
+.tl div::before{content:"";position:absolute;left:-23px;top:12px;width:10px;height:10px;border-radius:50%;background:var(--line)}
+.tl div.done{color:var(--ink);font-weight:500}.tl div.done::before{background:var(--good)}
+.tl div.now{color:var(--ink);font-weight:700}.tl div.now::before{background:var(--acc);box-shadow:0 0 0 4px color-mix(in srgb,var(--acc) 30%,transparent)}
+.sum dl{display:grid;grid-template-columns:1fr auto;gap:8px 16px;font-size:15px}
+.sum dt{color:var(--ink2)}.sum dd{text-align:right;font-weight:700;font-variant-numeric:tabular-nums}.sum dd.big{font-size:22px;font-weight:900}
+.mode{display:flex;background:var(--field);border-radius:12px;padding:4px;margin-top:10px}
+.mode button{flex:1;border:0;background:none;color:var(--ink2);border-radius:9px;padding:9px;font:inherit;font-size:13px;cursor:pointer}
+.mode button.on{background:var(--card);color:var(--ink);font-weight:700;box-shadow:0 1px 3px rgba(0,0,0,.1)}
+.vid{margin-top:14px;border:2px dashed var(--line);border-radius:16px;padding:22px;text-align:center;cursor:pointer}
+.vid b{display:block;font-size:16px}.vid span{font-size:13px;color:var(--ink2)}
+.vid.done{border-style:solid;border-color:var(--good);background:var(--good-bg)}
+.grid3{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px}
+.grid3 .chip{border-radius:12px;padding:12px 4px;text-align:center;font-size:13px}
+.bar{height:8px;background:var(--field);border-radius:5px;overflow:hidden}.bar i{display:block;height:100%;background:var(--acc)}
+.toast{position:fixed;top:14px;left:50%;transform:translate(-50%,-80px);background:var(--ink);color:var(--bg);padding:12px 18px;border-radius:12px;font-size:14px;max-width:360px;width:calc(100% - 40px);box-shadow:0 8px 30px rgba(0,0,0,.25);transition:transform .35s;z-index:20;word-break:keep-all}
+.toast.show{transform:translate(-50%,0)}
+.hero{padding:36px 0 10px}
+.err{color:var(--warn);font-size:13px;margin-top:8px;display:none}
+@media (prefers-reduced-motion: reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- 소비자 1 메인 + 출발/도착 -->
+<section class="screen on" id="s-home">
+  <div class="top"><span class="t">이사견적</span><button class="lnk" onclick="go('s-vendor')">이사업체이신가요?</button></div>
+  <div class="body hero">
+    <h1>이사 견적,<br>전화 돌리지 마세요.</h1>
+    <p class="sub">이사정보 한 번 입력하고 여러 업체의 최종 견적을 비교하세요. 전화번호는 업체에 공개되지 않습니다.</p>
+    <label class="f">현재 집<input id="from" value="대구 수성구 범어동 ○○아파트"></label>
+    <label class="f">이사 갈 집<input id="to" value="서울 송파구 ○○아파트"></label>
+    <label class="f">이사 예정일<input type="date" id="date" value="2026-10-24"></label>
+    <div class="hl"><b>전화 안 오는 이사견적</b> 마음에 드는 견적을 고른 뒤, 상담을 원하는 업체에만 연락처가 전달됩니다.</div>
+  </div>
+  <div class="bottom"><button class="btn acc" onclick="v0()">무료 견적 받기</button></div>
+</section>
+
+<!-- 2 집 조건 -->
+<section class="screen" id="s-cond">
+  <div class="top"><button class="bk" onclick="go('s-home')" aria-label="뒤로">‹</button><span class="t">집 조건</span><span class="step">1 / 3</span></div><div class="prog"><i style="width:33%"></i></div>
+  <div class="body">
+    <div class="route" id="route"></div>
+    <h3>현재 집</h3>
+    <div class="chips" data-group="ftype"><button class="chip sel">아파트</button><button class="chip">빌라</button><button class="chip">오피스텔</button><button class="chip">주택</button><button class="chip">사무실</button></div>
+    <div class="row2"><label class="f">평수<input id="fpy" inputmode="numeric" value="34"></label><label class="f">층수<input id="ffl" inputmode="numeric" value="12"></label></div>
+    <div class="row2"><div><label class="f">엘리베이터</label><div class="chips" data-group="fel"><button class="chip sel">있음</button><button class="chip">없음</button></div></div><div><label class="f">사다리차</label><div class="chips" data-group="flad"><button class="chip">필요</button><button class="chip sel">모름</button></div></div></div>
+    <h3>도착지</h3>
+    <div class="chips" data-group="ttype"><button class="chip sel">아파트</button><button class="chip">빌라</button><button class="chip">오피스텔</button><button class="chip">주택</button><button class="chip">사무실</button></div>
+    <div class="row2"><label class="f">평수<input id="tpy" inputmode="numeric" value="34"></label><label class="f">층수<input id="tfl" inputmode="numeric" value="8"></label></div>
+    <div class="row2"><div><label class="f">엘리베이터</label><div class="chips" data-group="tel"><button class="chip sel">있음</button><button class="chip">없음</button></div></div><div><label class="f">사다리차</label><div class="chips" data-group="tlad"><button class="chip">필요</button><button class="chip sel">모름</button></div></div></div>
+    <h3>이사 종류</h3>
+    <div class="chips" data-group="kind"><button class="chip sel">포장이사</button><button class="chip">반포장이사</button><button class="chip">일반이사</button><button class="chip">원룸이사</button><button class="chip">사무실이사</button></div>
+  </div>
+  <div class="bottom"><button class="btn" onclick="v1()">다음</button></div>
+</section>
+
+<!-- 3 사진/영상 -->
+<section class="screen" id="s-video">
+  <div class="top"><button class="bk" onclick="go('s-cond')" aria-label="뒤로">‹</button><span class="t">짐 영상</span><span class="step">2 / 3</span></div><div class="prog"><i style="width:66%"></i></div>
+  <div class="body">
+    <h2>짐을 하나하나 적지 마세요</h2>
+    <p class="sub">집을 천천히 촬영해주세요. 거실 → 주방 → 방 → 베란다, 1~2분이면 됩니다. 업체가 영상을 보고 견적을 냅니다.</p>
+    <div class="vid" id="vid" onclick="rec()"><b>📹 동영상 촬영</b><span>또는 갤러리에서 선택</span></div>
+    <h3>또는 사진</h3>
+    <div class="grid3" id="photos"></div>
+    <h3>미리 알려줄 것 (선택)</h3>
+    <div class="chips" id="items"></div>
+    <div class="note">MVP에서는 업체가 직접 영상을 판독합니다. 데이터가 쌓이면 AI가 냉장고 1·침대 2·박스 45개 같은 짐량을 자동 추출합니다.</div>
+  </div>
+  <div class="bottom"><button class="btn" onclick="go('s-contact')">다음</button><button class="btn ghost" onclick="go('s-contact')">나중에 올릴게요</button></div>
+</section>
+
+<!-- 4 연락처 -->
+<section class="screen" id="s-contact">
+  <div class="top"><button class="bk" onclick="go('s-video')" aria-label="뒤로">‹</button><span class="t">연락처</span><span class="step">3 / 3</span></div><div class="prog"><i style="width:100%"></i></div>
+  <div class="body">
+    <h2>견적 알림을 받을 연락처</h2>
+    <p class="sub">업체에는 이사 조건과 영상만 전달됩니다. 전화번호는 고객님이 선택한 업체에만 공개돼요.</p>
+    <label class="f">이름<input id="name" placeholder="홍길동"></label>
+    <label class="f">휴대전화<input id="phone" inputmode="tel" placeholder="010-0000-0000"></label>
+    <div class="panel sum"><div class="k" style="margin-bottom:10px">업체에 보이는 견적요청 카드</div><dl id="ct-dl"></dl><div class="note" style="margin-top:10px">☎ 전화번호: 비공개</div></div>
+  </div>
+  <div class="bottom"><button class="btn acc" onclick="submitReq()">견적 요청하기</button></div>
+</section>
+
+<!-- 5 완료/대기 -->
+<section class="screen" id="s-wait">
+  <div class="top"><span class="t">견적 요청 완료</span></div>
+  <div class="body">
+    <h2 id="w-title"></h2>
+    <p class="sub">24시간 안에 최종 견적이 모입니다. 견적은 모두 "현장 추가금 없는 최종 견적"입니다.</p>
+    <div class="panel"><div class="k">비슷한 조건의 예상 이사비 (누적 견적 데이터 기준 · 예시)</div><div class="money" id="w-est"></div><div class="note" style="margin-top:6px">이사일·요일·엘리베이터 여부에 따라 달라질 수 있습니다.</div></div>
+    <div class="tl"><div class="done">견적요청 카드 생성</div><div class="done">전국 인증 업체에 전달 (연락처 비공개)</div><div class="now" id="w-now">최종 견적 도착 중 <span id="w-cnt">0</span>/4</div><div>견적 비교 · 업체 선택</div><div>상담 · 계약</div></div>
+  </div>
+  <div class="bottom"><button class="btn" id="w-btn" disabled onclick="go('s-cmp')">견적 비교하기</button></div>
+</section>
+
+<!-- 6 비교 -->
+<section class="screen" id="s-cmp">
+  <div class="top"><button class="bk" onclick="go('s-wait')" aria-label="뒤로">‹</button><span class="t">견적 비교</span></div>
+  <div class="body">
+    <h2 id="c-title"></h2>
+    <p class="sub">같은 조건, 같은 영상을 보고 낸 최종 견적입니다. 업체끼리는 서로 가격을 볼 수 없어요.</p>
+    <div class="tbl" id="c-tbl"></div>
+    <div id="c-cards"></div>
+    <div class="hl"><b>현장 추가금 없는 견적</b> 입력 조건·영상과 현장이 다르지 않는 한 추가 요금이 없습니다. 예외 조건은 사전에 명시됩니다.</div>
+  </div>
+</section>
+
+<!-- 7 업체 상세 -->
+<section class="screen" id="s-detail">
+  <div class="top"><button class="bk" onclick="go('s-cmp')" aria-label="뒤로">‹</button><span class="t">업체 상세</span></div>
+  <div class="body" id="d-body"></div>
+  <div class="bottom"><button class="btn acc" id="d-btn">이 업체와 상담하기</button></div>
+</section>
+
+<!-- 8 상담/선택 -->
+<section class="screen" id="s-pick">
+  <div class="top"><button class="bk" onclick="go('s-detail')" aria-label="뒤로">‹</button><span class="t">상담 요청</span></div>
+  <div class="body">
+    <h2 id="p-title"></h2>
+    <div class="panel sum"><dl id="p-dl"></dl></div>
+    <label class="f">연락 가능 시간</label>
+    <div class="chips" data-group="ctime"><button class="chip sel">오전</button><button class="chip">오후</button><button class="chip">저녁 6시 이후</button><button class="chip">문자로만</button></div>
+    <div class="note">지금 이 업체에만 이름과 연락처가 전달됩니다. 다른 견적은 그대로 남아 있어요.</div>
+  </div>
+  <div class="bottom"><button class="btn acc" onclick="pickDone()">연락처 전달하고 상담 요청</button></div>
+</section>
+
+<section class="screen" id="s-done">
+  <div class="body" style="padding-top:48px">
+    <h2 id="z-title"></h2>
+    <p class="sub">업체가 확인 후 연락드립니다. 계약은 업체와 직접 진행하고, 견적 금액은 기록으로 남아 현장 추가금 분쟁 시 확인할 수 있어요.</p>
+    <div class="panel sum"><dl id="z-dl"></dl></div>
+    <h3>이사 다음에 필요한 것</h3>
+    <div class="chips"><span class="chip">입주청소</span><span class="chip">에어컨 이전</span><span class="chip">인터넷</span><span class="chip">정수기</span><span class="chip">도배/장판</span><span class="chip">커튼</span><span class="chip">폐기물</span></div>
+    <div class="note">이사는 고객획득 상품입니다. 여기서부터 입주 여정이 이어집니다.</div>
+  </div>
+  <div class="bottom"><button class="btn ghost" onclick="location.reload()">처음부터 다시</button></div>
+</section>
+
+<!-- ===== 업체 ===== -->
+<section class="screen" id="s-vendor">
+  <div class="top"><button class="bk" onclick="go('s-home')" aria-label="뒤로">‹</button><span class="t">업체</span><button class="lnk" onclick="go('s-admin')">관리자</button></div>
+  <div class="body">
+    <div class="mode"><button class="on" onclick="vMode('list',this)">견적 요청</button><button onclick="vMode('join',this)">무료 가입</button><button onclick="vMode('result',this)">선택 결과</button></div>
+    <div id="v-list">
+      <h3 style="margin-top:14px">🔔 새로운 이사 견적 요청</h3>
+      <div id="v-cards"></div>
+      <div class="note">앱 설치 없음. 카카오/SMS 링크로 이 화면이 열립니다. 고객 전화번호는 선택 전까지 비공개.</div>
+    </div>
+    <div id="v-join" style="display:none">
+      <h2 style="margin-top:14px">이사 고객을 보내드립니다</h2>
+      <p class="sub">가입비 0원. 견적 참여는 무료로 시작하고, 수익모델은 업체군별로 A(월 구독)·B(계약 수수료)를 테스트합니다.</p>
+      <label class="f">사업자등록번호<input placeholder="000-00-00000"></label><label class="f">업체명<input placeholder="○○익스프레스"></label>
+      <label class="f">화물운송 허가·보험 서류<button class="opt" style="margin-top:6px" onclick="toast('서류 업로드 (예시)')"><b>업로드</b><span>사업자·화물운송 허가·적재물배상보험</span></button></label>
+      <label class="f">서비스 지역</label><div class="chips" id="v-regions"></div>
+      <label class="f">보유 차량</label><div class="chips"><button class="chip sel">1톤</button><button class="chip sel">2.5톤</button><button class="chip sel">5톤</button><button class="chip">사다리차</button></div>
+      <button class="btn" style="margin-top:16px" onclick="toast('가입 신청 접수. 서류 확인 후 첫 견적요청이 발송됩니다 (예시)')">무료 가입</button>
+    </div>
+    <div id="v-result" style="display:none">
+      <h3 style="margin-top:14px">선택 결과</h3>
+      <div class="card"><div class="hd"><div class="nm">대구 수성 → 서울 송파<small>34평 포장이사 · 10/24</small></div><span class="pill">선택됨 · 상담 요청</span></div><div class="msg">고객 연락처가 공개되었습니다. 오전 연락 희망.</div><div class="acts"><button class="pri" onclick="toast('고객: 홍○○ · 010-****-1234 (예시)')">연락처 보기</button></div></div>
+      <div class="card"><div class="hd"><div class="nm">부산 해운대 → 부산 남구<small>25평 반포장 · 10/18</small></div><span class="pill w">미선택</span></div><div class="msg">고객이 다른 업체를 선택했습니다. 내 견적은 평균보다 12% 높았습니다.</div></div>
+    </div>
+  </div>
+</section>
+
+<section class="screen" id="s-vquote">
+  <div class="top"><button class="bk" onclick="go('s-vendor')" aria-label="뒤로">‹</button><span class="t">견적 제안</span></div>
+  <div class="body">
+    <div class="panel sum" id="vq-card"></div>
+    <button class="opt" onclick="toast('짐 영상 재생 (예시) · 1분 42초')"><b>📹 짐 영상 확인</b><span>거실 → 주방 → 방 2 → 베란다 · 1:42</span></button>
+    <h3>견적 입력</h3>
+    <div class="row2"><label class="f">차량<select id="q-truck"><option>5톤 × 1대</option><option>5톤 + 1톤</option><option>2.5톤 × 1대</option><option>1톤 × 1대</option></select></label><label class="f">작업인원<select id="q-crew"><option>남 4 / 여 1</option><option>남 3 / 여 1</option><option>남 5 / 여 1</option><option>남 2</option></select></label></div>
+    <label class="f">기본 이사비 (원)<input id="q-base" inputmode="numeric" value="1350000" oninput="qsum()"></label>
+    <div class="row2"><label class="f">사다리차 (원)<input id="q-lad" inputmode="numeric" value="150000" oninput="qsum()"></label><label class="f">기타비용 (원)<input id="q-etc" inputmode="numeric" value="0" oninput="qsum()"></label></div>
+    <div class="panel"><div class="k">최종 견적 (현장 추가금 없음)</div><div class="money" id="q-total">1,500,000원</div>
+      <label class="f" style="display:flex;gap:10px;align-items:center;font-size:13px;color:var(--ink)"><input type="checkbox" checked style="width:auto;margin:0"> 입력 조건·영상과 현장이 다르지 않는 한 추가 요금을 청구하지 않습니다</label></div>
+  </div>
+  <div class="bottom"><button class="btn" onclick="vSend()">견적 보내기</button></div>
+</section>
+
+<!-- ===== 관리자 ===== -->
+<section class="screen" id="s-admin">
+  <div class="top"><button class="bk" onclick="go('s-vendor')" aria-label="뒤로">‹</button><span class="t">관리자</span></div>
+  <div class="body">
+    <h2>이번 주 견적요청 412건</h2>
+    <div class="panel"><div class="k">North Star · 24시간 내 3개 이상 유효견적 수신율</div><div class="money">78%</div><div class="bar" style="margin-top:10px"><i style="width:78%"></i></div><div class="note" style="margin-top:6px">목표 80%. 100명 중 78명이 24시간 안에 비교 가능한 견적 3개 이상을 받음.</div></div>
+    <div class="stats"><div><b>41%</b><span>견적→상담 선택</span></div><div><b>58%</b><span>상담→계약</span></div><div><b>34,000원</b><span>계약당 CAC</span></div><div><b>3.1%</b><span>추가금 발생률</span></div></div>
+    <h3>지역별 요청 · 업체</h3>
+    <div class="tbl"><table><thead><tr><th>출발 지역</th><th>요청</th><th>업체</th><th>24h 3견적</th></tr></thead><tbody id="a-tbl"></tbody></table></div>
+    <h3>수익모델 테스트</h3>
+    <div class="tbl"><table><thead><tr><th>모델</th><th>업체</th><th>월 계약/업체</th><th>유지율</th><th>플랫폼 매출</th></tr></thead><tbody><tr><td>A 월구독 149,000원</td><td>60</td><td>2.4</td><td>71%</td><td>894만</td></tr><tr><td>B 계약 5%</td><td>75</td><td>3.1</td><td>84%</td><td>1,743만</td></tr></tbody></table></div>
+    <h3>클레임 큐</h3>
+    <div class="card"><div class="hd"><div class="nm">현장 추가금 청구 <small>대전 → 세종 · 25평 · 업체 ○○</small></div><span class="pill w">2건</span></div><div class="msg">견적 기록 vs 현장 청구 비교 → 예외 조건 해당 여부 판정</div></div>
+    <div class="card"><div class="hd"><div class="nm">파손·분쟁 <small>보험 처리 안내</small></div><span class="pill w">1건</span></div></div>
+    <div class="note">숫자는 예시입니다. V2 에스크로(PG 정산 서비스 활용)가 붙으면 실제 거래·노쇼·분쟁을 시스템으로 관리할 수 있습니다.</div>
+  </div>
+  <div class="bottom"><button class="btn ghost" onclick="go('s-home')">소비자 화면으로</button></div>
+</section>
+
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const $=id=>document.getElementById(id);
+const S={from:'',to:'',date:'',ftype:'아파트',ttype:'아파트',fpy:34,ffl:12,fel:'있음',flad:'모름',tpy:34,tfl:8,tel:'있음',tlad:'모름',kind:'포장이사',km:0,video:false,items:[],quotes:[],pick:null,ctime:'오전'};
+// 지역 간 거리 mock (km)
+const CITY={서울:[37.57,126.98],경기:[37.4,127.1],인천:[37.46,126.7],부산:[35.18,129.08],대구:[35.87,128.6],대전:[36.35,127.38],광주:[35.16,126.85],울산:[35.54,129.31],세종:[36.48,127.29],강원:[37.88,127.73],충북:[36.64,127.49],충남:[36.66,126.67],전북:[35.82,127.15],전남:[34.82,126.46],경북:[36.58,128.5],경남:[35.24,128.69],제주:[33.5,126.53]};
+function cityOf(s){for(const k in CITY)if(s.includes(k))return k;return '서울';}
+function dist(a,b){const A=CITY[cityOf(a)],B=CITY[cityOf(b)];if(cityOf(a)===cityOf(b))return 12+Math.round(Math.random()*10);const R=6371,d2r=Math.PI/180;const dLat=(B[0]-A[0])*d2r,dLon=(B[1]-A[1])*d2r;const h=Math.sin(dLat/2)**2+Math.cos(A[0]*d2r)*Math.cos(B[0]*d2r)*Math.sin(dLon/2)**2;return Math.round(2*R*Math.asin(Math.sqrt(h))*1.25);}
+function go(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on'));$(id).classList.add('on');window.scrollTo(0,0);}
+function toast(t){const el=$('toast');el.textContent=t;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),2800);}
+const won=v=>Math.round(v).toLocaleString('ko-KR')+'원';const man=v=>Math.round(v/1e4).toLocaleString()+'만원';
+document.querySelectorAll('.chips[data-group]').forEach(g=>g.addEventListener('click',e=>{const b=e.target.closest('.chip');if(!b)return;g.querySelectorAll('.chip').forEach(c=>c.classList.remove('sel'));b.classList.add('sel');S[g.dataset.group]=b.textContent;}));
+['거실','주방','방','베란다'].forEach(p=>{const b=document.createElement('button');b.className='chip';b.textContent=p+' +';b.onclick=()=>{b.classList.add('sel');b.textContent=p+' ✓';};$('photos').appendChild(b);});
+['피아노','대형 냉장고','안마의자','에어컨 이전','금고','수족관','화분 많음'].forEach(p=>{const b=document.createElement('button');b.className='chip';b.textContent=p;b.onclick=()=>{b.classList.toggle('sel');b.classList.contains('sel')?S.items.push(p):S.items=S.items.filter(x=>x!==p);};$('items').appendChild(b);});
+Object.keys(CITY).forEach(r=>{const b=document.createElement('button');b.className='chip'+(r==='대구'?' sel':'');b.textContent=r;b.onclick=()=>b.classList.toggle('sel');$('v-regions').appendChild(b);});
+function rec(){S.video=true;const v=$('vid');v.classList.add('done');v.innerHTML='<b>✓ 영상 등록됨 · 1:42</b><span>거실 → 주방 → 방 2 → 베란다 (예시)</span>';}
+function v0(){S.from=$('from').value.trim();S.to=$('to').value.trim();S.date=$('date').value;if(!S.from||!S.to){toast('출발지와 도착지를 입력해주세요');return;}S.km=dist(S.from,S.to);
+  $('route').innerHTML=`<div class="box"><b>${cityOf(S.from)}</b>${S.from.replace(cityOf(S.from),'').trim()}</div><div class="arr"><b>${S.km}km</b>${S.date.slice(5).replace('-','/')}</div><div class="box"><b>${cityOf(S.to)}</b>${S.to.replace(cityOf(S.to),'').trim()}</div>`;go('s-cond');}
+function v1(){S.fpy=+$('fpy').value||34;S.ffl=+$('ffl').value||1;S.tpy=+$('tpy').value||34;S.tfl=+$('tfl').value||1;
+  $('ct-dl').innerHTML=`<dt>출발</dt><dd>${cityOf(S.from)} · ${S.ftype} · ${S.fpy}평 · ${S.ffl}층 · 엘베 ${S.fel==='있음'?'O':'X'}</dd><dt>도착</dt><dd>${cityOf(S.to)} · ${S.ttype} · ${S.tpy}평 · ${S.tfl}층 · 엘베 ${S.tel==='있음'?'O':'X'}</dd><dt>거리</dt><dd>약 ${S.km}km</dd><dt>이사일</dt><dd>${S.date}</dd><dt>이사형태</dt><dd>${S.kind}</dd><dt>짐 영상</dt><dd>${S.video?'등록됨':'미등록'}</dd>`;go('s-video');}
+// 기준가 (예시 시세 모델): 평수·거리·형태·층/엘베
+function basePrice(){const k={'포장이사':1,'반포장이사':0.78,'일반이사':0.6,'원룸이사':0.35,'사무실이사':1.1}[S.kind];let p=(300000+S.fpy*24000)*k+S.km*1200;if(S.fel==='없음'&&S.ffl>2)p+=120000;if(S.tel==='없음'&&S.tfl>2)p+=120000;if(S.flad==='필요')p+=150000;if(S.tlad==='필요')p+=150000;p+=S.items.length*60000;const d=new Date(S.date);if(d.getDay()===6||d.getDay()===0)p*=1.1;if(new Date(S.date).getDate()>=25||new Date(S.date).getDate()<=5)p*=1.08;return p;}
+function submitReq(){if(!$('phone').value.trim()){toast('휴대전화 번호를 입력해주세요');return;}const b=basePrice();S.base=b;
+  $('w-title').textContent=`${cityOf(S.from)} → ${cityOf(S.to)} 업체 9곳에 전달했어요`;$('w-est').textContent=`${man(b*0.85)} ~ ${man(b*1.15)}`;
+  buildQuotes();go('s-wait');let n=0;const tick=()=>{n++;$('w-cnt').textContent=n;if(n===1)toast(`${S.quotes[0].n} 견적 도착`);if(n===3){$('w-btn').disabled=false;toast('견적 3개가 모였어요 — 비교할 수 있습니다');}if(n<4)setTimeout(tick,800+Math.random()*700);else{$('w-now').textContent='최종 견적 4건 도착';$('w-now').className='done';}};setTimeout(tick,900);}
+function buildQuotes(){const b=S.base;const lad=(S.flad==='필요'||S.tlad==='필요'||S.fel==='없음'||S.tel==='없음')?150000:0;
+  const mk=(n,mul,truck,crew,rating,cnt,extra,yrs,ins,msg)=>{const total=Math.round(b*mul/10000)*10000;return{n,total,base:total-lad,lad,etc:0,truck,crew,rating,cnt,extra,yrs,ins,msg,score:0};};
+  S.quotes=[mk('A 익스프레스',0.9,'5톤','남 4',4.7,312,1.2,9,'적재물배상 1억','영상 확인했습니다. 34평 기준 5톤 1대로 충분하고 오전 8시 시작 가능합니다.'),
+    mk('B 이사',0.99,'5톤','남 4 / 여 1',4.9,528,0.4,14,'적재물배상 2억','여성 정리 인력 포함. 주방·옷장 정리까지 당일 마무리합니다.'),
+    mk('C 물류',1.03,'5톤','남 4 / 여 1',4.6,141,2.8,5,'적재물배상 1억','장거리 전문. 도착지 8층 엘리베이터 확인했습니다.'),
+    mk('D 익스프레스',1.13,'5톤 + 1톤','남 5','4.8',276,0.7,11,'적재물배상 3억','짐량이 많아 보여 1톤 추가. 에어컨 이전 포함 가격입니다.')];
+  renderCmp();}
+function renderCmp(){const qs=[...S.quotes].sort((a,b)=>a.total-b.total);const min=qs[0].total;
+  $('c-title').textContent=`${S.fpy}평 ${S.kind} · 최종 견적 ${qs.length}건`;
+  $('c-tbl').innerHTML=`<table><thead><tr><th>업체</th><th>총 견적</th><th>차량</th><th>인원</th><th>추가금 이력</th></tr></thead><tbody>${qs.map(q=>`<tr><td>${q.n}</td><td class="${q.total===min?'lo':''}">${man(q.total)}</td><td>${q.truck}</td><td>${q.crew}</td><td>${q.extra}%</td></tr>`).join('')}</tbody></table>`;
+  $('c-cards').innerHTML=qs.map(q=>`<div class="card"><div class="hd"><div class="nm">${q.n}<small>${q.truck} · ${q.crew} · 경력 ${q.yrs}년</small></div><div class="fee">${man(q.total)}<em>${q.total===min?'최저':'+'+man(q.total-min)}</em></div></div>
+    <div class="tags"><span class="ok">사업자 확인</span><span class="ok">운송 허가</span><span class="ok">${q.ins}</span></div>
+    <div class="stats"><div><b>${q.rating}</b><span>평점</span></div><div><b>${q.cnt}건</b><span>최근 이용</span></div><div><b>${q.extra}%</b><span>추가금 이력</span></div><div><b>0건</b><span>미해결 분쟁</span></div></div>
+    <div class="msg">${q.msg}</div>
+    <div class="acts"><button onclick="openDetail('${q.n}')">업체 상세</button><button class="pri" onclick="openDetail('${q.n}',true)">상담하기</button></div></div>`).join('');}
+function openDetail(n,direct){const q=S.quotes.find(x=>x.n===n);S.pick=q;
+  $('d-body').innerHTML=`<h2>${q.n}</h2><p class="sub">경력 ${q.yrs}년 · ${q.ins}</p>
+    <div class="panel"><div class="k">최종 견적 (현장 추가금 없음)</div><div class="money">${won(q.total)}</div>
+    <div class="brk" style="margin-top:12px"><div><span>차량</span><span>${q.truck}</span></div><div><span>작업인원</span><span>${q.crew}</span></div><div><span>기본 이사비</span><span>${won(q.base)}</span></div><div><span>사다리차</span><span>${won(q.lad)}</span></div><div><span>기타비용</span><span>${won(q.etc)}</span></div><div class="tot"><span>최종 견적</span><span>${won(q.total)}</span></div></div></div>
+    <h3>검증 정보</h3><div class="tags"><span class="ok">사업자등록 확인</span><span class="ok">화물운송 허가 확인</span><span class="ok">${q.ins} 가입</span></div>
+    <div class="stats"><div><b>${q.cnt}건</b><span>최근 이용</span></div><div><b>${q.rating}</b><span>평점</span></div><div><b>${q.extra}%</b><span>추가금 발생</span></div><div><b>0건</b><span>미해결 분쟁</span></div></div>
+    <h3>후기</h3><div class="card"><div style="display:flex;justify-content:space-between"><b>★★★★★</b><span style="font-size:13px;color:var(--ink2)">2주 전 · 부산 → 대구 30평</span></div><div class="msg">견적 그대로 끝났고 추가금 얘기 없었습니다. 정리 인력 덕에 저녁에 바로 잘 수 있었어요.</div></div>`;
+  $('d-btn').onclick=()=>openPick();if(direct)openPick();else go('s-detail');}
+function openPick(){const q=S.pick;$('p-title').textContent=`${q.n}과 상담할게요`;$('p-dl').innerHTML=`<dt>이사</dt><dd>${cityOf(S.from)} → ${cityOf(S.to)} · ${S.fpy}평 ${S.kind}</dd><dt>이사일</dt><dd>${S.date}</dd><dt>최종 견적</dt><dd class="big">${won(q.total)}</dd><dt>차량 · 인원</dt><dd>${q.truck} · ${q.crew}</dd>`;go('s-pick');}
+function pickDone(){const q=S.pick;$('z-title').textContent='상담 요청을 보냈어요';$('z-dl').innerHTML=`<dt>업체</dt><dd>${q.n}</dd><dt>연락 시간</dt><dd>${S.ctime}</dd><dt>기록된 견적</dt><dd class="big">${won(q.total)}</dd><dt>조건</dt><dd>현장 추가금 없음</dd>`;go('s-done');}
+// 업체
+const OPEN=[{r:'서울 강남 → 경기 성남',c:'34평 → 34평 · 10/24 · 포장이사',v:true,n:2},{r:'부산 해운대 → 부산 남구',c:'25평 → 28평 · 10/18 · 반포장',v:true,n:4},{r:'대전 → 세종',c:'원룸 · 10/12 · 원룸이사',v:false,n:1}];
+function renderV(){const mine=S.base?[{r:`${cityOf(S.from)} → ${cityOf(S.to)}`,c:`${S.fpy}평 → ${S.tpy}평 · ${S.date.slice(5).replace('-','/')} · ${S.kind}`,v:S.video,n:S.quotes.length,me:true}]:[];
+  $('v-cards').innerHTML=[...mine,...OPEN].map((o,i)=>`<div class="card"><div class="hd"><div class="nm">${o.r}<small>${o.c}</small></div><span class="pill ${o.n>=3?'':'w'}">견적 ${o.n}</span></div><div class="tags"><span>${o.v?'📹 영상 있음':'영상 없음'}</span><span>☎ 비공개</span>${o.me?'<span class="ok">방금 소비자 화면에서 등록</span>':''}</div><div class="acts"><button class="pri" onclick="vOpen(${i})">짐 확인하고 견적내기</button></div></div>`).join('');}
+function vMode(m,el){document.querySelectorAll('#s-vendor .mode button').forEach(b=>b.classList.remove('on'));el.classList.add('on');['list','join','result'].forEach(k=>$('v-'+k).style.display=k===m?'':'none');}
+function vOpen(i){const mine=S.base?1:0;S.vCase=i<mine?'mine':i;
+  const rows=i<mine?[['출발',`${cityOf(S.from)} / ${S.ftype} / ${S.fpy}평 / ${S.ffl}층 / 엘베 ${S.fel==='있음'?'O':'X'}`],['도착',`${cityOf(S.to)} / ${S.ttype} / ${S.tpy}평 / ${S.tfl}층 / 엘베 ${S.tel==='있음'?'O':'X'}`],['거리',`약 ${S.km}km`],['이사일',S.date],['이사형태',S.kind]]:[['출발',OPEN[i-mine].r.split(' → ')[0]],['도착',OPEN[i-mine].r.split(' → ')[1]],['조건',OPEN[i-mine].c]];
+  $('vq-card').innerHTML=`<div class="k" style="margin-bottom:10px">신규 이사 견적 · ☎ 고객 연락처 비공개</div><dl>${rows.map(([k,v])=>`<dt>${k}</dt><dd>${v}</dd>`).join('')}</dl>`;qsum();go('s-vquote');}
+function qsum(){const t=(+$('q-base').value||0)+(+$('q-lad').value||0)+(+$('q-etc').value||0);$('q-total').textContent=won(t);}
+function vSend(){const t=(+$('q-base').value||0)+(+$('q-lad').value||0)+(+$('q-etc').value||0);if(!t){toast('기본 이사비를 입력해주세요');return;}toast(`고객에게 최종 견적 ${won(t)} 발송됨`);
+  if(S.vCase==='mine'&&S.quotes.length){S.quotes.push({n:'내 업체 (방금 입력)',total:t,base:+$('q-base').value,lad:+$('q-lad').value,etc:+$('q-etc').value,truck:$('q-truck').value,crew:$('q-crew').value,rating:'신규',cnt:0,extra:0,yrs:'—',ins:'확인 중',msg:''});renderCmp();}go('s-vendor');}
+const _go=go;go=function(id){if(id==='s-vendor')renderV();_go(id);};
+[['서울',128,61,84],['경기',97,44,80],['부산',42,15,71],['대구',35,17,79],['인천',27,9,63],['대전',19,6,52],['광주',16,5,44],['기타',48,12,31]].forEach(([r,q,v,p])=>{const tr=document.createElement('tr');tr.innerHTML=`<td>${r}</td><td>${q}</td><td>${v}</td><td><div style="display:flex;align-items:center;gap:8px;justify-content:flex-end"><div class="bar" style="width:60px"><i style="width:${p}%"></i></div>${p}%</div></td>`;$('a-tbl').appendChild(tr);});
+</script>
+</body>
+</html>
