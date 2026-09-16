@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>이 부동산, 내가 살 수 있을까? — 매입 자금계획 · 대출 비교</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F4F6F8; --card:#FFFFFF; --ink:#131A22; --ink2:#5A6570; --line:#E0E5EA;
+  --main:#0F2E4C; --main-ink:#FFFFFF; --acc:#0E7C86; --acc-bg:#E1F1F2; --good:#1F7A4D; --good-bg:#E4F2EA; --warn:#A2511B; --warn-bg:#F8EBDF; --field:#EAEEF2; --mono:ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0E1319; --card:#171E27; --ink:#EDF1F5; --ink2:#98A4B0; --line:#293440;
+    --main:#DCE6F0; --main-ink:#0E1319; --acc:#4FB8C0; --acc-bg:#14333A; --good:#5CC898; --good-bg:#17301F; --warn:#E0954E; --warn-bg:#3A2718; --field:#202932;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0E1319; --card:#171E27; --ink:#EDF1F5; --ink2:#98A4B0; --line:#293440;
+  --main:#DCE6F0; --main-ink:#0E1319; --acc:#4FB8C0; --acc-bg:#14333A; --good:#5CC898; --good-bg:#17301F; --warn:#E0954E; --warn-bg:#3A2718; --field:#202932;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:"Noto Sans KR",-apple-system,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased}
+.app{max-width:480px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column}
+.top{display:flex;align-items:center;gap:8px;padding:14px 16px 8px;position:sticky;top:0;background:var(--bg);z-index:5}
+.top button.bk{background:none;border:0;color:var(--ink);font-size:22px;line-height:1;padding:4px 8px 4px 0;cursor:pointer}
+.top .t{font-weight:700;font-size:16px}
+.top .step{margin-left:auto;font-size:13px;color:var(--ink2);font-variant-numeric:tabular-nums}
+.top .lnk{margin-left:auto;font-size:13px;color:var(--ink2);text-decoration:underline;background:none;border:0;padding:0;cursor:pointer;font-family:inherit}
+.prog{height:3px;background:var(--line);margin:0 16px}.prog i{display:block;height:100%;background:var(--acc)}
+.screen{display:none;flex:1;flex-direction:column}.screen.on{display:flex}
+.body{padding:12px 20px 130px;flex:1}
+h1{font-size:30px;line-height:1.25;font-weight:900;letter-spacing:-0.02em;word-break:keep-all}
+h2{font-size:22px;line-height:1.3;font-weight:700;letter-spacing:-0.01em;word-break:keep-all}
+h3{font-size:16px;font-weight:700;margin-top:22px;word-break:keep-all}
+p.sub{color:var(--ink2);font-size:15px;word-break:keep-all;margin-top:8px}
+.bottom{position:fixed;left:0;right:0;bottom:0;padding:12px 20px calc(12px + env(safe-area-inset-bottom));background:linear-gradient(to top,var(--bg) 70%,transparent);pointer-events:none}
+.bottom>*{max-width:440px;margin:0 auto;pointer-events:auto}
+.btn{display:block;width:100%;border:0;border-radius:14px;padding:17px;font:inherit;font-weight:700;font-size:17px;cursor:pointer;background:var(--main);color:var(--main-ink);text-align:center}
+.btn.ghost{background:var(--card);color:var(--ink);border:1.5px solid var(--line);margin-top:8px}
+.btn:focus-visible,input:focus-visible,select:focus-visible,.chip:focus-visible,.opt:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+label.f{display:block;margin-top:16px;font-size:14px;font-weight:500;color:var(--ink2)}
+input,select{width:100%;margin-top:6px;border:0;background:var(--field);color:var(--ink);border-radius:12px;padding:14px;font:inherit;font-size:17px}
+.row2{display:flex;gap:10px}.row2>*{flex:1}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.chip{border:1.5px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:9px 14px;font:inherit;font-size:14px;cursor:pointer}
+.chip.sel{border-color:var(--main);background:var(--main);color:var(--main-ink)}
+.opt{display:block;width:100%;text-align:left;border:1.5px solid var(--line);background:var(--card);color:var(--ink);border-radius:14px;padding:13px 16px;margin-top:8px;font:inherit;cursor:pointer}
+.opt.sel{border-color:var(--acc);box-shadow:inset 0 0 0 1px var(--acc)}
+.opt b{display:block;font-size:15px}.opt span{display:block;font-size:12px;color:var(--ink2);margin-top:2px;word-break:keep-all}
+.panel{background:var(--card);border-radius:18px;padding:20px;margin-top:16px;border:1px solid var(--line)}
+.panel .k{font-size:13px;color:var(--ink2)}
+.money{font-size:32px;font-weight:900;letter-spacing:-0.03em;font-variant-numeric:tabular-nums;line-height:1.15;word-break:keep-all}
+.brk div{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px dashed var(--line);font-size:15px;font-variant-numeric:tabular-nums}
+.brk div:last-child{border:0}.brk div.tot{font-weight:900;font-size:17px}
+.brk span:first-child{color:var(--ink2)}.brk div.tot span:first-child{color:var(--ink)}
+.note{font-size:13px;color:var(--ink2);margin-top:14px;word-break:keep-all;line-height:1.55}
+.legal{margin-top:14px;background:var(--warn-bg);color:var(--ink);border-radius:12px;padding:12px 14px;font-size:13px;word-break:keep-all;line-height:1.55}
+.legal b{color:var(--warn)}
+.pill{display:inline-block;background:var(--acc-bg);color:var(--acc);font-weight:700;font-size:12px;border-radius:8px;padding:3px 8px}
+.pill.g{background:var(--good-bg);color:var(--good)}.pill.w{background:var(--warn-bg);color:var(--warn)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin-top:12px}
+.card .hd{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+.card .nm{font-weight:700;font-size:16px}.card .nm small{display:block;font-weight:400;font-size:12px;color:var(--ink2)}
+.card .rate{font-size:24px;font-weight:900;font-variant-numeric:tabular-nums;letter-spacing:-0.02em;white-space:nowrap}
+.card .rate em{font-style:normal;font-size:11px;color:var(--ink2);font-weight:500;display:block;text-align:right}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:12px}
+.stats div{background:var(--field);border-radius:10px;padding:8px 4px;text-align:center}
+.stats b{display:block;font-size:14px;font-variant-numeric:tabular-nums}.stats span{font-size:11px;color:var(--ink2)}
+.why{margin-top:10px;background:var(--acc-bg);border-radius:10px;padding:10px 12px;font-size:12px;color:var(--ink);word-break:keep-all;line-height:1.5}
+.why b{color:var(--acc)}
+.acts{display:flex;gap:8px;margin-top:12px}
+.acts button{flex:1;border:1.5px solid var(--line);background:none;color:var(--ink);border-radius:10px;padding:10px;font:inherit;font-size:14px;cursor:pointer}
+.acts button.pri{background:var(--main);color:var(--main-ink);border-color:var(--main);font-weight:700}
+.sortbar{display:flex;gap:6px;margin-top:12px;overflow-x:auto;padding-bottom:4px}.sortbar .chip{white-space:nowrap;padding:7px 12px;font-size:13px}
+.scope{margin-top:12px;background:var(--field);border-radius:12px;padding:12px 14px;font-size:13px}
+.scope div{display:flex;justify-content:space-between;padding:3px 0;font-variant-numeric:tabular-nums}
+.scope details{margin-top:6px}.scope summary{cursor:pointer;color:var(--acc);font-weight:700}
+.scope ul{list-style:none;margin-top:6px}.scope li{display:flex;justify-content:space-between;padding:4px 0;border-top:1px dashed var(--line);color:var(--ink2)}
+.tbl{overflow-x:auto;margin-top:12px;border:1px solid var(--line);border-radius:14px;background:var(--card)}
+table{border-collapse:collapse;width:100%;font-size:13px;font-variant-numeric:tabular-nums;white-space:nowrap}
+th,td{padding:9px 12px;text-align:right;border-bottom:1px solid var(--line)}th:first-child,td:first-child{text-align:left;position:sticky;left:0;background:var(--card)}
+thead th{font-weight:700}tr:last-child td{border:0}
+.tl{margin-top:16px;border-left:2px solid var(--line);padding-left:16px}
+.tl div{position:relative;padding:6px 0 14px;color:var(--ink2);font-size:15px}
+.tl div::before{content:"";position:absolute;left:-23px;top:12px;width:10px;height:10px;border-radius:50%;background:var(--line)}
+.tl div.done{color:var(--ink);font-weight:500}.tl div.done::before{background:var(--good)}
+.tl div.now{color:var(--ink);font-weight:700}.tl div.now::before{background:var(--acc);box-shadow:0 0 0 4px color-mix(in srgb,var(--acc) 30%,transparent)}
+.sum dl{display:grid;grid-template-columns:1fr auto;gap:8px 16px;font-size:15px}
+.sum dt{color:var(--ink2)}.sum dd{text-align:right;font-weight:700;font-variant-numeric:tabular-nums}.sum dd.big{font-size:22px;font-weight:900}
+.mode{display:flex;background:var(--field);border-radius:12px;padding:4px;margin-top:10px}
+.mode button{flex:1;border:0;background:none;color:var(--ink2);border-radius:9px;padding:9px;font:inherit;font-size:13px;cursor:pointer}
+.mode button.on{background:var(--card);color:var(--ink);font-weight:700;box-shadow:0 1px 3px rgba(0,0,0,.1)}
+pre{font-family:var(--mono);font-size:11px;line-height:1.5;background:var(--field);border-radius:12px;padding:12px;overflow-x:auto;margin-top:10px;white-space:pre}
+.db{display:grid;grid-template-columns:1fr auto 1fr;gap:8px;align-items:center;margin-top:12px}
+.db .box{background:var(--field);border-radius:12px;padding:12px;font-size:12px;text-align:center}
+.db .box b{display:block;font-size:13px}
+.db .x{color:var(--warn);font-weight:900;font-size:22px;text-align:center}
+.toast{position:fixed;top:14px;left:50%;transform:translate(-50%,-80px);background:var(--ink);color:var(--bg);padding:12px 18px;border-radius:12px;font-size:14px;max-width:360px;width:calc(100% - 40px);box-shadow:0 8px 30px rgba(0,0,0,.25);transition:transform .35s;z-index:20;word-break:keep-all}
+.toast.show{transform:translate(-50%,0)}
+.hero{padding:36px 0 10px}
+.err{color:var(--warn);font-size:13px;margin-top:8px;display:none}
+.pv{font-size:13px;color:var(--ink2);margin-top:6px;font-variant-numeric:tabular-nums}
+@media (prefers-reduced-motion: reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="app">
+
+<section class="screen on" id="s-home">
+  <div class="top"><span class="t">매입 자금계획</span><button class="lnk" onclick="go('s-admin')">관리자</button></div>
+  <div class="body hero">
+    <h1>사고 싶은 부동산이<br>있으세요?</h1>
+    <p class="sub">주소나 아파트명과 예상 매수가를 입력하면 필요한 자기자본과 대출 가능 범위를 먼저 계산해 드립니다.</p>
+    <div class="mode"><button class="on" onclick="setMode('home',this)">주택·아파트</button><button onclick="setMode('comm',this)">상가·건물</button></div>
+    <label class="f">주소 또는 아파트명<input id="addr" value="대구 수성구 범어동 ○○아파트"></label>
+    <label class="f">예상 매수가<input id="price" value="12억" placeholder="예: 12억, 1200000000" oninput="pv()"><div class="pv" id="price-pv"></div></label>
+    <div id="comm-in" style="display:none">
+      <div class="row2"><label class="f">승계 보증금<input id="dep" value="3억"></label><label class="f">월세<input id="rent" value="1,500만"></label></div>
+    </div>
+    <div class="err" id="e0">매수가를 숫자로 입력해주세요. 예: 12억, 9.5억, 950000000</div>
+    <div class="note">비교 대상은 현재 플랫폼과 제휴되어 비교 가능한 금융회사 17곳의 상품입니다. 시장 전체 금융회사가 아닙니다.</div>
+  </div>
+  <div class="bottom"><button class="btn" onclick="v0()">내 자금계획 계산하기</button></div>
+</section>
+
+<section class="screen" id="s-info">
+  <div class="top"><button class="bk" onclick="go('s-home')" aria-label="뒤로">‹</button><span class="t">내 정보</span><span class="step">1 / 2</span></div><div class="prog"><i style="width:50%"></i></div>
+  <div class="body">
+    <h2>최소한만 여쭤볼게요</h2>
+    <p class="sub">신용정보 조회는 나중에 동의를 받아 진행합니다. 지금은 입력값으로 예상 범위만 계산합니다.</p>
+    <label class="f">부동산 종류</label>
+    <div class="chips" data-group="ptype"><button class="chip sel">아파트</button><button class="chip">주택</button><button class="chip">오피스텔</button><button class="chip">상가</button><button class="chip">건물</button><button class="chip">토지</button></div>
+    <label class="f">구매 목적</label>
+    <div class="chips" data-group="purpose"><button class="chip sel">실거주</button><button class="chip">투자</button><button class="chip">사업용</button></div>
+    <div class="row2"><label class="f">연소득 (근로)<input id="inc" value="1억"></label><label class="f">사업소득<input id="binc" value="0"></label></div>
+    <label class="f">보유 주택 수</label>
+    <div class="chips" data-group="houses"><button class="chip sel">무주택</button><button class="chip">1주택</button><button class="chip">2주택 이상</button></div>
+    <div class="row2"><label class="f">기존 대출 잔액<input id="debt" value="5천만"></label><label class="f">희망 대출금액<input id="want" value="5억"></label></div>
+    <label class="f">잔금일<input type="date" id="due" value="2026-12-15"></label>
+    <div class="err" id="e1">금액 항목을 숫자로 입력해주세요.</div>
+  </div>
+  <div class="bottom"><button class="btn" onclick="plan()">자금계획 보기</button></div>
+</section>
+
+<section class="screen" id="s-plan">
+  <div class="top"><button class="bk" onclick="go('s-info')" aria-label="뒤로">‹</button><span class="t">자금계획</span><span class="step">2 / 2</span></div><div class="prog"><i style="width:100%"></i></div>
+  <div class="body">
+    <h2 id="pl-title"></h2>
+    <div class="panel"><div class="k">예상 필요 자기자본</div><div class="money" id="pl-equity"></div>
+      <div class="brk" id="pl-brk" style="margin-top:14px"></div>
+      <div class="note" id="pl-note"></div></div>
+    <div class="legal"><b>예시 규칙</b> LTV·DSR·스트레스 금리 등은 프로토타입용 가정값입니다. 실제 서비스는 시행 중인 규제와 금융회사별 취급 기준으로 계산하며, 규칙은 알고리즘 버전으로 관리됩니다.</div>
+  </div>
+  <div class="bottom"><button class="btn" onclick="compare()">실제 대출조건 비교하기</button></div>
+</section>
+
+<section class="screen" id="s-cmp">
+  <div class="top"><button class="bk" onclick="go('s-plan')" aria-label="뒤로">‹</button><span class="t">대출 비교</span></div>
+  <div class="body">
+    <h2>무엇이 가장 중요하세요?</h2>
+    <p class="sub">고르신 기준 하나로만 정렬합니다. 플랫폼이 금융회사로부터 받는 수수료는 정렬에 반영되지 않습니다.</p>
+    <div class="sortbar" id="sorts"></div>
+    <div class="scope" id="scope"></div>
+    <div id="c-cards"></div>
+    <div class="note">예상 금리·한도는 입력값 기준 가조회 결과이며, 금융회사 심사 결과에 따라 달라질 수 있습니다.</div>
+  </div>
+</section>
+
+<section class="screen" id="s-detail">
+  <div class="top"><button class="bk" onclick="go('s-cmp')" aria-label="뒤로">‹</button><span class="t">상품 상세</span></div>
+  <div class="body" id="d-body"></div>
+  <div class="bottom"><button class="btn" id="d-btn">이 금융회사로 상담·심사 진행</button></div>
+</section>
+
+<section class="screen" id="s-apply">
+  <div class="top"><button class="bk" onclick="go('s-detail')" aria-label="뒤로">‹</button><span class="t">상담·심사 신청</span></div>
+  <div class="body">
+    <h2 id="a-title"></h2>
+    <div class="panel sum"><dl id="a-dl"></dl></div>
+    <label class="f">이름<input id="name" placeholder="홍길동"></label>
+    <label class="f">휴대전화<input id="phone" inputmode="tel" placeholder="010-0000-0000"></label>
+    <label class="f" style="display:flex;gap:10px;align-items:center;font-size:14px;color:var(--ink)"><input type="checkbox" checked style="width:auto;margin:0"> 개인(신용)정보 제3자 제공 및 조회에 동의합니다</label>
+    <div class="note">신청 시 선택한 금융회사에만 정보가 전달됩니다. 다른 상품 비교 결과는 그대로 남아 있습니다.</div>
+  </div>
+  <div class="bottom"><button class="btn" onclick="apply()">신청하기</button></div>
+</section>
+
+<section class="screen" id="s-done">
+  <div class="body" style="padding-top:48px">
+    <h2 id="z-title"></h2>
+    <p class="sub">금융회사 담당자가 확인 후 연락드립니다. 심사 결과에 따라 조건이 달라질 수 있어요.</p>
+    <div class="panel sum"><dl id="z-dl"></dl></div>
+    <div class="tl" style="margin-top:24px"><div class="done">자금계획</div><div class="done">대출 비교</div><div class="done">상담·심사 신청</div><div class="now">금융회사 심사</div><div>실행 · 잔금</div></div>
+    <div class="note">잔금 후에는 법무·등기, 취득세, 보험, 인테리어, 이사까지 이어집니다. (다음 단계)</div>
+  </div>
+  <div class="bottom"><button class="btn ghost" onclick="location.reload()">처음부터 다시</button></div>
+</section>
+
+<!-- 관리자 -->
+<section class="screen" id="s-admin">
+  <div class="top"><button class="bk" onclick="go('s-home')" aria-label="뒤로">‹</button><span class="t">관리자</span></div>
+  <div class="body">
+    <div class="mode"><button class="on" onclick="adminMode('algo',this)">알고리즘</button><button onclick="adminMode('log',this)">감사 로그</button><button onclick="adminMode('fun',this)">퍼널</button></div>
+    <div id="ad-algo">
+      <h3>알고리즘 버전 <span class="pill">v1.0.3</span></h3>
+      <div class="panel"><div class="k">DB 분리</div>
+        <div class="db"><div class="box"><b>A. 상품 DB</b>금리·한도·LTV·DSR·지역·담보·부대비용</div><div class="x">→</div><div class="box"><b>추천 엔진</b>필터 + 사용자 선택 정렬</div></div>
+        <div class="db"><div class="box"><b>B. 수익 DB</b>금융사별 플랫폼 수수료</div><div class="x">✕</div><div class="box" style="opacity:.5"><b>추천 엔진</b>읽기 권한 없음</div></div>
+        <div class="note">수수료 가중치 = 0. 엔진 코드는 수익 DB 스키마를 import하지 않습니다.</div></div>
+      <h3>정렬 프리셋 가중치</h3>
+      <div class="tbl"><table><thead><tr><th>프리셋</th><th>금리</th><th>한도</th><th>월상환</th><th>부대비용</th><th>중도상환</th><th>기간</th><th>수수료</th></tr></thead><tbody>
+        <tr><td>금리 중심</td><td>70</td><td>0</td><td>0</td><td>15</td><td>15</td><td>0</td><td><b>0</b></td></tr>
+        <tr><td>한도 중심</td><td>20</td><td>70</td><td>0</td><td>10</td><td>0</td><td>0</td><td><b>0</b></td></tr>
+        <tr><td>월 부담 중심</td><td>20</td><td>0</td><td>60</td><td>0</td><td>0</td><td>20</td><td><b>0</b></td></tr>
+      </tbody></table></div>
+      <div class="note">가중치·필터 기준은 설정값으로 버전관리되며, 코스콤 검증·규제 검토 과정에서 조정합니다.</div>
+      <h3>순위 수동 조정</h3>
+      <div class="card" style="opacity:.6"><div class="hd"><div class="nm">"A은행 1위로 올리기"</div><span class="pill w">기능 없음</span></div><div class="note" style="margin-top:6px">관리자 화면에 이 기능을 만들지 않습니다. 광고는 비교 결과와 분리된 별도 영역에서만.</div></div>
+      <div class="legal"><b>등록 전제</b> 실제 대출상품 비교·추천 출시 전 대출성 금융상품판매대리·중개업 등록(금소법 제12조)이 필요하며, 온라인 대출모집법인 등록요건에 이해상충 방지 알고리즘 및 코스콤 검증 결과 제출이 포함됩니다.</div>
+    </div>
+    <div id="ad-log" style="display:none">
+      <h3>최근 검색 감사 로그</h3>
+      <p class="sub">"왜 이 고객에게 이 상품이 첫 번째였습니까?"에 재현 가능하게 답하기 위한 기록입니다.</p>
+      <pre id="log-pre">아직 검색 기록이 없습니다. 소비자 화면에서 비교를 실행하면 여기 기록됩니다.</pre>
+    </div>
+    <div id="ad-fun" style="display:none">
+      <h3>퍼널 (첫 30일 가설)</h3>
+      <div class="tbl"><table><thead><tr><th>단계</th><th>인원</th><th>전환</th></tr></thead><tbody id="fun-tbl"></tbody></table></div>
+      <div class="note">첫 KPI는 대출 실행액이 아니라 단계별 전환율과 실행 1건당 CAC입니다.</div>
+    </div>
+  </div>
+  <div class="bottom"><button class="btn ghost" onclick="go('s-home')">소비자 화면으로</button></div>
+</section>
+
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const $=id=>document.getElementById(id);
+const S={mode:'home',price:0,dep:0,rent:0,ptype:'아파트',purpose:'실거주',houses:'무주택',inc:0,binc:0,debt:0,want:0,plan:null,sort:'rate',cands:[],excluded:[],pick:null,log:null};
+const ALGO='1.0.3';
+// ---- 규칙 (예시 가정값, 버전관리 대상) ----
+const RULES={ltv:{'무주택':0.70,'1주택':0.60,'2주택 이상':0.30},ltvComm:0.60,dsr:0.40,stress:0.015,term:30,existingRate:0.06,acqCost:0.035};
+// ---- 제휴 상품 DB (A) ---- 수수료는 별도 FEE_DB에 있고 엔진은 읽지 않음
+const PRODUCTS=[
+ {f:'A은행',n:'주택담보대출 고정형',rate:3.82,fixed:'고정(5년)',ltv:0.70,dsr:0.40,minInc:3e7,types:['아파트','주택','오피스텔'],regions:['전국'],fee:0.4,pre:1.2,maxLoan:1e9},
+ {f:'B은행',n:'아파트론 변동',rate:3.91,fixed:'변동(6개월)',ltv:0.70,dsr:0.40,minInc:2e7,types:['아파트'],regions:['전국'],fee:0.3,pre:1.0,maxLoan:1.5e9},
+ {f:'C보험',n:'주택담보대출',rate:4.02,fixed:'변동(12개월)',ltv:0.70,dsr:0.45,minInc:3e7,types:['아파트','주택'],regions:['전국'],fee:0.5,pre:1.4,maxLoan:2e9},
+ {f:'D은행',n:'혼합형 주담대',rate:3.95,fixed:'혼합(5년 고정 후 변동)',ltv:0.65,dsr:0.40,minInc:4e7,types:['아파트','주택','오피스텔'],regions:['수도권'],fee:0.3,pre:1.2,maxLoan:1.2e9},
+ {f:'E저축은행',n:'주택담보대출',rate:5.4,fixed:'변동',ltv:0.80,dsr:0.50,minInc:2e7,types:['아파트','주택','오피스텔','상가'],regions:['전국'],fee:0.8,pre:2.0,maxLoan:8e8},
+ {f:'F은행',n:'실수요자 우대 주담대',rate:3.78,fixed:'고정(5년)',ltv:0.70,dsr:0.40,minInc:5e7,types:['아파트'],regions:['전국'],fee:0.4,pre:1.2,maxLoan:6e8,firstOnly:true},
+ {f:'G은행',n:'주택담보대출',rate:4.11,fixed:'변동(6개월)',ltv:0.70,dsr:0.40,minInc:3e7,types:['아파트','주택'],regions:['전국'],fee:0.2,pre:0.8,maxLoan:1e9},
+ {f:'H은행',n:'오피스텔 담보대출',rate:4.35,fixed:'변동',ltv:0.60,dsr:0.40,minInc:3e7,types:['오피스텔'],regions:['전국'],fee:0.4,pre:1.2,maxLoan:8e8},
+ {f:'I캐피탈',n:'부동산 담보대출',rate:6.2,fixed:'변동',ltv:0.75,dsr:0.55,minInc:1e7,types:['아파트','주택','상가','건물'],regions:['전국'],fee:1.0,pre:2.0,maxLoan:1e9},
+ {f:'J은행',n:'주택담보대출',rate:3.99,fixed:'고정(10년)',ltv:0.70,dsr:0.40,minInc:3e7,types:['아파트','주택'],regions:['전국'],fee:0.5,pre:1.5,maxLoan:9e8},
+ {f:'K은행',n:'상가·건물 담보대출',rate:4.9,fixed:'변동',ltv:0.60,dsr:0.40,minInc:3e7,types:['상가','건물'],regions:['전국'],fee:0.5,pre:1.5,maxLoan:3e9},
+ {f:'L은행',n:'주택담보대출',rate:4.05,fixed:'변동(12개월)',ltv:0.70,dsr:0.40,minInc:3e7,types:['아파트','주택'],regions:['영남'],fee:0.3,pre:1.0,maxLoan:1e9},
+ {f:'M보험',n:'주택담보대출',rate:4.18,fixed:'고정(5년)',ltv:0.70,dsr:0.45,minInc:3e7,types:['아파트'],regions:['전국'],fee:0.4,pre:1.2,maxLoan:1.2e9},
+ {f:'N은행',n:'주택담보대출',rate:3.88,fixed:'혼합',ltv:0.70,dsr:0.40,minInc:6e7,types:['아파트','주택'],regions:['수도권'],fee:0.4,pre:1.2,maxLoan:1.5e9},
+ {f:'O은행',n:'사업자 부동산 담보',rate:4.6,fixed:'변동',ltv:0.65,dsr:0.40,minInc:3e7,types:['상가','건물','토지'],regions:['전국'],fee:0.5,pre:1.5,maxLoan:5e9},
+ {f:'P저축은행',n:'주택담보대출',rate:5.9,fixed:'변동',ltv:0.80,dsr:0.50,minInc:1e7,types:['아파트','주택','오피스텔'],regions:['전국'],fee:0.9,pre:2.0,maxLoan:5e8},
+ {f:'Q은행',n:'주택담보대출',rate:4.0,fixed:'고정(5년)',ltv:0.70,dsr:0.40,minInc:3e7,types:['아파트','주택'],regions:['전국'],fee:0.4,pre:1.2,maxLoan:2e9,minLoan:6e8},
+];
+// B. 수익 DB — 프로토타입에서도 엔진 함수는 이 객체를 참조하지 않음 (관리자 화면 전용)
+const FEE_DB={'A은행':1000000,'B은행':300000,'C보험':700000};
+
+function go(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on'));$(id).classList.add('on');window.scrollTo(0,0);}
+function toast(t){const el=$('toast');el.textContent=t;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),2800);}
+function parseKRW(s){s=String(s).replace(/[,\s원]/g,'');if(s==='0'||s==='')return 0;let m=s.match(/^(\d+(?:\.\d+)?)억(?:(\d+(?:\.\d+)?)천)?(?:(\d+)만)?$/);if(m){let v=parseFloat(m[1])*1e8;if(m[2])v+=parseFloat(m[2])*1e7;if(m[3])v+=parseInt(m[3])*1e4;return Math.round(v);}m=s.match(/^(\d+(?:\.\d+)?)천만?$/);if(m)return Math.round(parseFloat(m[1])*1e7);m=s.match(/^(\d+(?:\.\d+)?)만$/);if(m)return Math.round(parseFloat(m[1])*1e4);if(/^\d+$/.test(s))return parseInt(s);return NaN;}
+const eok=v=>{if(v<=0)return '0원';const e=v/1e8;if(e>=1){const w=Math.round((v%1e8)/1e6)/100;return (Math.floor(e)+(w>=1?1:0))+(w>=1?'억':'억')+(v%1e8>=5e5?' '+Math.round((v%1e8)/1e4).toLocaleString()+'만원':'원');}return Math.round(v/1e4).toLocaleString()+'만원';};
+const man=v=>Math.round(v/1e4).toLocaleString()+'만원';
+const pmt=(P,r,n)=>{r=r/12;return P*r/(1-Math.pow(1+r,-n));};
+document.querySelectorAll('.chips[data-group]').forEach(g=>g.addEventListener('click',e=>{const b=e.target.closest('.chip');if(!b)return;g.querySelectorAll('.chip').forEach(c=>c.classList.remove('sel'));b.classList.add('sel');S[g.dataset.group]=b.textContent;}));
+function setMode(m,el){S.mode=m;document.querySelectorAll('#s-home .mode button').forEach(b=>b.classList.remove('on'));el.classList.add('on');$('comm-in').style.display=m==='comm'?'':'none';
+  if(m==='comm'){$('addr').value='서울 송파구 ○○로 상가건물';$('price').value='30억';}else{$('addr').value='대구 수성구 범어동 ○○아파트';$('price').value='12억';}pv();}
+function pv(){const v=parseKRW($('price').value);$('price-pv').textContent=isNaN(v)||!v?'':eok(v);}pv();
+function v0(){const v=parseKRW($('price').value);if(isNaN(v)||v<=0){$('e0').style.display='block';return;}$('e0').style.display='none';S.price=v;
+  if(S.mode==='comm'){S.dep=parseKRW($('dep').value)||0;S.rent=parseKRW($('rent').value)||0;document.querySelectorAll('[data-group="ptype"] .chip').forEach(c=>c.classList.toggle('sel',c.textContent==='건물'));S.ptype='건물';document.querySelectorAll('[data-group="purpose"] .chip').forEach(c=>c.classList.toggle('sel',c.textContent==='사업용'));S.purpose='사업용';$('want').value='18억';}
+  go('s-info');}
+
+// ---- STEP 4 자금계획 ----
+function plan(){const f=['inc','binc','debt','want'].map(k=>parseKRW($(k).value));if(f.some(isNaN)){$('e1').style.display='block';return;}$('e1').style.display='none';[S.inc,S.binc,S.debt,S.want]=f;
+  const income=S.inc+S.binc;const ltv=S.mode==='comm'?RULES.ltvComm:(RULES.ltv[S.houses]);
+  const ltvCap=S.price*ltv;
+  // DSR: 연소득×DSR − 기존대출 연상환 → 스트레스 금리 30년 원리금 기준 한도
+  const capYear=Math.max(0,income*RULES.dsr-S.debt*RULES.existingRate);
+  const perWon=pmt(1,0.04+RULES.stress,RULES.term*12)*12;
+  const dsrCap=capYear/perWon;
+  const rentCap=S.mode==='comm'?(S.rent*12/0.05):Infinity; // 상가: RTI 개념 (예시)
+  const hi=Math.min(ltvCap,dsrCap,rentCap);const lo=hi*0.88;
+  const acq=S.price*RULES.acqCost;
+  S.plan={ltv,ltvCap,dsrCap,rentCap,lo,hi,acq,income};
+  $('pl-title').textContent=`${eok(S.price)} ${S.ptype} 구매 예상`;
+  const eqLo=S.price-(S.mode==='comm'?S.dep:0)-hi,eqHi=S.price-(S.mode==='comm'?S.dep:0)-lo;
+  $('pl-equity').textContent=`${eok(eqLo)} ~ ${eok(eqHi)}`;
+  let rows=[['매매가격',eok(S.price)]];
+  if(S.mode==='comm')rows.push(['승계 보증금','−'+eok(S.dep)]);
+  rows.push(['예상 대출 가능범위','−'+eok(lo)+' ~ '+eok(hi)],['취득 관련 비용 (별도, 약)','+'+eok(acq)]);
+  rows.push(['총 필요 현금 (약)',`${eok(eqLo+acq)} ~ ${eok(eqHi+acq)}`]);
+  $('pl-brk').innerHTML=rows.map(([k,v],i)=>`<div class="${i===rows.length-1?'tot':''}"><span>${k}</span><span>${v}</span></div>`).join('');
+  const bind=hi===ltvCap?`LTV ${Math.round(ltv*100)}%`:hi===dsrCap?`DSR ${Math.round(RULES.dsr*100)}% (스트레스 +${RULES.stress*100}%p)`:'임대수익 기준';
+  $('pl-note').textContent=`대출 상한을 결정한 조건: ${bind}. 희망 대출 ${eok(S.want)}${S.want>hi?'은 예상 범위를 넘습니다 — 자기자본을 늘리거나 조건을 조정해야 합니다.':'은 예상 범위 안입니다.'}${S.mode==='comm'&&S.rent?` 월세 ${man(S.rent)} 기준 연 임대수익 ${eok(S.rent*12)}.`:''}`;
+  go('s-plan');}
+
+// ---- STEP 5~7 필터 → 사용자 정렬 ----
+const SORTS=[['rate','금리 낮은 순'],['limit','한도 높은 순'],['pay','월 상환액 낮은 순'],['pre','중도상환 부담 낮은 순'],['fixed','고정금리 우선']];
+$('sorts').innerHTML=SORTS.map(([k,l],i)=>`<button class="chip ${i===0?'sel':''}" onclick="setSort('${k}',this)">${l}</button>`).join('');
+function setSort(k,el){S.sort=k;document.querySelectorAll('#sorts .chip').forEach(c=>c.classList.remove('sel'));el.classList.add('sel');render();}
+function regionOf(addr){if(/서울|경기|인천/.test(addr))return '수도권';if(/대구|부산|울산|경북|경남/.test(addr))return '영남';return '기타';}
+function compare(){
+  const addr=$('addr').value,reg=regionOf(addr),p=S.plan;const want=S.want||p.hi;
+  const cands=[],ex=[];const steps={'제휴 상품':PRODUCTS.length};let pool=PRODUCTS;
+  const step=(name,fn,reason)=>{const keep=[],drop=[];pool.forEach(x=>(fn(x)?keep:drop).push(x));drop.forEach(x=>ex.push({f:x.f,r:typeof reason==='function'?reason(x):reason}));pool=keep;steps[name]=pool.length;};
+  step('지역조건',x=>x.regions.includes('전국')||x.regions.includes(reg),'취급지역 아님');
+  step('담보종류',x=>x.types.includes(S.ptype),'해당 담보유형 미취급');
+  step('LTV 등 조건',x=>{const cap=S.price*Math.min(x.ltv,p.ltv);return cap>=want*0.9&&!(x.minLoan&&want<x.minLoan);},x=>x.minLoan&&want<x.minLoan?'최소 대출금액 미달':'요청 대출금액이 LTV 한도 초과');
+  step('소득/DSR 조건',x=>p.income>=x.minInc&&(p.dsrCap*(x.dsr/RULES.dsr))>=want*0.9,x=>p.income<x.minInc?'소득 요건 미충족':'DSR 한도 초과');
+  step('금융회사별 취급조건',x=>!(x.firstOnly&&S.houses!=='무주택')&&x.maxLoan>=want*0.9,x=>x.firstOnly?'무주택 실수요자 전용':'최대 취급한도 초과');
+  pool.forEach(x=>{const limit=Math.min(S.price*Math.min(x.ltv,p.ltv),p.dsrCap*(x.dsr/RULES.dsr),x.maxLoan);const amt=Math.min(want,limit);cands.push({...x,limit,amt,pay:pmt(amt,x.rate/100,RULES.term*12)});});
+  S.cands=cands;S.excluded=ex;S.steps=steps;
+  S.log={ts:new Date().toISOString(),algo:ALGO,input:{addr,price:S.price,ptype:S.ptype,purpose:S.purpose,houses:S.houses,income:p.income,debt:S.debt,want},plan:{ltv:p.ltv,ltvCap:Math.round(p.ltvCap),dsrCap:Math.round(p.dsrCap)},filter_steps:steps,excluded:ex,fee_weight:0,sorts:[]};
+  render();go('s-cmp');}
+function render(){
+  const cs=[...S.cands];const key={rate:(a,b)=>a.rate-b.rate,limit:(a,b)=>b.limit-a.limit,pay:(a,b)=>a.pay-b.pay,pre:(a,b)=>a.pre-b.pre||a.rate-b.rate,fixed:(a,b)=>(b.fixed.startsWith('고정')-a.fixed.startsWith('고정'))||a.rate-b.rate}[S.sort];
+  cs.sort(key);const label=SORTS.find(s=>s[0]===S.sort)[1];
+  S.log.sorts.push({t:new Date().toISOString(),sort:S.sort,order:cs.map(c=>({f:c.f,rate:c.rate,limit:Math.round(c.limit),pay:Math.round(c.pay)}))});
+  $('scope').innerHTML=`<div><span>현재 플랫폼과 제휴되어 비교 가능한 금융회사</span><b>${PRODUCTS.length}곳</b></div><div><span>고객 조건으로 비교된 상품</span><b>${cs.length}개</b></div><div><span>조건상 제외된 상품</span><b>${S.excluded.length}개</b></div>
+    <details><summary>제외 이유 보기</summary><ul>${S.excluded.map(e=>`<li><span>${e.f}</span><span>${e.r}</span></li>`).join('')}</ul></details>
+    <details><summary>필터 단계</summary><ul>${Object.entries(S.steps).map(([k,v])=>`<li><span>${k}</span><span>${v}개</span></li>`).join('')}</ul></details>`;
+  $('c-cards').innerHTML=cs.length?cs.map((c,i)=>`<div class="card"><div class="hd"><div class="nm">${c.f}<small>${c.n} · ${c.fixed}</small></div><div class="rate">${c.rate.toFixed(2)}%<em>예상금리</em></div></div>
+    <div class="stats"><div><b>${eok(c.limit)}</b><span>예상한도</span></div><div><b>${man(c.pay)}</b><span>월상환액 (${eok(c.amt)} 기준)</span></div><div><b>${c.pre}%</b><span>중도상환수수료</span></div></div>
+    <div class="why"><b>왜 ${i+1}번째에 표시되나요?</b> 고객님이 선택한 '${label}' 기준으로 현재 비교 가능한 ${cs.length}개 상품 중 정렬되었습니다. 플랫폼이 금융회사로부터 받는 수수료는 이 정렬에 반영되지 않습니다.</div>
+    <div class="acts"><button onclick="openDetail('${c.f}')">상세조건</button><button class="pri" onclick="openDetail('${c.f}',true)">선택</button></div></div>`).join('')
+   :`<div class="card"><b>조건에 맞는 제휴 상품이 없습니다.</b><div class="note">희망 대출금액을 낮추거나 자기자본을 늘리면 후보가 생길 수 있습니다. 제외 이유를 확인해 보세요.</div></div>`;
+  $('log-pre').textContent=JSON.stringify(S.log,null,1).slice(0,4000);}
+function openDetail(f,direct){const c=S.cands.find(x=>x.f===f);S.pick=c;
+  $('d-body').innerHTML=`<h2>${c.f}</h2><p class="sub">${c.n}</p>
+    <div class="panel"><div class="k">예상금리</div><div class="money">${c.rate.toFixed(2)}%</div>
+    <div class="brk" style="margin-top:12px"><div><span>금리 유형</span><span>${c.fixed}</span></div><div><span>예상 한도</span><span>${eok(c.limit)}</span></div><div><span>신청 예정 금액</span><span>${eok(c.amt)}</span></div><div><span>기간 · 상환방식</span><span>${RULES.term}년 · 원리금균등</span></div><div><span>예상 월상환액</span><span>${man(c.pay)}</span></div><div><span>부대비용 (약)</span><span>${c.fee}%</span></div><div><span>중도상환수수료</span><span>${c.pre}% (3년)</span></div><div><span>취급지역</span><span>${c.regions.join('·')}</span></div><div><span>담보</span><span>${c.types.join('·')}</span></div></div></div>
+    <div class="note">가조회 결과입니다. 실제 금리·한도는 신용정보 조회와 금융회사 심사 후 확정됩니다.</div>`;
+  $('d-btn').onclick=()=>openApply();if(direct)openApply();else go('s-detail');}
+function openApply(){const c=S.pick;$('a-title').textContent=`${c.f}에 상담·심사를 신청할게요`;$('a-dl').innerHTML=`<dt>상품</dt><dd>${c.n}</dd><dt>예상금리</dt><dd>${c.rate.toFixed(2)}%</dd><dt>신청 금액</dt><dd class="big">${eok(c.amt)}</dd><dt>예상 월상환액</dt><dd>${man(c.pay)}</dd><dt>잔금일</dt><dd>${$('due').value}</dd>`;go('s-apply');}
+function apply(){if(!$('phone').value.trim()){toast('휴대전화 번호를 입력해주세요');return;}const c=S.pick;$('z-title').textContent='신청이 접수됐어요';$('z-dl').innerHTML=`<dt>금융회사</dt><dd>${c.f}</dd><dt>상품</dt><dd>${c.n}</dd><dt>신청 금액</dt><dd class="big">${eok(c.amt)}</dd><dt>정렬 기준 (기록)</dt><dd>${SORTS.find(s=>s[0]===S.sort)[1]}</dd><dt>알고리즘 버전</dt><dd>v${ALGO}</dd>`;go('s-done');}
+function adminMode(m,el){document.querySelectorAll('#s-admin .mode button').forEach(b=>b.classList.remove('on'));el.classList.add('on');['algo','log','fun'].forEach(k=>$('ad-'+k).style.display=k===m?'':'none');}
+[['부동산 입력',10000],['자금계획 완료',6000],['대출비교',3000],['상품 상세조회',1500],['상담/신청',600],['심사',300],['실행',150]].forEach(([n,v],i,a)=>{const tr=document.createElement('tr');tr.innerHTML=`<td>${n}</td><td>${v.toLocaleString()}</td><td>${i?Math.round(v/a[i-1][1]*100)+'%':'—'}</td>`;$('fun-tbl').appendChild(tr);});
+</script>
+</body>
+</html>
