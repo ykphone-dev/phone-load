@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>인테리어 비교견적 — 우리 집 인테리어, 얼마가 적당할까요?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F6F5F2; --card:#FFFFFF; --ink:#1B1F1D; --ink2:#5F6864; --line:#E2E4E0;
+  --main:#1E5E4B; --main-ink:#FFFFFF; --good:#1F7A4D; --good-bg:#E4F2EA; --warn:#B4541E; --warn-bg:#F9EBE2; --field:#EEEFEB;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#111513; --card:#1B211E; --ink:#EDF0EE; --ink2:#9AA59F; --line:#2C3531;
+    --main:#3E9C7E; --main-ink:#0B120F; --good:#5CC898; --good-bg:#17301F; --warn:#E5814A; --warn-bg:#3A2418; --field:#242C28;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#111513; --card:#1B211E; --ink:#EDF0EE; --ink2:#9AA59F; --line:#2C3531;
+  --main:#3E9C7E; --main-ink:#0B120F; --good:#5CC898; --good-bg:#17301F; --warn:#E5814A; --warn-bg:#3A2418; --field:#242C28;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:"Noto Sans KR",-apple-system,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased}
+.app{max-width:480px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column}
+.top{display:flex;align-items:center;gap:8px;padding:14px 16px 8px;position:sticky;top:0;background:var(--bg);z-index:5}
+.top button{background:none;border:0;color:var(--ink);font-size:22px;line-height:1;padding:4px 8px 4px 0;cursor:pointer}
+.top .t{font-weight:700;font-size:16px}
+.top .step{margin-left:auto;font-size:13px;color:var(--ink2);font-variant-numeric:tabular-nums}
+.prog{height:3px;background:var(--line);margin:0 16px}.prog i{display:block;height:100%;background:var(--main);transition:width .3s}
+.screen{display:none;flex:1;flex-direction:column}.screen.on{display:flex}
+.body{padding:12px 20px 130px;flex:1}
+h1{font-size:30px;line-height:1.25;font-weight:900;letter-spacing:-0.02em;word-break:keep-all}
+h2{font-size:22px;line-height:1.3;font-weight:700;letter-spacing:-0.01em;word-break:keep-all}
+h3{font-size:17px;font-weight:700;margin-top:24px;word-break:keep-all}
+p.sub{color:var(--ink2);font-size:15px;word-break:keep-all;margin-top:8px}
+.bottom{position:fixed;left:0;right:0;bottom:0;padding:12px 20px calc(12px + env(safe-area-inset-bottom));background:linear-gradient(to top,var(--bg) 70%,transparent);pointer-events:none}
+.bottom>*{max-width:440px;margin:0 auto;pointer-events:auto}
+.btn{display:block;width:100%;border:0;border-radius:14px;padding:17px;font:inherit;font-weight:700;font-size:17px;cursor:pointer;background:var(--main);color:var(--main-ink);text-align:center}
+.btn:disabled{opacity:.4;cursor:default}
+.btn.ghost{background:var(--card);color:var(--ink);border:1.5px solid var(--line);margin-top:8px}
+.btn:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,.chip:focus-visible,.opt:focus-visible{outline:3px solid var(--main);outline-offset:2px}
+label.f{display:block;margin-top:18px;font-size:14px;font-weight:500;color:var(--ink2)}
+input,select,textarea{width:100%;margin-top:6px;border:0;background:var(--field);color:var(--ink);border-radius:12px;padding:14px;font:inherit;font-size:17px}
+.row{display:flex;gap:10px}.row>*{flex:1}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.chip{border:1.5px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:9px 14px;font:inherit;font-size:14px;cursor:pointer}
+.chip.sel{border-color:var(--main);background:var(--main);color:var(--main-ink)}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
+.grid .chip{border-radius:12px;padding:12px 6px;text-align:center}
+.opt{display:block;width:100%;text-align:left;border:1.5px solid var(--line);background:var(--card);color:var(--ink);border-radius:14px;padding:14px 16px;margin-top:10px;font:inherit;cursor:pointer}
+.opt.sel{border-color:var(--main);box-shadow:inset 0 0 0 1px var(--main)}
+.opt b{display:block;font-size:16px}.opt span{display:block;font-size:13px;color:var(--ink2);margin-top:2px;word-break:keep-all}
+.money{font-size:36px;font-weight:900;letter-spacing:-0.03em;font-variant-numeric:tabular-nums;line-height:1.15;word-break:keep-all}
+.panel{background:var(--card);border-radius:18px;padding:20px;margin-top:16px;border:1px solid var(--line)}
+.panel .k{font-size:13px;color:var(--ink2)}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.tags span{font-size:12px;border:1px solid var(--line);border-radius:6px;padding:3px 8px;color:var(--ink2)}
+.brk{margin-top:8px}
+.brk div{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px dashed var(--line);font-size:15px;font-variant-numeric:tabular-nums}
+.brk div:last-child{border:0}.brk div span:last-child{font-weight:500}
+.note{font-size:13px;color:var(--ink2);margin-top:14px;word-break:keep-all;line-height:1.55}
+.pill{display:inline-block;background:var(--good-bg);color:var(--good);font-weight:700;font-size:13px;border-radius:8px;padding:4px 9px}
+.pill.w{background:var(--warn-bg);color:var(--warn)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin-top:12px}
+.card .hd{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+.card .nm{font-weight:700;font-size:17px}
+.card .fee{font-size:22px;font-weight:900;font-variant-numeric:tabular-nums;letter-spacing:-0.02em}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:12px}
+.stats div{background:var(--field);border-radius:10px;padding:8px 4px;text-align:center}
+.stats b{display:block;font-size:15px;font-variant-numeric:tabular-nums}.stats span{font-size:11px;color:var(--ink2)}
+.msg{font-size:14px;margin-top:12px;word-break:keep-all;line-height:1.55}
+.acts{display:flex;gap:8px;margin-top:12px}
+.acts button{flex:1;border:1.5px solid var(--line);background:none;color:var(--ink);border-radius:10px;padding:11px;font:inherit;font-size:14px;cursor:pointer}
+.acts button.pri{background:var(--main);color:var(--main-ink);border-color:var(--main);font-weight:700}
+.acts button.on{border-color:var(--main);color:var(--main);font-weight:700}
+.tbl{overflow-x:auto;margin-top:12px;border:1px solid var(--line);border-radius:14px;background:var(--card)}
+table{border-collapse:collapse;width:100%;font-size:13px;font-variant-numeric:tabular-nums;white-space:nowrap}
+th,td{padding:9px 12px;text-align:right;border-bottom:1px solid var(--line)}
+th:first-child,td:first-child{text-align:left;position:sticky;left:0;background:var(--card);font-weight:500;color:var(--ink2)}
+thead th{font-weight:700;color:var(--ink)}
+tr:last-child td{border:0}
+td.lo{color:var(--good);font-weight:700}td.hi{color:var(--warn)}
+.tl{margin-top:16px;border-left:2px solid var(--line);padding-left:16px}
+.tl div{position:relative;padding:6px 0 14px;color:var(--ink2);font-size:15px}
+.tl div::before{content:"";position:absolute;left:-23px;top:12px;width:10px;height:10px;border-radius:50%;background:var(--line)}
+.tl div.done{color:var(--ink);font-weight:500}.tl div.done::before{background:var(--good)}
+.tl div.now{color:var(--ink);font-weight:700}.tl div.now::before{background:var(--main);box-shadow:0 0 0 4px color-mix(in srgb,var(--main) 25%,transparent)}
+.sum dl{display:grid;grid-template-columns:1fr auto;gap:10px 16px;font-size:15px}
+.sum dt{color:var(--ink2)}.sum dd{text-align:right;font-weight:700;font-variant-numeric:tabular-nums}
+.sum dd.big{font-size:24px;font-weight:900;letter-spacing:-0.02em}
+.diff{margin-top:12px;background:var(--field);border-radius:12px;padding:12px 14px;font-size:14px}
+.diff div{display:flex;justify-content:space-between;padding:4px 0;font-variant-numeric:tabular-nums}
+.toast{position:fixed;top:14px;left:50%;transform:translate(-50%,-80px);background:var(--ink);color:var(--bg);padding:12px 18px;border-radius:12px;font-size:14px;max-width:360px;width:calc(100% - 40px);box-shadow:0 8px 30px rgba(0,0,0,.25);transition:transform .35s;z-index:20;word-break:keep-all}
+.toast.show{transform:translate(-50%,0)}
+.hero{padding:44px 0 10px}
+.hero .ex{margin-top:32px;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px 20px;font-size:15px}
+.hero .ex .big{font-size:24px;font-weight:900;font-variant-numeric:tabular-nums;letter-spacing:-0.02em;margin-top:4px}
+.hero .ex .big.g{color:var(--good)}
+.hero .ex .arrow{color:var(--ink2);text-align:center;padding:6px 0}
+.err{color:var(--warn);font-size:13px;margin-top:8px;display:none}
+@media (prefers-reduced-motion: reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="app">
+
+<section class="screen on" id="s-home">
+  <div class="body hero">
+    <h1>우리 집 인테리어,<br>얼마가 적당할까요?</h1>
+    <p class="sub">30초면 예상가격을 확인하고 우리 지역 인테리어 업체들의 실제 견적을 비교할 수 있습니다.</p>
+    <div class="ex">
+      <div>대구 수성구 34평 · 전체 인테리어 · 표준형</div>
+      <div class="big">예상 4,300만 ~ 5,200만원</div>
+      <div class="arrow">↓ 지역 업체 3곳 실제 견적</div>
+      <div class="big g">4,580만 · 4,780만 · 5,150만원</div>
+      <div class="note" style="margin-top:6px">같은 조건인데 왜 570만원이 다른지, 공종별로 보여드립니다. (예시 데이터)</div>
+    </div>
+  </div>
+  <div class="bottom">
+    <button class="btn" onclick="go('s-1')">무료 예상견적 받기</button>
+    <button class="btn ghost" onclick="go('s-1')">실제 업체 견적 비교하기</button>
+  </div>
+</section>
+
+<section class="screen" id="s-1">
+  <div class="top"><button onclick="go('s-home')" aria-label="뒤로">‹</button><span class="t">공사 장소</span><span class="step">1 / 6</span></div><div class="prog"><i style="width:16%"></i></div>
+  <div class="body">
+    <h2>어디를 공사하시나요?</h2>
+    <label class="f">주소<input id="addr" value="대구광역시 수성구 범어동"></label>
+    <label class="f">아파트명 (선택)<input id="apt" placeholder="예: 범어 SK뷰"></label>
+    <div class="row">
+      <label class="f">평형<input id="py" inputmode="numeric" value="34" oninput="syncM2()"></label>
+      <label class="f">전용면적 ㎡<input id="m2" inputmode="numeric" value="84"></label>
+    </div>
+    <label class="f">공사 유형</label>
+    <div class="chips" data-group="type"><button class="chip sel">전체 인테리어</button><button class="chip">부분 인테리어</button></div>
+    <div class="err" id="e1">평형을 숫자로 입력해주세요.</div>
+  </div>
+  <div class="bottom"><button class="btn" onclick="v1()">다음</button></div>
+</section>
+
+<section class="screen" id="s-2">
+  <div class="top"><button onclick="go('s-1')" aria-label="뒤로">‹</button><span class="t">공사 범위</span><span class="step">2 / 6</span></div><div class="prog"><i style="width:33%"></i></div>
+  <div class="body">
+    <h2>어떤 공사를 원하세요?</h2>
+    <p class="sub">체크한 공종만 견적에 들어갑니다. 샷시는 금액이 커서 따로 표시합니다.</p>
+    <div class="grid" id="scope"></div>
+    <div class="acts"><button onclick="scopeAll(true)">전체 선택</button><button onclick="scopeAll(false)">전체 해제</button></div>
+  </div>
+  <div class="bottom"><button class="btn" onclick="v2()">다음</button></div>
+</section>
+
+<section class="screen" id="s-3">
+  <div class="top"><button onclick="go('s-2')" aria-label="뒤로">‹</button><span class="t">인테리어 수준</span><span class="step">3 / 6</span></div><div class="prog"><i style="width:50%"></i></div>
+  <div class="body">
+    <h2>어느 정도 수준을 원하세요?</h2>
+    <div data-group="grade" class="opts">
+      <button class="opt" data-v="실속형"><b>실속형</b><span>가격 중심 · 기본 자재 · 투자용/임대용 추천</span></button>
+      <button class="opt sel" data-v="표준형"><b>표준형</b><span>가격과 디자인 균형 · 중급 자재 · 실거주 추천</span></button>
+      <button class="opt" data-v="고급형"><b>고급형</b><span>디자인 중심 · 상급 자재 · 프리미엄 마감</span></button>
+    </div>
+    <h3>원하는 스타일 (최대 3개)</h3>
+    <div class="chips" id="style"></div>
+  </div>
+  <div class="bottom"><button class="btn" onclick="go('s-4')">다음</button></div>
+</section>
+
+<section class="screen" id="s-4">
+  <div class="top"><button onclick="go('s-3')" aria-label="뒤로">‹</button><span class="t">예산 · 일정</span><span class="step">4 / 6</span></div><div class="prog"><i style="width:66%"></i></div>
+  <div class="body">
+    <h2>예산과 일정을 알려주세요</h2>
+    <label class="f">예산</label>
+    <div class="chips" data-group="budget"><button class="chip">3천만원 이하</button><button class="chip">3천~4천만원</button><button class="chip sel">4천~5천만원</button><button class="chip">5천~7천만원</button><button class="chip">7천만~1억원</button><button class="chip">1억원 이상</button><button class="chip">아직 모르겠어요</button></div>
+    <div class="row">
+      <label class="f">희망 공사 시작일<input type="date" id="start" value="2026-11-10"></label>
+      <label class="f">입주 희망일<input type="date" id="movein" value="2026-12-10"></label>
+    </div>
+    <label class="f">현재 상태</label>
+    <div class="chips" data-group="status"><button class="chip sel">공실</button><button class="chip">거주 중</button><button class="chip">매매계약 완료</button><button class="chip">잔금 전</button><button class="chip">경매 낙찰</button></div>
+  </div>
+  <div class="bottom"><button class="btn" onclick="go('s-5')">다음</button></div>
+</section>
+
+<section class="screen" id="s-5">
+  <div class="top"><button onclick="go('s-4')" aria-label="뒤로">‹</button><span class="t">사진 · 도면</span><span class="step">5 / 6</span></div><div class="prog"><i style="width:83%"></i></div>
+  <div class="body">
+    <h2>현재 집 사진이 있으면 올려주세요</h2>
+    <p class="sub">선택사항입니다. 사진이 있으면 업체 견적이 더 정확해집니다.</p>
+    <div class="grid" id="photos"></div>
+    <button class="opt" style="margin-top:14px" onclick="toast('도면 1장 등록됨 (예시)')"><b>평면도 업로드</b><span>아파트 평면도 이미지 또는 PDF</span></button>
+  </div>
+  <div class="bottom"><button class="btn" onclick="go('s-6')">다음</button><button class="btn ghost" onclick="go('s-6')">건너뛰기</button></div>
+</section>
+
+<section class="screen" id="s-6">
+  <div class="top"><button onclick="go('s-5')" aria-label="뒤로">‹</button><span class="t">연락처</span><span class="step">6 / 6</span></div><div class="prog"><i style="width:100%"></i></div>
+  <div class="body">
+    <h2>예상견적을 받을 연락처</h2>
+    <p class="sub">업체에는 견적 단계에서 전화번호가 공개되지 않습니다. 현장실측이나 상담을 신청할 때만 공유됩니다.</p>
+    <label class="f">이름<input id="name" placeholder="홍길동"></label>
+    <label class="f">휴대전화<input id="phone" inputmode="tel" placeholder="010-0000-0000"></label>
+    <label class="f" style="display:flex;gap:10px;align-items:center;font-size:15px;color:var(--ink)"><input type="checkbox" id="agree" checked style="width:auto;margin:0"> 이용약관 및 개인정보 처리방침에 동의합니다</label>
+  </div>
+  <div class="bottom"><button class="btn" onclick="estimate()">예상견적 보기</button></div>
+</section>
+
+<section class="screen" id="s-est">
+  <div class="top"><button onclick="go('s-6')" aria-label="뒤로">‹</button><span class="t">예상견적</span></div>
+  <div class="body">
+    <h2>고객님의 예상 인테리어 비용</h2>
+    <div class="panel">
+      <div class="money" id="e-range"></div>
+      <div class="tags" id="e-tags"></div>
+      <h3 style="margin-top:20px;font-size:15px">예상 공종별 비용</h3>
+      <div class="brk" id="e-brk"></div>
+      <div class="note">실제 가격은 현장상태, 자재, 설계 및 시공범위에 따라 달라질 수 있습니다. 부가세 별도.</div>
+    </div>
+    <div class="panel" style="border-style:dashed">
+      <div class="k">실제 업체 견적을 받으면</div>
+      <div class="msg" style="margin-top:6px">같은 조건으로 지역 업체 최대 5곳이 표준 양식으로 견적을 냅니다. 총액만이 아니라 공종별 단가·공사기간·A/S를 나란히 비교할 수 있어요. 견적 단계에서는 어떤 비용도 없습니다.</div>
+    </div>
+  </div>
+  <div class="bottom"><button class="btn" onclick="requestBids()">실제 업체 견적 받아보기</button></div>
+</section>
+
+<section class="screen" id="s-req">
+  <div class="top"><span class="t">견적 요청 완료</span></div>
+  <div class="body">
+    <h2 id="r-title">수성구 업체 5곳에 요청했어요</h2>
+    <p class="sub">보통 1~2일 안에 1차 견적이 모입니다. 도착하면 알려드릴게요.</p>
+    <div class="panel sum">
+      <div class="k" style="margin-bottom:10px">표준 견적요청서 <b id="r-id"></b></div>
+      <dl id="r-dl"></dl>
+    </div>
+    <div class="tl">
+      <div class="done">공사 정보 등록</div>
+      <div class="done">지역 인증 업체에 전달</div>
+      <div class="now" id="r-now">1차 견적 도착 중 <span id="r-cnt">0</span>/3</div>
+      <div>견적 비교 · 현장실측 신청</div>
+      <div>최종견적 · 업체 선택</div>
+    </div>
+  </div>
+  <div class="bottom"><button class="btn" id="r-btn" disabled onclick="go('s-cmp')">견적 비교하기</button></div>
+</section>
+
+<section class="screen" id="s-cmp">
+  <div class="top"><button onclick="go('s-req')" aria-label="뒤로">‹</button><span class="t">견적 비교</span></div>
+  <div class="body">
+    <h2>3개 업체 1차 견적</h2>
+    <p class="sub">같은 조건, 같은 양식으로 받은 견적입니다. 업체끼리는 서로의 금액을 볼 수 없습니다.</p>
+    <div id="c-cards"></div>
+    <h3>공종별 비교 (만원)</h3>
+    <div class="tbl" id="c-tbl"></div>
+    <h3>견적 차이 설명</h3>
+    <div id="c-why"></div>
+    <div class="note">현장실측은 최대 2개 업체까지 신청할 수 있습니다. 실측 후 최종견적이 나오고, 변경 내역은 모두 기록됩니다.</div>
+  </div>
+  <div class="bottom"><button class="btn" id="c-btn" disabled onclick="go('s-visit')">현장실측 신청 (<span id="c-n">0</span>/2)</button></div>
+</section>
+
+<section class="screen" id="s-detail">
+  <div class="top"><button onclick="go('s-cmp')" aria-label="뒤로">‹</button><span class="t">업체 상세</span></div>
+  <div class="body" id="d-body"></div>
+  <div class="bottom"><button class="btn" id="d-btn"></button></div>
+</section>
+
+<section class="screen" id="s-visit">
+  <div class="top"><button onclick="go('s-cmp')" aria-label="뒤로">‹</button><span class="t">현장실측 신청</span></div>
+  <div class="body">
+    <h2>무료 현장실측을 신청할게요</h2>
+    <p class="sub" id="v-who"></p>
+    <label class="f">날짜</label>
+    <div class="chips" data-group="vdate"><button class="chip sel">토 10/3</button><button class="chip">일 10/4</button><button class="chip">화 10/6</button><button class="chip">수 10/7</button></div>
+    <label class="f">시간</label>
+    <div class="chips" data-group="vtime"><button class="chip">10:00</button><button class="chip sel">14:00</button><button class="chip">16:00</button></div>
+    <label class="f">주소 확인<input id="v-addr"></label>
+    <label class="f">요청사항<textarea placeholder="예: 공동현관 비밀번호는 방문 당일 문자로 드립니다"></textarea></label>
+    <div class="note">실측을 신청하면 선택한 업체에만 연락처가 공유됩니다.</div>
+  </div>
+  <div class="bottom"><button class="btn" onclick="submitVisit()">실측 신청하기</button></div>
+</section>
+
+<section class="screen" id="s-final">
+  <div class="top"><span class="t">최종견적</span></div>
+  <div class="body">
+    <h2>현장실측 후 최종견적이 도착했어요</h2>
+    <p class="sub">1차 가견적에서 달라진 항목과 이유를 확인하세요.</p>
+    <div id="f-cards"></div>
+  </div>
+</section>
+
+<section class="screen" id="s-sign">
+  <div class="top"><button onclick="go('s-final')" aria-label="뒤로">‹</button><span class="t">계약 확인</span></div>
+  <div class="body">
+    <h2>이 조건으로 계약할게요</h2>
+    <div class="panel sum"><dl id="g-dl"></dl></div>
+    <div class="note">계약서·공사대금은 업체와 직접 진행합니다. 플랫폼은 견적·실측·변경 내역을 기록으로 보관해 분쟁 시 확인할 수 있게 합니다.</div>
+  </div>
+  <div class="bottom"><button class="btn" onclick="done()">이 업체와 계약하기</button></div>
+</section>
+
+<section class="screen" id="s-done">
+  <div class="body" style="padding-top:48px">
+    <h2 id="z-title">계약이 접수됐어요</h2>
+    <p class="sub">업체가 오늘 안에 연락드려 계약서와 공정표를 안내합니다. 공사가 끝나면 후기를 남겨주세요 — 다음 고객이 업체를 고르는 기준이 됩니다.</p>
+    <div class="tl" style="margin-top:28px">
+      <div class="done">예상견적</div><div class="done">1차 견적 3건 비교</div><div class="done">현장실측 2곳</div><div class="done">최종견적 · 업체 선택</div><div class="now">계약 · 공사 시작</div><div>후기</div>
+    </div>
+  </div>
+  <div class="bottom"><button class="btn ghost" onclick="location.reload()">처음부터 다시 해보기</button></div>
+</section>
+
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const S={py:34,addr:'',type:'전체 인테리어',grade:'표준형',budget:'4천~5천만원',status:'공실',styles:[],scope:new Set(),est:null,bids:[],visit:new Set(),pick:null,vdate:'토 10/3',vtime:'14:00'};
+
+// 공종 기준 단가 — 34평 표준형 기준 [min,max] 만원 (기획서 14항), 평형 비례
+const CATS=[
+  ['철거',350,450],['샷시',600,900],['목공',400,600],['전기/조명',300,450],['욕실/타일',600,800],
+  ['도배',200,300],['필름',250,400],['바닥',250,350],['주방',800,1100],['붙박이장/가구',400,600],
+  ['중문',120,200],['도어',150,250],['발코니',150,300],['기타',300,500]
+];
+const DEFAULT_ON=new Set(['철거','목공','전기/조명','욕실/타일','도배','필름','바닥','주방','붙박이장/가구','기타']);
+const GRADE={'실속형':0.8,'표준형':1,'고급형':1.35};
+const STYLES=['모던','미니멀','우드','화이트','호텔','내추럴','럭셔리','잘 모르겠어요'];
+const PHOTOS=['거실','주방','욕실','방','현관','베란다'];
+
+// ---- 유틸 ----
+const $=id=>document.getElementById(id);
+function go(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on'));$(id).classList.add('on');window.scrollTo(0,0);}
+function toast(t){const el=$('toast');el.textContent=t;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),2600);}
+const man=v=>Math.round(v).toLocaleString('ko-KR')+'만원';
+const manShort=v=>{v=Math.round(v); if(v>=10000){const e=Math.floor(v/10000),r=v%10000;return r?`${e}억 ${r.toLocaleString()}만`:`${e}억`;} return v.toLocaleString();};
+function syncM2(){const p=parseFloat($('py').value);if(p)$('m2').value=Math.round(p*2.48);}
+
+// chips (single select)
+document.querySelectorAll('.chips[data-group]').forEach(g=>g.addEventListener('click',e=>{const b=e.target.closest('.chip');if(!b)return;g.querySelectorAll('.chip').forEach(c=>c.classList.remove('sel'));b.classList.add('sel');S[g.dataset.group]=b.textContent;}));
+document.querySelector('.opts').addEventListener('click',e=>{const b=e.target.closest('.opt');if(!b)return;document.querySelectorAll('.opts .opt').forEach(c=>c.classList.remove('sel'));b.classList.add('sel');S.grade=b.dataset.v;});
+
+// scope
+const scopeEl=$('scope');
+CATS.forEach(([n])=>{const b=document.createElement('button');b.className='chip'+(DEFAULT_ON.has(n)?' sel':'');b.textContent=n;if(DEFAULT_ON.has(n))S.scope.add(n);b.onclick=()=>{b.classList.toggle('sel');b.classList.contains('sel')?S.scope.add(n):S.scope.delete(n);};scopeEl.appendChild(b);});
+function scopeAll(on){scopeEl.querySelectorAll('.chip').forEach(b=>{b.classList.toggle('sel',on);on?S.scope.add(b.textContent):S.scope.delete(b.textContent);});}
+// styles
+STYLES.forEach(s=>{const b=document.createElement('button');b.className='chip';b.textContent=s;b.onclick=()=>{if(b.classList.contains('sel')){b.classList.remove('sel');S.styles=S.styles.filter(x=>x!==s);}else{if(S.styles.length>=3){toast('스타일은 최대 3개까지 선택할 수 있어요');return;}b.classList.add('sel');S.styles.push(s);}};$('style').appendChild(b);});
+// photos
+PHOTOS.forEach(p=>{const b=document.createElement('button');b.className='chip';b.textContent=p+' +';b.onclick=()=>{b.classList.add('sel');b.textContent=p+' ✓';toast(p+' 사진 1장 등록됨 (예시)');};$('photos').appendChild(b);});
+
+function v1(){const p=parseFloat($('py').value);if(!p||p<=0){$('e1').style.display='block';return;}$('e1').style.display='none';S.py=p;S.addr=$('addr').value;go('s-2');}
+function v2(){if(S.scope.size===0){toast('공종을 하나 이상 선택해주세요');return;}go('s-3');}
+
+// ---- 예상견적 ----
+function estimate(){
+  if(!$('phone').value.trim()){toast('휴대전화 번호를 입력해주세요');return;}
+  const k=S.py/34*GRADE[S.grade];
+  let lo=0,hi=0;const rows=[];
+  CATS.forEach(([n,a,b])=>{if(!S.scope.has(n))return;const l=a*k,h=b*k;lo+=l;hi+=h;rows.push([n,l,h]);});
+  S.est={lo,hi,rows};
+  $('e-range').textContent=`${manShort(lo)} ~ ${manShort(hi)}만원`;
+  const ex=S.scope.has('샷시')?'샷시 포함':'샷시 제외';
+  $('e-tags').innerHTML=[`${S.py}평`,S.type,S.grade,ex,...S.styles].map(t=>`<span>${t}</span>`).join('');
+  $('e-brk').innerHTML=rows.map(([n,l,h])=>`<div><span>${n}</span><span>${Math.round(l).toLocaleString()}~${Math.round(h).toLocaleString()}만원</span></div>`).join('');
+  go('s-est');
+}
+
+// ---- 업체 mock & 1차 견적 ----
+function buildBids(){
+  const gu=(S.addr.match(/(\S+구)/)||[])[1]||'우리 지역';
+  const base=S.est.rows; // [n,lo,hi]
+  const mk=(name,mul,tilt,days,as,rating,cnt,yrs,design,d3,msg)=>{
+    const items=base.map(([n,l,h])=>{let v=(l+h)/2*mul*(tilt[n]||1);return [n,Math.round(v/10)*10];});
+    const total=items.reduce((a,[,v])=>a+v,0);
+    return {name,items,total,days,as,rating,cnt,yrs,design,d3,msg,gu};
+  };
+  S.bids=[
+    mk('A 리빙디자인',0.93,{},30,'1년',4.8,84,9,'포함','미포함','견적에 3D는 빠져 있습니다. 실속 있게 마감하고 싶으신 분께 맞습니다. 실측 후 확정합니다.'),
+    mk('B 하우스',0.98,{'주방':1.02,'욕실/타일':1.02},28,'2년',4.9,132,12,'포함','포함','34평 전체 리모델링 기준이며 3D 도면과 현장소장 배정이 포함됩니다. 현장실측 후 최종금액이 확정됩니다.'),
+    mk('C 스튜디오',1.06,{'주방':1.12,'목공':1.12,'욕실/타일':1.06},25,'2년',4.7,61,7,'포함','포함','주방과 목공은 상급 자재 기준으로 잡았습니다. 공사기간을 짧게 가져가 입주일을 맞춰드립니다.'),
+  ];
+}
+function requestBids(){
+  buildBids();
+  const gu=S.bids[0].gu;
+  $('r-title').textContent=`${gu} 업체 5곳에 요청했어요`;
+  $('r-id').textContent='#A'+Math.floor(10000+Math.random()*89999);
+  $('r-dl').innerHTML=`<dt>지역</dt><dd>${S.addr}</dd><dt>평수 · 유형</dt><dd>${S.py}평 · ${S.type}</dd><dt>등급</dt><dd>${S.grade}</dd><dt>공종</dt><dd>${S.scope.size}개</dd><dt>예산</dt><dd>${S.budget}</dd><dt>희망 시작</dt><dd>${$('start').value}</dd>`;
+  go('s-req');
+  let n=0;const tick=()=>{n++;$('r-cnt').textContent=n;if(n===1){$('r-btn').disabled=false;toast(`${S.bids[0].name} 1차 견적이 도착했어요`);}if(n<3)setTimeout(tick,800+Math.random()*600);else{$('r-now').textContent='1차 견적 3건 도착';$('r-now').className='done';renderCmp();}};
+  setTimeout(tick,900);renderCmp();
+}
+function renderCmp(){
+  const bids=S.bids,avg=bids.reduce((a,b)=>a+b.total,0)/bids.length;
+  $('c-cards').innerHTML=bids.map((b,i)=>`
+    <div class="card">
+      <div class="hd"><div class="nm">${b.name}</div><div class="fee">${manShort(b.total)}만원</div></div>
+      <div style="margin-top:6px">${b.total<avg?`<span class="pill">평균 대비 −${man(avg-b.total)}</span>`:`<span class="pill w">평균 대비 +${man(b.total-avg)}</span>`}</div>
+      <div class="stats"><div><b>${b.days}일</b><span>공사기간</span></div><div><b>${b.as}</b><span>A/S</span></div><div><b>${b.rating}</b><span>평점</span></div><div><b>${b.cnt}건</b><span>시공건수</span></div></div>
+      <div class="msg">${b.msg}</div>
+      <div class="acts"><button onclick="openDetail(${i})">상세 보기</button><button class="${S.visit.has(i)?'on':''}" onclick="toggleVisit(${i})">${S.visit.has(i)?'실측 선택됨 ✓':'실측 후보로 선택'}</button></div>
+    </div>`).join('');
+  const cats=bids[0].items.map(x=>x[0]);
+  let t=`<table><thead><tr><th>항목</th>${bids.map(b=>`<th>${b.name.split(' ')[0]}</th>`).join('')}</tr></thead><tbody>`;
+  t+=`<tr><td>총액</td>${bids.map(b=>`<td class="${b.total===Math.min(...bids.map(x=>x.total))?'lo':''}">${b.total.toLocaleString()}</td>`).join('')}</tr>`;
+  cats.forEach((c,ci)=>{const vs=bids.map(b=>b.items[ci][1]),mn=Math.min(...vs),mx=Math.max(...vs);t+=`<tr><td>${c}</td>${vs.map(v=>`<td class="${v===mn&&mn!==mx?'lo':v===mx&&mn!==mx?'hi':''}">${v.toLocaleString()}</td>`).join('')}</tr>`;});
+  t+=`<tr><td>공사기간</td>${bids.map(b=>`<td>${b.days}일</td>`).join('')}</tr><tr><td>A/S</td>${bids.map(b=>`<td>${b.as}</td>`).join('')}</tr><tr><td>3D 디자인</td>${bids.map(b=>`<td>${b.d3}</td>`).join('')}</tr></tbody></table>`;
+  $('c-tbl').innerHTML=t;
+  // 자동 설명
+  const why=bids.map(b=>{
+    const lines=[];
+    if(b.total===Math.min(...bids.map(x=>x.total)))lines.push(`최저 견적 · 평균 대비 −${man(avg-b.total)}`);
+    if(b.d3==='미포함')lines.push('3D 디자인 미포함');
+    if(b.d3==='포함'&&b.as==='2년'&&Math.abs(b.total-avg)<avg*0.03)lines.push('가격/서비스 균형 · A/S 2년 · 3D 포함');
+    const hiCats=b.items.filter(([n,v],ci)=>v===Math.max(...bids.map(x=>x.items[ci][1]))&&v>avgItem(ci)*1.05).map(([n])=>n);
+    if(hiCats.length)lines.push(`${hiCats.join('·')} 사양이 상대적으로 높음`);
+    if(b.days===Math.min(...bids.map(x=>x.days)))lines.push(`공사기간 최단 ${b.days}일`);
+    return `<div class="card" style="padding:12px 16px"><b>${b.name}</b><div class="msg" style="margin-top:4px">${lines.join('<br>')||'평균 수준'}</div></div>`;
+  }).join('');
+  $('c-why').innerHTML=why;
+  $('c-n').textContent=S.visit.size;$('c-btn').disabled=S.visit.size===0;
+  function avgItem(ci){return bids.reduce((a,x)=>a+x.items[ci][1],0)/bids.length;}
+}
+function toggleVisit(i){if(S.visit.has(i))S.visit.delete(i);else{if(S.visit.size>=2){toast('현장실측은 최대 2개 업체까지 신청할 수 있어요');return;}S.visit.add(i);}renderCmp();}
+function openDetail(i){
+  const b=S.bids[i];
+  $('d-body').innerHTML=`
+    <h2>${b.name}</h2><p class="sub">인증 업체 · 사업자등록 확인 · ${S.addr.split(' ').slice(0,2).join(' ')} 시공 가능</p>
+    <div class="panel"><div class="k">1차 견적</div><div class="money">${manShort(b.total)}만원</div>
+      <div class="stats"><div><b>${b.days}일</b><span>공사기간</span></div><div><b>${b.as}</b><span>A/S</span></div><div><b>${b.yrs}년</b><span>시공경력</span></div><div><b>${b.cnt}건</b><span>시공건수</span></div></div>
+      <div class="tags"><span>현장소장 배정</span><span>디자인 ${b.design}</span><span>3D ${b.d3}</span></div>
+      <h3 style="font-size:15px;margin-top:18px">세부 견적</h3>
+      <div class="brk">${b.items.map(([n,v])=>`<div><span>${n}</span><span>${v.toLocaleString()}만원</span></div>`).join('')}</div>
+    </div>
+    <h3>업체 코멘트</h3><div class="msg">${b.msg}</div>
+    <h3>포트폴리오</h3><div class="grid">${['수성구 34평','달서구 32평','수성구 25평'].map(p=>`<div class="chip" style="cursor:default">${p}</div>`).join('')}</div>
+    <h3>후기</h3>
+    <div class="card"><div style="display:flex;justify-content:space-between"><b>★★★★★</b><span class="k" style="font-size:13px;color:var(--ink2)">3주 전</span></div><div class="msg" style="margin-top:4px">견적과 최종금액 차이가 거의 없었고 공정표대로 끝났습니다. A/S 문의에도 바로 와주셨어요.</div></div>`;
+  const on=S.visit.has(i);$('d-btn').textContent=on?'실측 후보 해제':'이 업체 실측 후보로 선택';$('d-btn').onclick=()=>{toggleVisit(i);go('s-cmp');};
+  go('s-detail');
+}
+function submitVisit(){
+  const names=[...S.visit].map(i=>S.bids[i].name);
+  toast(`${names.join(', ')}에 실측 신청됐어요`);
+  // 최종견적 생성
+  const CHANGES=[['욕실 방수 추가',80],['전기배선 추가',40],['천장 보강',20],['타일 면적 증가',35],['주방 상판 변경',60]];
+  $('f-cards').innerHTML=[...S.visit].map(i=>{
+    const b=S.bids[i];const ch=CHANGES.slice(i%2,(i%2)+3);const delta=ch.reduce((a,[,v])=>a+v,0)*(S.py/34);b.final=Math.round(b.total+delta);b.changes=ch;
+    return `<div class="card"><div class="hd"><div class="nm">${b.name}</div><div class="fee">${manShort(b.final)}만원</div></div>
+      <div class="diff"><div><span>1차 가견적</span><span>${man(b.total)}</span></div><div><span>최종견적</span><b>${man(b.final)}</b></div><div><span>차액</span><span class="pill w">+${man(b.final-b.total)}</span></div></div>
+      <div class="msg"><b>변경 이유</b><br>${ch.map(([n,v])=>`· ${n} (+${man(v*(S.py/34))})`).join('<br>')}</div>
+      <div class="stats"><div><b>${b.days}일</b><span>공사기간</span></div><div><b>${b.as}</b><span>A/S</span></div><div><b>${$('start').value.slice(5).replace('-','/')}</b><span>공사 시작</span></div><div><b>${b.rating}</b><span>평점</span></div></div>
+      <div class="acts"><button class="pri" onclick="pick(${i})">이 업체 선택</button></div></div>`;
+  }).join('');
+  go('s-final');
+}
+function pick(i){const b=S.bids[i];S.pick=b;
+  $('g-dl').innerHTML=`<dt>업체</dt><dd>${b.name}</dd><dt>최종 공사금액</dt><dd class="big">${manShort(b.final)}만원</dd><dt>1차 견적 대비</dt><dd>+${man(b.final-b.total)}</dd><dt>공사기간</dt><dd>${b.days}일</dd><dt>A/S</dt><dd>${b.as}</dd><dt>공사 시작</dt><dd>${$('start').value}</dd><dt>입주 희망</dt><dd>${$('movein').value}</dd>`;
+  go('s-sign');}
+function done(){$('z-title').textContent=`${S.pick.name}와 계약이 접수됐어요`;go('s-done');}
+$('v-addr').value=$('addr').value;$('addr').addEventListener('input',()=>$('v-addr').value=$('addr').value);
+document.querySelector('#s-visit').addEventListener('transitionend',()=>{});
+const _go=go;go=function(id){if(id==='s-visit')$('v-who').textContent=[...S.visit].map(i=>S.bids[i].name).join(', ')+' — 2곳까지 무료입니다.';_go(id);};
+</script>
+</body>
+</html>
