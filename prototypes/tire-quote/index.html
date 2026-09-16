@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>내 차 타이어 견적 비교 — 차량번호 하나로</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F4F4F2; --card:#FFFFFF; --ink:#16181C; --ink2:#5C6168; --line:#E1E2E0;
+  --main:#1C1F26; --main-ink:#FFFFFF; --acc:#E8A11C; --acc-ink:#1C1F26; --good:#1F7A4D; --good-bg:#E4F2EA; --warn:#B4541E; --warn-bg:#F9EBE2; --field:#EAEBE8;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#101215; --card:#1A1D23; --ink:#EEF0F2; --ink2:#9AA0A8; --line:#2B2F37;
+    --main:#F0B33A; --main-ink:#16181C; --acc:#F0B33A; --acc-ink:#16181C; --good:#5CC898; --good-bg:#17301F; --warn:#E5814A; --warn-bg:#3A2418; --field:#23272E;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#101215; --card:#1A1D23; --ink:#EEF0F2; --ink2:#9AA0A8; --line:#2B2F37;
+  --main:#F0B33A; --main-ink:#16181C; --acc:#F0B33A; --acc-ink:#16181C; --good:#5CC898; --good-bg:#17301F; --warn:#E5814A; --warn-bg:#3A2418; --field:#23272E;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:"Noto Sans KR",-apple-system,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased}
+.app{max-width:480px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column}
+.top{display:flex;align-items:center;gap:8px;padding:14px 16px 8px;position:sticky;top:0;background:var(--bg);z-index:5}
+.top button{background:none;border:0;color:var(--ink);font-size:22px;line-height:1;padding:4px 8px 4px 0;cursor:pointer}
+.top .t{font-weight:700;font-size:16px}
+.top .step{margin-left:auto;font-size:13px;color:var(--ink2);font-variant-numeric:tabular-nums}
+.top .lnk{margin-left:auto;font-size:13px;color:var(--ink2);text-decoration:underline;background:none;border:0;padding:0;cursor:pointer}
+.screen{display:none;flex:1;flex-direction:column}.screen.on{display:flex}
+.body{padding:12px 20px 130px;flex:1}
+h1{font-size:32px;line-height:1.2;font-weight:900;letter-spacing:-0.02em;word-break:keep-all}
+h2{font-size:22px;line-height:1.3;font-weight:700;letter-spacing:-0.01em;word-break:keep-all}
+h3{font-size:17px;font-weight:700;margin-top:24px;word-break:keep-all}
+p.sub{color:var(--ink2);font-size:15px;word-break:keep-all;margin-top:8px}
+.bottom{position:fixed;left:0;right:0;bottom:0;padding:12px 20px calc(12px + env(safe-area-inset-bottom));background:linear-gradient(to top,var(--bg) 70%,transparent);pointer-events:none}
+.bottom>*{max-width:440px;margin:0 auto;pointer-events:auto}
+.btn{display:block;width:100%;border:0;border-radius:14px;padding:17px;font:inherit;font-weight:700;font-size:17px;cursor:pointer;background:var(--main);color:var(--main-ink);text-align:center}
+.btn.acc{background:var(--acc);color:var(--acc-ink)}
+.btn:disabled{opacity:.4;cursor:default}
+.btn.ghost{background:var(--card);color:var(--ink);border:1.5px solid var(--line);margin-top:8px}
+.btn:focus-visible,input:focus-visible,textarea:focus-visible,.chip:focus-visible,.opt:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+label.f{display:block;margin-top:18px;font-size:14px;font-weight:500;color:var(--ink2)}
+input,textarea,select{width:100%;margin-top:6px;border:0;background:var(--field);color:var(--ink);border-radius:12px;padding:14px;font:inherit;font-size:17px}
+.plate{display:block;width:100%;margin-top:20px;border:2px solid var(--ink);border-radius:14px;background:var(--card);color:var(--ink);padding:18px;font:inherit;font-size:32px;font-weight:900;text-align:center;letter-spacing:.06em}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.chip{border:1.5px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:9px 14px;font:inherit;font-size:14px;cursor:pointer}
+.chip.sel{border-color:var(--main);background:var(--main);color:var(--main-ink)}
+.opt{display:block;width:100%;text-align:left;border:1.5px solid var(--line);background:var(--card);color:var(--ink);border-radius:14px;padding:14px 16px;margin-top:10px;font:inherit;cursor:pointer}
+.opt.sel{border-color:var(--acc);box-shadow:inset 0 0 0 1px var(--acc)}
+.opt b{display:block;font-size:16px}.opt span{display:block;font-size:13px;color:var(--ink2);margin-top:2px;word-break:keep-all}
+.panel{background:var(--card);border-radius:18px;padding:20px;margin-top:16px;border:1px solid var(--line)}
+.panel .k{font-size:13px;color:var(--ink2)}
+.panel .v{font-size:20px;font-weight:700;margin-top:2px}
+.spec{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+.spec div{background:var(--field);border-radius:12px;padding:12px}
+.spec b{display:block;font-size:19px;font-variant-numeric:tabular-nums;letter-spacing:-0.01em}.spec span{font-size:12px;color:var(--ink2)}
+.money{font-size:30px;font-weight:900;letter-spacing:-0.03em;font-variant-numeric:tabular-nums;line-height:1.15}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin-top:12px}
+.card.best{border-color:var(--acc);box-shadow:inset 0 0 0 1px var(--acc)}
+.card .hd{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+.card .nm{font-weight:700;font-size:16px}.card .nm small{display:block;font-weight:400;font-size:13px;color:var(--ink2)}
+.card .fee{font-size:24px;font-weight:900;font-variant-numeric:tabular-nums;letter-spacing:-0.02em;white-space:nowrap}
+.card .fee em{font-style:normal;font-size:12px;color:var(--ink2);font-weight:500;display:block;text-align:right}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:12px}
+.stats div{background:var(--field);border-radius:10px;padding:8px 4px;text-align:center}
+.stats b{display:block;font-size:14px;font-variant-numeric:tabular-nums}.stats span{font-size:11px;color:var(--ink2)}
+.pill{display:inline-block;background:var(--good-bg);color:var(--good);font-weight:700;font-size:12px;border-radius:8px;padding:3px 8px}
+.pill.w{background:var(--warn-bg);color:var(--warn)}.pill.a{background:var(--acc);color:var(--acc-ink)}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}.tags span{font-size:12px;border:1px solid var(--line);border-radius:6px;padding:3px 8px;color:var(--ink2)}
+.msg{font-size:14px;margin-top:10px;word-break:keep-all;line-height:1.55}
+.note{font-size:13px;color:var(--ink2);margin-top:14px;word-break:keep-all;line-height:1.55}
+.acts{display:flex;gap:8px;margin-top:12px}
+.acts button{flex:1;border:1.5px solid var(--line);background:none;color:var(--ink);border-radius:10px;padding:11px;font:inherit;font-size:14px;cursor:pointer}
+.acts button.pri{background:var(--main);color:var(--main-ink);border-color:var(--main);font-weight:700}
+.sortbar{display:flex;gap:6px;margin-top:12px;overflow-x:auto;padding-bottom:4px}.sortbar .chip{white-space:nowrap;padding:7px 12px;font-size:13px}
+.ctx{margin-top:12px;background:var(--field);border-radius:12px;padding:12px 14px;font-size:14px}
+.ctx div{display:flex;justify-content:space-between;padding:3px 0;font-variant-numeric:tabular-nums}
+.tl{margin-top:16px;border-left:2px solid var(--line);padding-left:16px}
+.tl div{position:relative;padding:6px 0 14px;color:var(--ink2);font-size:15px}
+.tl div::before{content:"";position:absolute;left:-23px;top:12px;width:10px;height:10px;border-radius:50%;background:var(--line)}
+.tl div.done{color:var(--ink);font-weight:500}.tl div.done::before{background:var(--good)}
+.tl div.now{color:var(--ink);font-weight:700}.tl div.now::before{background:var(--acc);box-shadow:0 0 0 4px color-mix(in srgb,var(--acc) 30%,transparent)}
+.sum dl{display:grid;grid-template-columns:1fr auto;gap:10px 16px;font-size:15px}
+.sum dt{color:var(--ink2)}.sum dd{text-align:right;font-weight:700;font-variant-numeric:tabular-nums}.sum dd.big{font-size:24px;font-weight:900}
+.toast{position:fixed;top:14px;left:50%;transform:translate(-50%,-80px);background:var(--ink);color:var(--bg);padding:12px 18px;border-radius:12px;font-size:14px;max-width:360px;width:calc(100% - 40px);box-shadow:0 8px 30px rgba(0,0,0,.25);transition:transform .35s;z-index:20;word-break:keep-all}
+.toast.show{transform:translate(-50%,0)}
+.hero{padding:36px 0 10px}
+.hero .ex{margin-top:28px;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px 18px;font-size:14px}
+.hero .ex .row{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px dashed var(--line);font-variant-numeric:tabular-nums}
+.hero .ex .row:last-child{border:0}.hero .ex b{font-size:16px}
+.owner{margin-top:20px;font-size:13px;color:var(--ink2);text-align:center}.owner button{background:none;border:0;color:var(--ink);text-decoration:underline;font:inherit;cursor:pointer;padding:0}
+.err{color:var(--warn);font-size:13px;margin-top:8px;display:none}
+.mode{display:flex;background:var(--field);border-radius:12px;padding:4px;margin-top:10px}
+.mode button{flex:1;border:0;background:none;color:var(--ink2);border-radius:9px;padding:9px;font:inherit;font-size:14px;cursor:pointer}
+.mode button.on{background:var(--card);color:var(--ink);font-weight:700;box-shadow:0 1px 3px rgba(0,0,0,.1)}
+.tbl{overflow-x:auto;margin-top:12px;border:1px solid var(--line);border-radius:14px;background:var(--card)}
+table{border-collapse:collapse;width:100%;font-size:13px;font-variant-numeric:tabular-nums;white-space:nowrap}
+th,td{padding:9px 12px;text-align:right;border-bottom:1px solid var(--line)}th:first-child,td:first-child{text-align:left}
+thead th{font-weight:700}tr:last-child td{border:0}
+.bar{height:8px;background:var(--field);border-radius:5px;overflow:hidden}.bar i{display:block;height:100%;background:var(--acc)}
+@media (prefers-reduced-motion: reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- 소비자 0 -->
+<section class="screen on" id="s-home">
+  <div class="top"><span class="t">타이어 견적 비교</span><button class="lnk" onclick="go('s-shop')">타이어 매장 사장님이신가요?</button></div>
+  <div class="body hero">
+    <h1>내 차 타이어<br>교체비용은?</h1>
+    <p class="sub">차량번호만 입력하세요. 타이어 규격을 몰라도 됩니다. 전국 어디서든 장착 견적을 비교해 드립니다.</p>
+    <input class="plate" id="plate" value="123가4567" placeholder="12가 3456" maxlength="9" oninput="this.value=this.value.replace(/\s/g,'')">
+    <div class="err" id="e0">차량번호 형식을 확인해주세요. 예: 123가4567</div>
+    <div class="ex">
+      <div class="k" style="font-size:12px;color:var(--ink2);margin-bottom:6px">최근 견적 (예시)</div>
+      <div class="row"><span>제네시스 G80 · 19인치 4본 · 송파구</span><b>690,000원</b></div>
+      <div class="row"><span>그랜저 GN7 · 18인치 4본 · 수성구</span><b>528,000원</b></div>
+      <div class="row"><span>쏘렌토 MQ4 · 20인치 4본 · 해운대구</span><b>612,000원</b></div>
+    </div>
+    <div class="owner">모든 견적은 장착완료 가격입니다 · 재고·물류 없이 견적과 예약만 연결합니다</div>
+  </div>
+  <div class="bottom"><button class="btn acc" onclick="lookup()">내 차 타이어 찾기</button></div>
+</section>
+
+<!-- 소비자 1 차량/규격 -->
+<section class="screen" id="s-car">
+  <div class="top"><button onclick="go('s-home')" aria-label="뒤로">‹</button><span class="t">차량 확인</span><span class="step">1 / 4</span></div>
+  <div class="body">
+    <h2 id="c-title"></h2>
+    <p class="sub">고객님 차량의 순정 타이어 규격을 찾았습니다.</p>
+    <div class="panel">
+      <div class="k">차량번호</div><div class="v" id="c-plate"></div>
+      <div class="spec" id="c-spec"></div>
+      <div class="note">다른 휠을 사용하고 계신가요? 규격이 다르면 사진으로 확인해 드립니다.</div>
+      <div class="acts"><button class="pri" onclick="S.confirmed=true;go('s-region')">맞아요</button><button onclick="S.confirmed=false;toast('타이어 옆면 사진을 올려주시면 운영자가 규격을 확인해 드립니다 (예시)')">잘 모르겠어요 · 사진 올리기</button></div>
+    </div>
+    <h3>교체 수량</h3>
+    <div class="chips" data-group="qty"><button class="chip sel">4본</button><button class="chip">앞 2본</button><button class="chip">뒤 2본</button><button class="chip">1본</button></div>
+    <h3>브랜드 선호 (선택)</h3>
+    <div class="chips" data-group="brand"><button class="chip sel">상관없음</button><button class="chip">한국</button><button class="chip">금호</button><button class="chip">넥센</button><button class="chip">미쉐린</button><button class="chip">컨티넨탈</button><button class="chip">브리지스톤</button></div>
+  </div>
+  <div class="bottom"><button class="btn" onclick="go('s-region')">다음</button></div>
+</section>
+
+<!-- 소비자 2 지역 -->
+<section class="screen" id="s-region">
+  <div class="top"><button onclick="go('s-car')" aria-label="뒤로">‹</button><span class="t">장착 지역</span><span class="step">2 / 4</span></div>
+  <div class="body">
+    <h2>어디에서 교체하시겠어요?</h2>
+    <button class="opt" onclick="S.region='현재 위치';S.gu='현재 위치 반경 5km';toast('현재 위치 기준으로 검색합니다 (예시)');go('s-when')"><b>📍 현재 위치 사용</b><span>반경 5km 내 제휴점에 견적을 요청합니다</span></button>
+    <h3>또는 지역 선택</h3>
+    <div class="chips" data-group="region" id="regions"></div>
+    <label class="f">구/동 (선택)<input id="gu" placeholder="예: 강남구 역삼동"></label>
+    <div class="note" id="r-note"></div>
+  </div>
+  <div class="bottom"><button class="btn" onclick="pickRegion()">다음</button></div>
+</section>
+
+<!-- 소비자 3 시기/연락처 -->
+<section class="screen" id="s-when">
+  <div class="top"><button onclick="go('s-region')" aria-label="뒤로">‹</button><span class="t">교체 시기</span><span class="step">3 / 4</span></div>
+  <div class="body">
+    <h2>언제 교체하시겠어요?</h2>
+    <div class="chips" data-group="when"><button class="chip sel">이번 주</button><button class="chip">2주 내</button><button class="chip">한 달 내</button><button class="chip">가격만 볼게요</button></div>
+    <label class="f">견적 알림 받을 휴대전화<input id="phone" inputmode="tel" placeholder="010-0000-0000"></label>
+    <div class="note">매장에는 차량·규격·지역만 전달됩니다. 연락처는 예약한 매장에만 공개돼요.</div>
+  </div>
+  <div class="bottom"><button class="btn acc" onclick="requestQuotes()">견적 요청하기</button></div>
+</section>
+
+<!-- 소비자 3b 대기 (제휴점 있음/없음 분기) -->
+<section class="screen" id="s-wait">
+  <div class="top"><span class="t">견적 요청 완료</span></div>
+  <div class="body">
+    <h2 id="w-title"></h2>
+    <p class="sub" id="w-sub"></p>
+    <div class="panel sum"><div class="k" style="margin-bottom:10px">요청서 <b id="w-id"></b></div><dl id="w-dl"></dl></div>
+    <div class="tl">
+      <div class="done">차량 · 규격 확정</div>
+      <div class="done" id="w-step2">지역 제휴점에 전달</div>
+      <div class="now" id="w-now">견적 도착 중 <span id="w-cnt">0</span>/3</div>
+      <div>견적 비교 · 예약</div>
+      <div>장착</div>
+    </div>
+    <div class="note" id="w-note"></div>
+  </div>
+  <div class="bottom"><button class="btn" id="w-btn" disabled onclick="go('s-cmp')">견적 비교하기</button><button class="btn ghost" id="w-home" style="display:none" onclick="go('s-home')">확인</button></div>
+</section>
+
+<!-- 소비자 4 비교 -->
+<section class="screen" id="s-cmp">
+  <div class="top"><button onclick="go('s-wait')" aria-label="뒤로">‹</button><span class="t">견적 비교</span><span class="step">4 / 4</span></div>
+  <div class="body">
+    <h2 id="p-title"></h2>
+    <p class="sub">모두 장착완료 가격입니다 (타이어 + 장착 + 밸런스 + 폐타이어 처리). 매장끼리는 서로 가격을 볼 수 없어요.</p>
+    <div class="ctx" id="p-ctx"></div>
+    <div class="sortbar">
+      <button class="chip sel" onclick="sortBy('rec',this)">추천순</button><button class="chip" onclick="sortBy('price',this)">가격 낮은순</button><button class="chip" onclick="sortBy('dist',this)">가까운순</button><button class="chip" onclick="sortBy('fast',this)">빠른 장착순</button>
+    </div>
+    <div id="p-cards"></div>
+    <div class="note">가격만이 아니라 거리·장착 가능 시간·후기를 함께 보세요. 예약 전까지 비용은 없습니다.</div>
+  </div>
+</section>
+
+<!-- 소비자 5 예약 -->
+<section class="screen" id="s-book">
+  <div class="top"><button onclick="go('s-cmp')" aria-label="뒤로">‹</button><span class="t">예약</span></div>
+  <div class="body">
+    <h2 id="b-title"></h2>
+    <div class="panel sum"><dl id="b-dl"></dl></div>
+    <h3>방문 일시</h3>
+    <div class="chips" data-group="bdate"><button class="chip sel">목 9/17</button><button class="chip">금 9/18</button><button class="chip">토 9/19</button><button class="chip">일 9/20</button></div>
+    <div class="chips" data-group="btime"><button class="chip">10:00</button><button class="chip sel">14:00</button><button class="chip">16:00</button><button class="chip">18:00</button></div>
+    <label class="f">이름<input id="name" placeholder="홍길동"></label>
+    <div class="note">결제는 장착 후 매장에서 직접 합니다. 견적 금액은 예약 시점 기준으로 기록되어 현장에서 달라지면 확인할 수 있어요.</div>
+  </div>
+  <div class="bottom"><button class="btn acc" onclick="book()">예약 요청하기</button></div>
+</section>
+
+<section class="screen" id="s-done">
+  <div class="body" style="padding-top:48px">
+    <h2 id="z-title"></h2>
+    <p class="sub" id="z-sub"></p>
+    <div class="panel sum"><dl id="z-dl"></dl></div>
+    <div class="tl" style="margin-top:24px"><div class="done">견적 3건 비교</div><div class="done">예약 요청</div><div class="now">매장 확인 대기</div><div>장착</div><div>후기</div></div>
+  </div>
+  <div class="bottom"><button class="btn ghost" onclick="location.reload()">처음부터 다시 해보기</button></div>
+</section>
+
+<!-- ============ 점주 ============ -->
+<section class="screen" id="s-shop">
+  <div class="top"><button onclick="go('s-home')" aria-label="뒤로">‹</button><span class="t">매장 입점</span></div>
+  <div class="body">
+    <h2>타이어 장착 고객을<br>보내드립니다.</h2>
+    <p class="sub">가입비 0원 · 광고비 0원. 고객의 차량·타이어 규격·지역을 확인하고 가능한 가격만 제시하세요.</p>
+    <div class="mode"><button class="on" onclick="shopMode('join',this)">무료 입점</button><button onclick="shopMode('inbox',this)">견적 요청함 (점주 화면)</button></div>
+    <div id="shop-join">
+      <label class="f">사업자등록번호<input placeholder="000-00-00000"></label>
+      <label class="f">매장명<input placeholder="○○타이어 송파점"></label>
+      <label class="f">주소<input placeholder="서울 송파구 …"></label>
+      <label class="f">전화번호<input inputmode="tel" placeholder="02-000-0000"></label>
+      <label class="f">취급 브랜드</label>
+      <div class="chips" id="shop-brands"></div>
+      <label class="f">장착 가능 시간<input value="평일 09:00–19:00 · 토 09:00–15:00"></label>
+    </div>
+    <div id="shop-inbox" style="display:none">
+      <h3 style="margin-top:14px">🔔 새로운 견적요청</h3>
+      <div class="card" id="shop-req"></div>
+      <h3>견적 입력</h3>
+      <label class="f">제품<input id="q-prod" placeholder="예: 한국타이어 벤투스 S1 evo3"></label>
+      <label class="f">장착완료가격 (원)<input id="q-price" inputmode="numeric" placeholder="690000"></label>
+      <label class="f">장착 가능<input id="q-time" value="내일 오후"></label>
+      <button class="btn" style="margin-top:16px" onclick="shopSend()">견적 보내기</button>
+      <div class="note">ERP·POS 연동 없음. 제품·가격·가능 시간, 이 세 칸이 전부입니다.</div>
+    </div>
+  </div>
+  <div class="bottom" id="shop-bottom"><button class="btn acc" onclick="toast('입점 신청이 접수됐어요. 운영자 확인 후 첫 견적요청이 발송됩니다 (예시)')">무료 입점하기</button><button class="btn ghost" onclick="go('s-admin')">관리자 화면 보기</button></div>
+</section>
+
+<!-- ============ 관리자 ============ -->
+<section class="screen" id="s-admin">
+  <div class="top"><button onclick="go('s-shop')" aria-label="뒤로">‹</button><span class="t">관리자 · 수요 지도</span></div>
+  <div class="body">
+    <h2>이번 주 견적요청 1,000건</h2>
+    <p class="sub">고객 요청이 먼저 쌓이고, 그 데이터가 어느 지역 매장부터 영업할지 정합니다.</p>
+    <div class="tbl"><table><thead><tr><th>지역</th><th>요청</th><th>제휴점</th><th>10분 내 3건 도착률</th></tr></thead><tbody id="a-tbl"></tbody></table></div>
+    <h3>제휴점 없는 요청 (운영자 수동 대응)</h3>
+    <div class="card"><div class="hd"><div class="nm">송파구 · G80 2023<small>245/40R19 앞 · 275/35R19 뒤 × 4 · 이번 주</small></div><span class="pill w">제휴점 0</span></div>
+      <div class="msg">주변 타이어점 3곳에 전화 → 가격 받아서 아래에 입력하면 고객에게 바로 견적 발송</div>
+      <div class="acts"><button onclick="toast('주변 매장 목록 열기 (예시)')">주변 매장 찾기</button><button class="pri" onclick="toast('대리 입력: 한국타이어 4본 690,000원 → 고객에게 발송됨 (예시)')">견적 대리 입력</button></div></div>
+    <h3>핵심 KPI (첫 30일)</h3>
+    <div class="stats"><div><b>31%</b><span>번호입력→요청</span></div><div><b>2.4개</b><span>평균 견적 수</span></div><div><b>18%</b><span>예약 전환</span></div><div><b>42%</b><span>10분 내 3견적</span></div></div>
+    <div class="note">숫자는 예시입니다. 실제 광고 후 지역별·차종별·규격별로 축적하면 "차량 × 규격 × 지역 × 실제 장착가격" 데이터가 자산이 됩니다.</div>
+  </div>
+  <div class="bottom"><button class="btn ghost" onclick="go('s-home')">소비자 화면으로</button></div>
+</section>
+
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const $=id=>document.getElementById(id);
+const S={plate:'',car:null,qty:'4본',brand:'상관없음',region:'',gu:'',when:'이번 주',quotes:[],sort:'rec',pick:null,bdate:'목 9/17',btime:'14:00',confirmed:true};
+const CARS=[
+  {name:'제네시스 G80 2023',front:'245/40R19',rear:'275/35R19',inch:19,base:690000},
+  {name:'현대 그랜저 GN7 2024',front:'245/40R19',rear:'245/40R19',inch:19,base:610000},
+  {name:'기아 쏘렌토 MQ4 2022',front:'255/45R20',rear:'255/45R20',inch:20,base:640000},
+  {name:'현대 아반떼 CN7 2021',front:'225/45R17',rear:'225/45R17',inch:17,base:420000},
+  {name:'기아 카니발 KA4 2023',front:'235/55R19',rear:'235/55R19',inch:19,base:580000},
+  {name:'테슬라 모델 Y 2023',front:'255/45R19',rear:'255/45R19',inch:19,base:720000},
+];
+// 지역별 제휴점 수 (전국 오픈, 공급 편중을 그대로 노출)
+const REGIONS={'서울':38,'경기':29,'인천':6,'부산':9,'대구':11,'대전':4,'광주':3,'울산':2,'세종':0,'강원':0,'충북':0,'충남':1,'전북':0,'전남':0,'경북':2,'경남':3,'제주':0};
+const DEMAND=[['서울',310,38,71],['경기',270,29,58],['부산',90,9,40],['대구',70,11,52],['인천',65,6,31],['대전',45,4,22],['광주',40,3,15],['기타',110,8,9]];
+const BRANDS=['한국','금호','넥센','미쉐린','컨티넨탈','브리지스톤','피렐리','굿이어'];
+
+function go(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on'));$(id).classList.add('on');window.scrollTo(0,0);}
+function toast(t){const el=$('toast');el.textContent=t;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),2800);}
+const won=v=>Math.round(v).toLocaleString('ko-KR')+'원';
+document.querySelectorAll('.chips[data-group]').forEach(g=>g.addEventListener('click',e=>{const b=e.target.closest('.chip');if(!b)return;g.querySelectorAll('.chip').forEach(c=>c.classList.remove('sel'));b.classList.add('sel');S[g.dataset.group]=b.textContent;if(g.dataset.group==='region')regionNote();}));
+Object.keys(REGIONS).forEach(r=>{const b=document.createElement('button');b.className='chip'+(r==='서울'?' sel':'');b.textContent=r;$('regions').appendChild(b);});S.region='서울';
+BRANDS.forEach(r=>{const b=document.createElement('button');b.className='chip';b.textContent=r;b.onclick=()=>b.classList.toggle('sel');$('shop-brands').appendChild(b);});
+DEMAND.forEach(([r,q,s,p])=>{const tr=document.createElement('tr');tr.innerHTML=`<td>${r}</td><td>${q}</td><td>${s}</td><td><div style="display:flex;align-items:center;gap:8px;justify-content:flex-end"><div class="bar" style="width:70px"><i style="width:${p}%"></i></div>${p}%</div></td>`;$('a-tbl').appendChild(tr);});
+
+function regionNote(){const n=REGIONS[S.region]??0;$('r-note').textContent=n>0?`${S.region} 제휴점 ${n}곳에 견적을 요청합니다.`:`${S.region}은 아직 제휴점이 없어요. 그래도 요청은 받습니다 — 운영자가 주변 매장에 직접 확인해 견적을 만들어 드립니다.`;}
+regionNote();
+
+function lookup(){
+  const p=$('plate').value.trim();
+  if(!/^\d{2,3}[가-힣]\d{4}$/.test(p)){$('e0').style.display='block';return;}$('e0').style.display='none';
+  S.plate=p;const h=[...p].reduce((a,c)=>a+c.charCodeAt(0),0);S.car=CARS[h%CARS.length];
+  $('c-title').textContent=S.car.name;$('c-plate').textContent=p;
+  const same=S.car.front===S.car.rear;
+  $('c-spec').innerHTML=same?`<div><b>${S.car.front}</b><span>앞·뒤 동일 · ${S.car.inch}인치</span></div><div><b>${S.car.inch}인치</b><span>순정 휠</span></div>`:`<div><b>${S.car.front}</b><span>앞 · ${S.car.inch}인치</span></div><div><b>${S.car.rear}</b><span>뒤 · ${S.car.inch}인치</span></div>`;
+  go('s-car');
+}
+function pickRegion(){S.gu=$('gu').value.trim()||S.region;go('s-when');}
+
+function requestQuotes(){
+  if(!$('phone').value.trim()){toast('휴대전화 번호를 입력해주세요');return;}
+  const n=S.region==='현재 위치'?5:(REGIONS[S.region]??0);
+  const qn=S.qty==='4본'?4:S.qty==='1본'?1:2;
+  $('w-id').textContent='#T'+Math.floor(10000+Math.random()*89999);
+  $('w-dl').innerHTML=`<dt>차량</dt><dd>${S.car.name}</dd><dt>규격</dt><dd>${S.car.front}${S.car.front!==S.car.rear?' / '+S.car.rear:''}</dd><dt>수량</dt><dd>${S.qty}</dd><dt>지역</dt><dd>${S.gu}</dd><dt>시기</dt><dd>${S.when}</dd><dt>브랜드</dt><dd>${S.brand}</dd>`;
+  $('w-btn').style.display='';$('w-home').style.display='none';
+  if(n===0){
+    $('w-title').textContent=`${S.region} 지역 견적을 준비 중입니다`;
+    $('w-sub').textContent='현재 고객님 지역의 실시간 제휴점 견적을 준비 중입니다. 운영자가 주변 타이어 매장에 직접 확인해 1~3개의 실제 견적을 만들어 알려드릴게요.';
+    $('w-step2').textContent='운영자가 주변 매장 확인 중';$('w-step2').className='now';
+    $('w-now').textContent='견적 도착 대기 (보통 1~3시간)';$('w-now').className='';
+    $('w-note').textContent='이 요청은 버려지지 않습니다. 같은 지역 요청이 쌓이면 그 지역 매장 영업이 시작됩니다.';
+    $('w-btn').style.display='none';$('w-home').style.display='';
+    go('s-wait');
+    // 데모: 운영자 대리 입력으로 견적 도착
+    setTimeout(()=>{toast('운영자가 주변 매장 확인 후 견적 2건을 입력했어요 (데모)');buildQuotes(qn,2);$('w-now').textContent='운영자 대리 견적 2건 도착';$('w-now').className='done';$('w-step2').className='done';$('w-btn').style.display='';$('w-btn').disabled=false;$('w-home').style.display='none';},3500);
+    return;
+  }
+  $('w-title').textContent=`${S.gu} 제휴점 ${Math.min(n,5)}곳에 요청했어요`;
+  $('w-sub').textContent='보통 10분 안에 첫 견적이 도착합니다. 도착하면 알려드릴게요.';
+  $('w-step2').textContent='지역 제휴점에 전달';$('w-step2').className='done';$('w-now').className='now';$('w-note').textContent='';
+  go('s-wait');buildQuotes(qn,3);
+  let c=0;const tick=()=>{c++;$('w-cnt').textContent=c;if(c===1){$('w-btn').disabled=false;toast(`${S.quotes[0].shop} 견적이 도착했어요`);}if(c<3)setTimeout(tick,700+Math.random()*600);else{$('w-now').textContent='견적 3건 도착';$('w-now').className='done';}};setTimeout(tick,900);
+}
+function buildQuotes(qn,count){
+  const per=S.car.base/4;const base=per*qn;
+  const brandPref=S.brand==='상관없음'?null:S.brand;
+  const mk=(shop,brand,prod,mul,dist,fast,rating,cnt,tag)=>({shop,brand,prod,price:Math.round(base*mul/1000)*1000,dist,fast,rating,cnt,tag});
+  let list=[
+    mk('타이어프로 '+(S.gu.split(' ')[0]||'')+'점','한국','벤투스 S1 evo3',1.0,3.2,'내일 오후',4.8,214,'제휴점'),
+    mk('스피드마스터 타이어','금호','엑스타 PS71',0.94,5.8,'오늘 저녁',4.7,96,'제휴점'),
+    mk('티스테이션 '+(S.gu.split(' ')[0]||'')+'점','미쉐린','파일럿 스포츠 4',1.18,1.9,'모레 오전',4.9,338,'제휴점'),
+  ];
+  if(brandPref){list[0].brand=brandPref;list[0].prod=brandPref+' 인기 모델';}
+  list=list.slice(0,count);if(count===2)list.forEach(q=>q.tag='운영자 대리 입력');
+  list.forEach(q=>q.score=(1-q.price/(base*1.2))*40+(q.rating/5)*25+(1-q.dist/8)*20+(q.fast.startsWith('오늘')?15:q.fast.startsWith('내일')?10:5));
+  S.quotes=list;S.base=base;renderCmp();
+}
+function sortBy(k,el){S.sort=k;document.querySelectorAll('.sortbar .chip').forEach(c=>c.classList.remove('sel'));el.classList.add('sel');renderCmp();}
+function renderCmp(){
+  const qs=[...S.quotes];const ord={'오늘':0,'내일':1,'모레':2};
+  if(S.sort==='price')qs.sort((a,b)=>a.price-b.price);else if(S.sort==='dist')qs.sort((a,b)=>a.dist-b.dist);else if(S.sort==='fast')qs.sort((a,b)=>ord[a.fast.slice(0,2)]-ord[b.fast.slice(0,2)]);else qs.sort((a,b)=>b.score-a.score);
+  const min=Math.min(...qs.map(q=>q.price));const natAvg=Math.round(S.base*1.04/1000)*1000,regAvg=Math.round(S.base*1.02/1000)*1000;
+  $('p-title').textContent=`${S.car.name} · ${S.qty} 견적 ${qs.length}건`;
+  $('p-ctx').innerHTML=`<div><span>최저 견적</span><b>${won(min)}</b></div><div><span>동일 차량 최근 전국 평균</span><span>${won(natAvg)}</span></div><div><span>${S.region} 평균</span><span>${won(regAvg)}</span></div><div style="margin-top:4px"><span class="pill">${min<regAvg?'최근 거래 대비 합리적인 가격대':'지역 평균 수준'}</span></div>`;
+  $('p-cards').innerHTML=qs.map((q,i)=>`
+    <div class="card ${i===0&&S.sort==='rec'?'best':''}">
+      <div class="hd"><div class="nm">${q.shop}<small>${q.brand} ${q.prod} · ${S.qty} 장착완료</small></div><div class="fee">${q.price.toLocaleString()}원<em>${q.price===min?'최저가':'+'+(q.price-min).toLocaleString()+'원'}</em></div></div>
+      <div style="margin-top:6px">${i===0&&S.sort==='rec'?'<span class="pill a">추천</span> ':''}<span class="pill ${q.tag==='제휴점'?'':'w'}">${q.tag}</span></div>
+      <div class="stats"><div><b>${q.dist}km</b><span>거리</span></div><div><b>${q.fast}</b><span>장착 가능</span></div><div><b>${q.rating}</b><span>평점</span></div><div><b>${q.cnt}건</b><span>플랫폼 장착</span></div></div>
+      <div class="acts"><button onclick="toast('${q.shop} 후기 ${q.cnt}건 · 사업자 인증 완료 (예시)')">매장 정보</button><button class="pri" onclick="openBook('${q.shop}')">예약하기</button></div>
+    </div>`).join('');
+}
+function openBook(shop){const q=S.quotes.find(x=>x.shop===shop);S.pick=q;
+  $('b-title').textContent=q.shop+'에 예약할게요';
+  $('b-dl').innerHTML=`<dt>차량</dt><dd>${S.car.name}</dd><dt>제품</dt><dd>${q.brand} ${q.prod}</dd><dt>수량</dt><dd>${S.qty}</dd><dt>장착완료 가격</dt><dd class="big">${q.price.toLocaleString()}원</dd><dt>거리</dt><dd>${q.dist}km</dd>`;
+  go('s-book');}
+function book(){const q=S.pick;
+  $('z-title').textContent='예약 요청을 보냈어요';$('z-sub').textContent=`${q.shop}에서 확인 후 문자로 안내드립니다. 매장에 이제 연락처가 공유됩니다.`;
+  $('z-dl').innerHTML=`<dt>매장</dt><dd>${q.shop}</dd><dt>일시</dt><dd>${S.bdate} ${S.btime}</dd><dt>제품</dt><dd>${q.brand} ${q.prod} ${S.qty}</dd><dt>예약 시점 견적</dt><dd class="big">${q.price.toLocaleString()}원</dd>`;
+  go('s-done');}
+
+// 점주
+function shopMode(m,el){document.querySelectorAll('.mode button').forEach(b=>b.classList.remove('on'));el.classList.add('on');$('shop-join').style.display=m==='join'?'':'none';$('shop-inbox').style.display=m==='inbox'?'':'none';$('shop-bottom').style.display=m==='join'?'':'none';
+  if(m==='inbox'){const c=S.car||CARS[1];$('shop-req').innerHTML=`<div class="hd"><div class="nm">${c.name}<small>${c.front}${c.front!==c.rear?' / '+c.rear:''} × ${S.qty}</small></div><span class="pill">이번 주</span></div><div class="tags"><span>고객 위치: ${S.gu||'서울 강남구'}</span><span>브랜드: ${S.brand}</span></div><div class="note">고객 연락처는 예약 후 공개됩니다.</div>`;}}
+function shopSend(){const p=parseInt(($('q-price').value||'').replace(/\D/g,''));if(!$('q-prod').value.trim()||!p){toast('제품과 가격을 입력해주세요');return;}
+  toast(`고객에게 발송됨: ${$('q-prod').value} · ${p.toLocaleString()}원 · ${$('q-time').value}`);
+  if(S.quotes.length){S.quotes.push({shop:'내 매장 (방금 입력)',brand:'',prod:$('q-prod').value,price:p,dist:2.5,fast:$('q-time').value,rating:'신규',cnt:0,tag:'제휴점',score:50});renderCmp();}}
+</script>
+</body>
+</html>
