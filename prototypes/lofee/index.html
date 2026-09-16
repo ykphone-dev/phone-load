@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>로피 LoFee — 내 사건의 변호사 비용, 비교하고 결정하세요</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F5F5F7; --card:#FFFFFF; --ink:#15161B; --ink2:#5E626C; --line:#E2E3E8;
+  --main:#2B2D42; --main-ink:#FFFFFF; --acc:#1F6F78; --acc-bg:#E3F0F1; --good:#1F7A4D; --good-bg:#E4F2EA; --warn:#9A5B1A; --warn-bg:#F7EEDD; --field:#ECEDF1;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#111217; --card:#1B1D25; --ink:#EEEFF3; --ink2:#9CA1AD; --line:#2B2E3A;
+    --main:#DDE0EA; --main-ink:#15161B; --acc:#5FB3BC; --acc-bg:#16303A; --good:#5CC898; --good-bg:#17301F; --warn:#E0A64A; --warn-bg:#3A2E18; --field:#242732;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#111217; --card:#1B1D25; --ink:#EEEFF3; --ink2:#9CA1AD; --line:#2B2E3A;
+  --main:#DDE0EA; --main-ink:#15161B; --acc:#5FB3BC; --acc-bg:#16303A; --good:#5CC898; --good-bg:#17301F; --warn:#E0A64A; --warn-bg:#3A2E18; --field:#242732;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:"Noto Sans KR",-apple-system,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased}
+.app{max-width:480px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column}
+.top{display:flex;align-items:center;gap:8px;padding:14px 16px 8px;position:sticky;top:0;background:var(--bg);z-index:5}
+.top button.bk{background:none;border:0;color:var(--ink);font-size:22px;line-height:1;padding:4px 8px 4px 0;cursor:pointer}
+.top .t{font-weight:700;font-size:16px}
+.top .step{margin-left:auto;font-size:13px;color:var(--ink2);font-variant-numeric:tabular-nums}
+.top .lnk{margin-left:auto;font-size:13px;color:var(--ink2);text-decoration:underline;background:none;border:0;padding:0;cursor:pointer;font-family:inherit}
+.prog{height:3px;background:var(--line);margin:0 16px}.prog i{display:block;height:100%;background:var(--acc);transition:width .3s}
+.screen{display:none;flex:1;flex-direction:column}.screen.on{display:flex}
+.body{padding:12px 20px 130px;flex:1}
+h1{font-size:30px;line-height:1.25;font-weight:900;letter-spacing:-0.02em;word-break:keep-all}
+h2{font-size:22px;line-height:1.3;font-weight:700;letter-spacing:-0.01em;word-break:keep-all}
+h3{font-size:17px;font-weight:700;margin-top:24px;word-break:keep-all}
+p.sub{color:var(--ink2);font-size:15px;word-break:keep-all;margin-top:8px}
+.bottom{position:fixed;left:0;right:0;bottom:0;padding:12px 20px calc(12px + env(safe-area-inset-bottom));background:linear-gradient(to top,var(--bg) 70%,transparent);pointer-events:none}
+.bottom>*{max-width:440px;margin:0 auto;pointer-events:auto}
+.btn{display:block;width:100%;border:0;border-radius:14px;padding:17px;font:inherit;font-weight:700;font-size:17px;cursor:pointer;background:var(--main);color:var(--main-ink);text-align:center}
+.btn:disabled{opacity:.4;cursor:default}
+.btn.ghost{background:var(--card);color:var(--ink);border:1.5px solid var(--line);margin-top:8px}
+.btn:focus-visible,input:focus-visible,textarea:focus-visible,.chip:focus-visible,.opt:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+label.f{display:block;margin-top:18px;font-size:14px;font-weight:500;color:var(--ink2)}
+input,textarea,select{width:100%;margin-top:6px;border:0;background:var(--field);color:var(--ink);border-radius:12px;padding:14px;font:inherit;font-size:17px}
+textarea{min-height:80px;resize:vertical}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.chip{border:1.5px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:9px 14px;font:inherit;font-size:14px;cursor:pointer}
+.chip.sel{border-color:var(--main);background:var(--main);color:var(--main-ink)}
+.chip.dim{opacity:.55}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.opt{display:block;width:100%;text-align:left;border:1.5px solid var(--line);background:var(--card);color:var(--ink);border-radius:14px;padding:14px 16px;font:inherit;cursor:pointer}
+.opt.sel{border-color:var(--acc);box-shadow:inset 0 0 0 1px var(--acc)}
+.opt b{display:block;font-size:16px}.opt span{display:block;font-size:12px;color:var(--ink2);margin-top:2px;word-break:keep-all}
+.q{margin-top:22px}.q .qt{font-weight:700;font-size:16px;word-break:keep-all}
+.panel{background:var(--card);border-radius:18px;padding:20px;margin-top:16px;border:1px solid var(--line)}
+.panel .k{font-size:13px;color:var(--ink2)}
+.sum dl{display:grid;grid-template-columns:auto 1fr;gap:8px 16px;font-size:15px}
+.sum dt{color:var(--ink2);white-space:nowrap}.sum dd{font-weight:500;font-variant-numeric:tabular-nums}
+.note{font-size:13px;color:var(--ink2);margin-top:14px;word-break:keep-all;line-height:1.55}
+.legal{margin-top:14px;background:var(--warn-bg);color:var(--ink);border-radius:12px;padding:12px 14px;font-size:13px;word-break:keep-all;line-height:1.55}
+.legal b{color:var(--warn)}
+.pill{display:inline-block;background:var(--acc-bg);color:var(--acc);font-weight:700;font-size:12px;border-radius:8px;padding:3px 8px}
+.pill.g{background:var(--good-bg);color:var(--good)}.pill.w{background:var(--warn-bg);color:var(--warn)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin-top:12px}
+.card .hd{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+.card .nm{font-weight:700;font-size:16px}.card .nm small{display:block;font-weight:400;font-size:13px;color:var(--ink2)}
+.card .fee{font-size:22px;font-weight:900;font-variant-numeric:tabular-nums;letter-spacing:-0.02em;white-space:nowrap}
+.card .fee em{font-style:normal;font-size:12px;color:var(--ink2);font-weight:500;display:block;text-align:right}
+.kv{display:grid;grid-template-columns:1fr 1fr;gap:6px 12px;margin-top:12px;font-size:13px}
+.kv div{display:flex;justify-content:space-between;border-bottom:1px dashed var(--line);padding:5px 0}
+.kv span:first-child{color:var(--ink2)}
+.msg{font-size:14px;margin-top:10px;word-break:keep-all;line-height:1.55}
+.acts{display:flex;gap:8px;margin-top:12px}
+.acts button{flex:1;border:1.5px solid var(--line);background:none;color:var(--ink);border-radius:10px;padding:11px;font:inherit;font-size:14px;cursor:pointer}
+.acts button.pri{background:var(--main);color:var(--main-ink);border-color:var(--main);font-weight:700}
+.tbl{overflow-x:auto;margin-top:12px;border:1px solid var(--line);border-radius:14px;background:var(--card)}
+table{border-collapse:collapse;width:100%;font-size:13px;font-variant-numeric:tabular-nums;white-space:nowrap}
+th,td{padding:9px 12px;text-align:center;border-bottom:1px solid var(--line)}
+th:first-child,td:first-child{text-align:left;position:sticky;left:0;background:var(--card);color:var(--ink2);font-weight:500}
+thead th{font-weight:700;color:var(--ink)}tr:last-child td{border:0}
+.tl{margin-top:16px;border-left:2px solid var(--line);padding-left:16px}
+.tl div{position:relative;padding:6px 0 14px;color:var(--ink2);font-size:15px}
+.tl div::before{content:"";position:absolute;left:-23px;top:12px;width:10px;height:10px;border-radius:50%;background:var(--line)}
+.tl div.done{color:var(--ink);font-weight:500}.tl div.done::before{background:var(--good)}
+.tl div.now{color:var(--ink);font-weight:700}.tl div.now::before{background:var(--acc);box-shadow:0 0 0 4px color-mix(in srgb,var(--acc) 30%,transparent)}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:12px}
+.stats div{background:var(--field);border-radius:10px;padding:10px 4px;text-align:center}
+.stats b{display:block;font-size:18px;font-variant-numeric:tabular-nums;letter-spacing:-0.01em}.stats span{font-size:11px;color:var(--ink2)}
+.bar{height:8px;background:var(--field);border-radius:5px;overflow:hidden}.bar i{display:block;height:100%;background:var(--acc)}
+.mode{display:flex;background:var(--field);border-radius:12px;padding:4px;margin-top:10px}
+.mode button{flex:1;border:0;background:none;color:var(--ink2);border-radius:9px;padding:9px;font:inherit;font-size:13px;cursor:pointer}
+.mode button.on{background:var(--card);color:var(--ink);font-weight:700;box-shadow:0 1px 3px rgba(0,0,0,.1)}
+.toast{position:fixed;top:14px;left:50%;transform:translate(-50%,-80px);background:var(--ink);color:var(--bg);padding:12px 18px;border-radius:12px;font-size:14px;max-width:360px;width:calc(100% - 40px);box-shadow:0 8px 30px rgba(0,0,0,.25);transition:transform .35s;z-index:20;word-break:keep-all}
+.toast.show{transform:translate(-50%,0)}
+.hero{padding:40px 0 10px}
+.hero .ex{margin-top:30px;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px 18px;font-size:14px}
+.hero .ex .row{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px dashed var(--line);font-variant-numeric:tabular-nums}
+.hero .ex .row:last-child{border:0}
+.foot{margin-top:18px;font-size:12px;color:var(--ink2);text-align:center;word-break:keep-all;line-height:1.5}
+.price{font-size:34px;font-weight:900;letter-spacing:-0.03em;font-variant-numeric:tabular-nums}
+.price small{font-size:15px;font-weight:500;color:var(--ink2);margin-left:4px}
+.err{color:var(--warn);font-size:13px;margin-top:8px;display:none}
+.row2{display:flex;gap:10px}.row2>*{flex:1}
+@media (prefers-reduced-motion: reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- ===== 소비자 ===== -->
+<section class="screen on" id="s-home">
+  <div class="top"><span class="t">로피 <span style="color:var(--acc)">LoFee</span></span><button class="lnk" onclick="go('s-law')">변호사이신가요?</button></div>
+  <div class="body hero">
+    <h1>내 사건의 변호사 비용,<br>비교해보고 결정하세요.</h1>
+    <p class="sub">사건 내용을 한 번 등록하고, 참여 변호사들의 비용과 업무조건을 비교하세요. 등록·비교는 무료입니다.</p>
+    <div class="ex">
+      <div style="font-size:12px;color:var(--ink2);margin-bottom:6px">최근 등록 사건에 제안된 착수금 범위 (예시)</div>
+      <div class="row"><span>임대차보증금 반환 · 1.5억 · 소송 전</span><b>330만~550만원</b></div>
+      <div class="row"><span>이혼·재산분할 · 서울</span><b>440만~770만원</b></div>
+      <div class="row"><span>임금체불 · 2,800만원</span><b>220만~330만원</b></div>
+    </div>
+    <div class="foot">로피는 특정 변호사를 추천·배정하지 않습니다. 참여 변호사가 직접 사건을 검토해 조건을 제시하고, 선택은 이용자가 합니다.</div>
+  </div>
+  <div class="bottom"><button class="btn" onclick="go('s-cat')">내 사건 등록하고 조건 비교하기</button></div>
+</section>
+
+<section class="screen" id="s-cat">
+  <div class="top"><button class="bk" onclick="go('s-home')" aria-label="뒤로">‹</button><span class="t">사건 선택</span><span class="step">1 / 3</span></div><div class="prog"><i style="width:33%"></i></div>
+  <div class="body">
+    <h2>어떤 사건인가요?</h2>
+    <p class="sub">비용 구조를 표준화하기 쉬운 분야부터 시작합니다.</p>
+    <div class="grid" id="cats"></div>
+    <div class="note">형사 사건은 성공보수 등 별도 법적 이슈가 있어 MVP에서는 후순위입니다.</div>
+  </div>
+  <div class="bottom"><button class="btn" id="cat-btn" disabled onclick="go('s-q')">다음</button></div>
+</section>
+
+<section class="screen" id="s-q">
+  <div class="top"><button class="bk" onclick="go('s-cat')" aria-label="뒤로">‹</button><span class="t" id="q-title">사건 표준화</span><span class="step">2 / 3</span></div><div class="prog"><i style="width:66%"></i></div>
+  <div class="body">
+    <h2>몇 가지만 선택해주세요</h2>
+    <p class="sub">긴 글을 쓰실 필요 없습니다. 선택한 내용으로 사건 카드가 만들어집니다.</p>
+    <div id="qs"></div>
+    <label class="f">지역</label>
+    <div class="chips" data-group="region"><button class="chip sel">서울</button><button class="chip">경기</button><button class="chip">인천</button><button class="chip">부산</button><button class="chip">대구</button><button class="chip">대전</button><button class="chip">광주</button><button class="chip">기타</button></div>
+    <label class="f">추가 설명 (선택)<textarea id="memo" placeholder="상대방 이름 등 식별정보는 적지 마세요. 변호사 선택 후 별도로 공유됩니다."></textarea></label>
+    <div class="err" id="q-err">모든 질문에 답해주세요.</div>
+  </div>
+  <div class="bottom"><button class="btn" onclick="makeCard()">사건 카드 만들기</button></div>
+</section>
+
+<section class="screen" id="s-card">
+  <div class="top"><button class="bk" onclick="go('s-q')" aria-label="뒤로">‹</button><span class="t">사건 카드</span><span class="step">3 / 3</span></div><div class="prog"><i style="width:100%"></i></div>
+  <div class="body">
+    <h2 id="cd-title"></h2>
+    <p class="sub">참여 변호사에게 공개되는 내용입니다. 개인정보는 변호사 선택 전 제한적으로만 공개됩니다.</p>
+    <div class="panel sum"><dl id="cd-dl"></dl><div class="note" style="margin-top:12px">공개 범위: 사건 유형 · 지역 · 금액 · 단계 · 희망 업무. 이름·연락처·상대방 정보는 비공개.</div></div>
+    <label class="f">조건 알림 받을 휴대전화<input id="phone" inputmode="tel" placeholder="010-0000-0000"></label>
+    <div class="legal"><b>안내</b> 로피는 사건을 특정 변호사에게 배정하거나 추천하지 않습니다. 등록된 사건은 참여 변호사가 스스로 열람하고 참여 여부를 결정합니다.</div>
+  </div>
+  <div class="bottom"><button class="btn" onclick="submitCase()">비용조건 받아보기</button></div>
+</section>
+
+<section class="screen" id="s-wait">
+  <div class="top"><span class="t">사건 등록 완료</span></div>
+  <div class="body">
+    <h2>사건이 등록됐어요</h2>
+    <p class="sub">참여 변호사들이 사건을 검토하고 있습니다. 72시간 동안 제안을 받습니다.</p>
+    <div class="panel sum"><div class="k" style="margin-bottom:10px">사건번호 <b id="w-id"></b></div><dl id="w-dl"></dl></div>
+    <div class="tl"><div class="done">사건 카드 생성</div><div class="done">참여 변호사 열람 가능</div><div class="now" id="w-now">조건 제안 도착 중 <span id="w-cnt">0</span>개</div><div>조건 비교 · 프로필 확인</div><div>상담 요청</div></div>
+    <div class="note">비교의 의미가 있으려면 3개 이상의 제안이 필요합니다. 3개가 모이면 다시 알려드릴게요.</div>
+  </div>
+  <div class="bottom"><button class="btn" id="w-btn" disabled onclick="go('s-cmp')">받은 제안 보기</button></div>
+</section>
+
+<section class="screen" id="s-cmp">
+  <div class="top"><button class="bk" onclick="go('s-wait')" aria-label="뒤로">‹</button><span class="t">조건 비교</span></div>
+  <div class="body">
+    <h2 id="p-title"></h2>
+    <p class="sub">가격만이 아니라 총 조건을 비교하세요. 제안은 도착 순서로 표시되며, 로피는 순위를 매기지 않습니다.</p>
+    <div class="tbl" id="p-tbl"></div>
+    <h3>제안 상세</h3>
+    <div id="p-cards"></div>
+    <div class="note">착수금 외 성공보수·부가세·인지송달료·항소심 포함 여부에 따라 실제 부담이 달라집니다. 상담 요청 전까지 연락처는 공개되지 않습니다.</div>
+  </div>
+</section>
+
+<section class="screen" id="s-prof">
+  <div class="top"><button class="bk" onclick="go('s-cmp')" aria-label="뒤로">‹</button><span class="t">변호사 프로필</span></div>
+  <div class="body" id="pf-body"></div>
+  <div class="bottom"><button class="btn" id="pf-btn">상담 요청</button></div>
+</section>
+
+<section class="screen" id="s-consult">
+  <div class="top"><button class="bk" onclick="go('s-prof')" aria-label="뒤로">‹</button><span class="t">상담 요청</span></div>
+  <div class="body">
+    <h2 id="cs-title"></h2>
+    <div class="panel sum"><dl id="cs-dl"></dl></div>
+    <label class="f">상담 방식</label>
+    <div class="chips" data-group="how"><button class="chip sel">전화</button><button class="chip">화상</button><button class="chip">방문</button></div>
+    <label class="f">희망 일시</label>
+    <div class="chips" data-group="cdate"><button class="chip sel">금 9/18</button><button class="chip">월 9/21</button><button class="chip">화 9/22</button></div>
+    <div class="chips" data-group="ctime"><button class="chip">10:00</button><button class="chip sel">14:00</button><button class="chip">17:00</button></div>
+    <label class="f">이름<input id="name" placeholder="홍길동"></label>
+    <div class="note">상담을 요청하면 이 변호사에게만 이름과 연락처가 공개됩니다. 선임 여부는 상담 후 이용자가 결정합니다.</div>
+  </div>
+  <div class="bottom"><button class="btn" onclick="consult()">상담 요청 보내기</button></div>
+</section>
+
+<section class="screen" id="s-done">
+  <div class="body" style="padding-top:48px">
+    <h2 id="z-title"></h2>
+    <p class="sub">변호사 측에서 확인 후 연락드립니다. 다른 제안도 그대로 남아 있으니 여러 변호사와 상담하셔도 됩니다.</p>
+    <div class="panel sum"><dl id="z-dl"></dl></div>
+    <div class="tl" style="margin-top:24px"><div class="done">사건 등록</div><div class="done" id="z-n"></div><div class="done">상담 요청</div><div class="now">변호사 확인 대기</div><div>선임 결정 (이용자)</div></div>
+  </div>
+  <div class="bottom"><button class="btn ghost" onclick="go('s-cmp')">다른 제안 보기</button><button class="btn ghost" onclick="location.reload()">처음부터</button></div>
+</section>
+
+<!-- ===== 변호사 ===== -->
+<section class="screen" id="s-law">
+  <div class="top"><button class="bk" onclick="go('s-home')" aria-label="뒤로">‹</button><span class="t">변호사</span><button class="lnk" onclick="go('s-admin')">관리자</button></div>
+  <div class="body">
+    <h2>사건을 직접 검토하고<br>참여 여부를 결정하세요.</h2>
+    <p class="sub">사건별 수수료 없이 월 정액으로 플랫폼 기능을 이용합니다. 수임 0건도 10건도 같은 금액입니다.</p>
+    <div class="mode"><button class="on" onclick="lawMode('list',this)">사건 탐색</button><button onclick="lawMode('sub',this)">구독</button></div>
+    <div id="law-list">
+      <div class="chips" style="margin-top:14px"><button class="chip sel">전체</button><button class="chip">임대차</button><button class="chip">이혼·가사</button><button class="chip">민사금전</button><button class="chip">노동</button><button class="chip">서울</button></div>
+      <div id="law-cases"></div>
+      <div class="note">플랫폼은 사건을 배정하지 않습니다. 열람·참여는 변호사의 판단입니다.</div>
+    </div>
+    <div id="law-sub" style="display:none">
+      <div class="panel"><div class="k">Professional</div><div class="price">299,000<small>원 / 월</small></div>
+        <div class="msg">프로필 관리 · 비용조건 등록 · 사건정보 열람·검색 · 조건 제안 · 상담 일정 관리 · 제안 관리 · 기본 통계</div>
+        <div class="kv" style="grid-template-columns:1fr"><div><span>수임 0건</span><span>299,000원</span></div><div><span>수임 10건</span><span>299,000원</span></div><div><span>선임료 3,000만원 사건</span><span>299,000원</span></div></div>
+        <div class="note">수임 성과에 연동된 수수료를 받지 않습니다.</div></div>
+      <div class="panel" style="border-color:var(--acc)"><span class="pill">Founding Lawyer · 첫 100명</span><div class="price" style="margin-top:6px">99,000<small>원 / 월 × 3개월</small></div><div class="msg">이후 정상가 299,000원. 카드 등록이 필요합니다 — "쓸 것 같다"가 아니라 "결제하겠다"를 검증합니다.</div>
+        <label class="f">변호사 등록번호<input placeholder="00000"></label><label class="f">소속<input placeholder="법무법인 ○○ / 개인"></label>
+        <button class="btn" style="margin-top:14px" onclick="toast('자격 확인 후 카드 등록 화면으로 이동합니다 (예시)')">Founding Lawyer로 시작</button></div>
+      <div class="legal"><b>법적 검토 필요</b> 정액제라도 실제 기능이 변호사법 제34조의 유상 소개·알선·유인으로 평가될 수 있는지는 출시 전 화면·약관·과금방식을 묶어 법률의견을 받는 것을 전제로 합니다.</div>
+    </div>
+  </div>
+</section>
+
+<section class="screen" id="s-lawdetail">
+  <div class="top"><button class="bk" onclick="go('s-law')" aria-label="뒤로">‹</button><span class="t">사건 상세</span></div>
+  <div class="body">
+    <div class="panel sum" id="ld-card"></div>
+    <h3>조건 제안하기</h3>
+    <label class="f">착수금 (원)<input id="o-fee" inputmode="numeric" placeholder="3300000"></label>
+    <label class="f">성공보수 (사건유형상 허용·적절한 범위에 한해)<input id="o-succ" placeholder="예: 회수금액의 10%"></label>
+    <div class="row2">
+      <label class="f">상담료<select id="o-cons"><option>무료</option><option>유료 5만원</option><option>유료 10만원</option></select></label>
+      <label class="f">부가세<select id="o-vat"><option>별도</option><option>포함</option></select></label>
+    </div>
+    <div class="row2">
+      <label class="f">인지·송달료<select id="o-stamp"><option>별도</option><option>포함</option></select></label>
+      <label class="f">항소심<select id="o-app"><option>별도</option><option>포함</option></select></label>
+    </div>
+    <label class="f">예상 업무범위</label>
+    <div class="chips" id="o-scope"><button class="chip sel">내용증명</button><button class="chip sel">소장 작성·제출</button><button class="chip sel">변론 출석</button><button class="chip">가압류</button><button class="chip">강제집행</button></div>
+    <label class="f">한 줄 메시지 (선택)<input id="o-msg" placeholder="예: 유사 사건 다수 수행. 첫 상담에서 회수 가능성부터 말씀드립니다."></label>
+  </div>
+  <div class="bottom"><button class="btn" onclick="lawSubmit()">제안 제출</button></div>
+</section>
+
+<!-- ===== 관리자 ===== -->
+<section class="screen" id="s-admin">
+  <div class="top"><button class="bk" onclick="go('s-law')" aria-label="뒤로">‹</button><span class="t">관리자 · 오늘</span></div>
+  <div class="body">
+    <h2>오늘 사건등록 127건</h2>
+    <div class="stats"><div><b>83</b><span>제안 발생</span></div><div><b>3.7</b><span>평균 제안 수</span></div><div><b>42</b><span>상담요청</span></div><div><b>8</b><span>변호사 가입</span></div><div><b>61%</b><span>72h 내 3제안</span></div><div><b>312</b><span>구독 변호사</span></div></div>
+    <div class="panel"><div class="k">North Star · 이번 달 3개 이상 조건을 비교한 소비자</div><div class="price" style="margin-top:4px">1,040<small>명</small></div><div class="bar" style="margin-top:10px"><i style="width:68%"></i></div><div class="note" style="margin-top:6px">목표 1,500명 · 사건등록 3,000 → 유효 2,000 → 제안 1,500 → 3개 비교 1,000 → 상담 600 가설</div></div>
+    <h3>분야별 등록 (오늘)</h3>
+    <div class="tbl"><table><thead><tr><th>분야</th><th>등록</th><th>제안률</th><th>3제안 도달</th></tr></thead><tbody id="a-tbl"></tbody></table></div>
+    <h3>운영 큐</h3>
+    <div class="card"><div class="hd"><div class="nm">변호사 인증 대기 <small>등록번호·소속 확인</small></div><span class="pill w">5건</span></div></div>
+    <div class="card"><div class="hd"><div class="nm">신고·차단 <small>식별정보 포함 사건 카드</small></div><span class="pill w">2건</span></div></div>
+    <div class="card"><div class="hd"><div class="nm">구독 결제 실패 <small>카드 재등록 안내</small></div><span class="pill">3건</span></div></div>
+    <div class="note">숫자는 예시입니다. 누적되는 자산은 사건 유형 × 규모 × 단계 × 지역 × 제안 착수금 × 보수조건 × 실제 선택 데이터입니다.</div>
+  </div>
+  <div class="bottom"><button class="btn ghost" onclick="go('s-home')">소비자 화면으로</button></div>
+</section>
+
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const $=id=>document.getElementById(id);
+const S={cat:null,ans:{},region:'서울',amount:0,offers:[],pick:null,how:'전화',cdate:'금 9/18',ctime:'14:00'};
+const CATS=[
+  {n:'임대차',d:'보증금 반환·명도',q:[['보증금은 얼마인가요?','amount'],['계약이 종료됐나요?',['종료됨','종료 예정','진행 중']],['보증금을 돌려받지 못했나요?',['전액 못 받음','일부 못 받음','아직 만기 전']],['내용증명을 보냈나요?',['발송 완료','미발송']],['상대방 재산을 알고 있나요?',['알고 있음','일부','모름']],['현재 단계는요?',['소송 전','소송 진행 중','판결 후 집행']]],title:'임대차보증금 반환',work:'보증금반환청구',mul:1.0},
+  {n:'이혼·가사',d:'이혼·양육·재산분할',q:[['분할 대상 재산 규모는요?','amount'],['상대방도 이혼에 동의하나요?',['협의','다툼 있음','모름']],['미성년 자녀가 있나요?',['있음','없음']],['현재 단계는요?',['소송 전','조정 중','소송 진행 중']]],title:'이혼·재산분할',work:'이혼 및 재산분할 청구',mul:1.3},
+  {n:'민사금전',d:'대여금·물품대금',q:[['받을 금액은 얼마인가요?','amount'],['증빙이 있나요?',['계약서·차용증','문자·송금내역','구두']],['상대방 재산을 알고 있나요?',['알고 있음','일부','모름']],['현재 단계는요?',['소송 전','지급명령','소송 진행 중']]],title:'대여금 반환',work:'대여금 청구',mul:0.9},
+  {n:'노동',d:'임금체불·해고',q:[['체불 금액은 얼마인가요?','amount'],['어떤 문제인가요?',['임금·퇴직금 체불','부당해고','산재']],['노동청 진정을 했나요?',['진정 완료','미진정']],['현재 단계는요?',['진정 전','진정 중','소송 전']]],title:'임금체불',work:'체불임금 청구',mul:0.75},
+  {n:'부동산',d:'매매·소유권·명도',q:[['분쟁 금액은요?','amount'],['현재 단계는요?',['소송 전','소송 진행 중']]],title:'부동산 분쟁',work:'소유권·명도 관련',mul:1.1},
+  {n:'행정',d:'처분 취소·영업정지',q:[['처분 유형은요?',['영업정지','과징금','허가 취소','기타']],['처분일로부터 90일 이내인가요?',['예','아니오','모름']],['현재 단계는요?',['처분 전','행정심판','행정소송']]],title:'행정처분 취소',work:'행정심판·소송',mul:1.0},
+  {n:'회생·파산',d:'개인회생·파산',q:[['총 채무액은요?','amount'],['월 소득이 있나요?',['있음','없음']],['현재 단계는요?',['신청 전','신청 후']]],title:'개인회생',work:'개인회생 신청',mul:0.6},
+  {n:'형사',d:'MVP 후순위',q:[],dim:true},
+];
+const LAWYERS=[
+  {n:'김○○ 변호사',firm:'법무법인 한결',yrs:'11년차',loc:'서울 서초구',how:'전화·방문',fee:1.0,succ:'회수금액의 10%',cons:'무료',vat:'별도',stamp:'별도',app:'별도',msg:'유사 사건 다수 수행. 첫 상담에서 회수 가능성부터 말씀드립니다.'},
+  {n:'박○○ 변호사',firm:'개인 사무소',yrs:'7년차',loc:'서울 강남구',how:'화상·전화',fee:1.33,succ:'회수금액의 8%',cons:'무료',vat:'포함',stamp:'별도',app:'별도',msg:'부가세 포함 금액입니다. 가압류까지 포함해 진행합니다.'},
+  {n:'이○○ 변호사',firm:'법무법인 정률',yrs:'16년차',loc:'서울 종로구',how:'방문',fee:1.67,succ:'회수금액의 7%',cons:'유료 5만원',vat:'별도',stamp:'별도',app:'별도',msg:'상대방 재산조회부터 강제집행까지 한 번에 맡길 수 있습니다.'},
+  {n:'최○○ 변호사',firm:'개인 사무소',yrs:'4년차',loc:'경기 성남시',how:'전화·화상',fee:0.85,succ:'회수금액의 12%',cons:'무료',vat:'별도',stamp:'포함',app:'별도',msg:'인지·송달료를 착수금에 포함했습니다.'},
+];
+function go(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on'));$(id).classList.add('on');window.scrollTo(0,0);}
+function toast(t){const el=$('toast');el.textContent=t;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),2800);}
+const won=v=>Math.round(v).toLocaleString('ko-KR')+'원';
+const man=v=>{v=Math.round(v/1e4);return v>=10000?`${Math.floor(v/10000)}억${v%10000?' '+(v%10000).toLocaleString()+'만':''}원`:v.toLocaleString()+'만원';};
+function parseKRW(s){s=String(s).replace(/[,\s원]/g,'');let m=s.match(/^(\d+(?:\.\d+)?)억(?:(\d+(?:\.\d+)?)천)?(?:(\d+)만)?$/);if(m){let v=parseFloat(m[1])*1e8;if(m[2])v+=parseFloat(m[2])*1e7;if(m[3])v+=parseInt(m[3])*1e4;return Math.round(v);}m=s.match(/^(\d+(?:\.\d+)?)만$/);if(m)return Math.round(parseFloat(m[1])*1e4);if(/^\d+$/.test(s))return parseInt(s);return NaN;}
+document.querySelectorAll('.chips[data-group]').forEach(g=>g.addEventListener('click',e=>{const b=e.target.closest('.chip');if(!b)return;g.querySelectorAll('.chip').forEach(c=>c.classList.remove('sel'));b.classList.add('sel');S[g.dataset.group]=b.textContent;}));
+
+// 사건 선택
+CATS.forEach((c,i)=>{const b=document.createElement('button');b.className='opt'+(c.dim?' dim':'');b.innerHTML=`<b>${c.n}</b><span>${c.d}</span>`;b.onclick=()=>{if(c.dim){toast('형사 분야는 준비 중입니다');return;}document.querySelectorAll('#cats .opt').forEach(o=>o.classList.remove('sel'));b.classList.add('sel');S.cat=c;$('cat-btn').disabled=false;buildQ();};$('cats').appendChild(b);});
+function buildQ(){const c=S.cat;S.ans={};$('q-title').textContent=c.n;
+  $('qs').innerHTML=c.q.map(([q,o],i)=>o==='amount'?`<div class="q"><div class="qt">${q}</div><input id="amt" placeholder="예: 1억5천, 2800만, 150000000" style="margin-top:8px"></div>`:`<div class="q"><div class="qt">${q}</div><div class="chips" data-q="${i}">${o.map(x=>`<button class="chip">${x}</button>`).join('')}</div></div>`).join('');
+  $('qs').querySelectorAll('.chips[data-q]').forEach(g=>g.addEventListener('click',e=>{const b=e.target.closest('.chip');if(!b)return;g.querySelectorAll('.chip').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');S.ans[g.dataset.q]=b.textContent;}));}
+function makeCard(){const c=S.cat;const need=c.q.filter(([,o])=>o!=='amount').length;const amtEl=$('amt');
+  let ok=Object.keys(S.ans).length>=need;if(amtEl){S.amount=parseKRW(amtEl.value);if(isNaN(S.amount)||S.amount<=0)ok=false;}
+  if(!ok){$('q-err').style.display='block';return;}$('q-err').style.display='none';
+  const stage=Object.values(S.ans).find(v=>/소송|진정|조정|신청|처분|판결/.test(v))||'—';S.stage=stage;
+  $('cd-title').textContent=c.title;
+  const rows=[['지역',S.region]];if(amtEl)rows.push(['청구예정액',man(S.amount)]);rows.push(['현재 단계',stage]);
+  c.q.forEach(([q,o],i)=>{if(o!=='amount'&&S.ans[i]&&!/단계/.test(q))rows.push([q.replace(/\?$/,'').replace(/나요|인가요|은요|는요/g,'').trim(),S.ans[i]]);});
+  rows.push(['희망 업무',c.work]);S.rows=rows;
+  $('cd-dl').innerHTML=rows.map(([k,v])=>`<dt>${k}</dt><dd>${v}</dd>`).join('');go('s-card');}
+function submitCase(){if(!$('phone').value.trim()){toast('휴대전화 번호를 입력해주세요');return;}
+  $('w-id').textContent='#L'+Math.floor(10000+Math.random()*89999);$('w-dl').innerHTML=S.rows.slice(0,4).map(([k,v])=>`<dt>${k}</dt><dd>${v}</dd>`).join('');
+  buildOffers();go('s-wait');
+  let n=0;const tick=()=>{n++;$('w-cnt').textContent=n;if(n===1)toast(`${S.offers[0].n} 조건 제안이 도착했어요`);if(n===3){$('w-btn').disabled=false;toast('제안 3개가 모였어요. 이제 비교할 수 있습니다');}if(n<4)setTimeout(tick,900+Math.random()*700);else{$('w-now').textContent='조건 제안 4개 도착';$('w-now').className='done';}};setTimeout(tick,1000);}
+function buildOffers(){const base=S.amount?Math.min(Math.max(S.amount*0.022,2200000),15000000):3300000;const mul=S.cat.mul;
+  S.offers=LAWYERS.map(l=>({...l,feeWon:Math.round(base*mul*l.fee/100000)*100000,succ:S.cat.n==='이혼·가사'?'재산분할액의 5%':S.cat.n==='회생·파산'?'없음':S.cat.n==='행정'?'인용 시 착수금의 100%':l.succ}));renderCmp();}
+function renderCmp(){const os=S.offers;
+  $('p-title').textContent=`${S.cat.title} · 제안 ${os.length}개`;
+  const r=(k,f)=>`<tr><td>${k}</td>${os.map(f).join('')}</tr>`;
+  $('p-tbl').innerHTML=`<table><thead><tr><th>조건</th>${os.map(o=>`<th>${o.n.replace(' 변호사','')}</th>`).join('')}</tr></thead><tbody>${r('착수금',o=>`<td><b>${man(o.feeWon)}</b></td>`)}${r('보수조건',o=>`<td>${o.succ}</td>`)}${r('상담료',o=>`<td>${o.cons}</td>`)}${r('VAT',o=>`<td>${o.vat}</td>`)}${r('인지·송달료',o=>`<td>${o.stamp}</td>`)}${r('항소심',o=>`<td>${o.app}</td>`)}${r('경력',o=>`<td>${o.yrs}</td>`)}${r('사무실',o=>`<td>${o.loc.split(' ')[1]||o.loc}</td>`)}</tbody></table>`;
+  $('p-cards').innerHTML=os.map((o,i)=>`<div class="card"><div class="hd"><div class="nm">${o.n}<small>${o.firm} · ${o.yrs} · ${o.loc}</small></div><div class="fee">${man(o.feeWon)}<em>착수금 · VAT ${o.vat}</em></div></div>
+    <div class="kv"><div><span>보수조건</span><span>${o.succ}</span></div><div><span>상담료</span><span>${o.cons}</span></div><div><span>인지·송달료</span><span>${o.stamp}</span></div><div><span>항소심</span><span>${o.app}</span></div></div>
+    <div class="msg">${o.msg}</div><div class="acts"><button onclick="openProf(${i})">프로필 보기</button><button class="pri" onclick="openProf(${i},true)">상담 요청</button></div></div>`).join('');}
+function openProf(i,direct){const o=S.offers[i];S.pick=o;
+  $('pf-body').innerHTML=`<h2>${o.n}</h2><p class="sub">${o.firm} · ${o.loc}</p>
+    <div class="panel"><div class="kv" style="grid-template-columns:1fr;margin-top:0"><div><span>변호사 경력정보</span><span>${o.yrs}</span></div><div><span>등록된 업무분야</span><span>${S.cat.n} · 민사</span></div><div><span>사무실 위치</span><span>${o.loc}</span></div><div><span>상담 방식</span><span>${o.how}</span></div></div></div>
+    <h3>이 사건에 제안한 조건</h3>
+    <div class="panel"><div class="k">착수금</div><div class="price">${man(o.feeWon)}</div>
+    <div class="kv"><div><span>보수조건</span><span>${o.succ}</span></div><div><span>상담료</span><span>${o.cons}</span></div><div><span>부가세</span><span>${o.vat}</span></div><div><span>인지·송달료</span><span>${o.stamp}</span></div><div><span>항소심</span><span>${o.app}</span></div><div><span>출장비</span><span>별도</span></div></div>
+    <div class="msg">${o.msg}</div></div>
+    <div class="note">로피는 승소확률·순위·추천을 제공하지 않습니다. 표시된 정보는 변호사가 직접 등록한 내용입니다.</div>`;
+  $('pf-btn').onclick=()=>openConsult();if(direct)openConsult();else go('s-prof');}
+function openConsult(){const o=S.pick;$('cs-title').textContent=`${o.n}에게 상담을 요청할게요`;$('cs-dl').innerHTML=`<dt>사건</dt><dd>${S.cat.title}</dd><dt>제안 착수금</dt><dd>${man(o.feeWon)} (VAT ${o.vat})</dd><dt>보수조건</dt><dd>${o.succ}</dd><dt>상담료</dt><dd>${o.cons}</dd>`;go('s-consult');}
+function consult(){const o=S.pick;$('z-title').textContent='상담 요청을 보냈어요';$('z-dl').innerHTML=`<dt>변호사</dt><dd>${o.n}</dd><dt>방식</dt><dd>${S.how}</dd><dt>희망 일시</dt><dd>${S.cdate} ${S.ctime}</dd><dt>제안 조건</dt><dd>착수금 ${man(o.feeWon)} · ${o.succ}</dd>`;$('z-n').textContent=`제안 ${S.offers.length}개 비교`;go('s-done');}
+
+// 변호사
+const OPEN=[{t:'임대차보증금 반환',r:'서울',a:'1.5억',s:'소송 전',n:2,h:'3시간 전'},{t:'이혼·재산분할',r:'경기',a:'재산 4억',s:'조정 중',n:4,h:'6시간 전'},{t:'대여금 반환',r:'부산',a:'6,000만',s:'지급명령',n:1,h:'어제'},{t:'임금체불',r:'서울',a:'2,800만',s:'진정 중',n:3,h:'어제'}];
+function renderLaw(){const mine=S.cat?[{t:S.cat.title,r:S.region,a:S.amount?man(S.amount):'—',s:S.stage||'—',n:S.offers.length,h:'방금',me:true}]:[];
+  $('law-cases').innerHTML=[...mine,...OPEN].map((c,i)=>`<div class="card"><div class="hd"><div class="nm">${c.t}<small>${c.r} · ${c.a} · ${c.s}</small></div><span class="pill ${c.n>=3?'g':''}">제안 ${c.n}</span></div><div class="note" style="margin-top:8px">${c.h} 등록${c.me?' · 방금 소비자 화면에서 등록한 사건':''}</div><div class="acts"><button class="pri" onclick="lawOpen(${i})">상세보기</button></div></div>`).join('');}
+function lawMode(m,el){document.querySelectorAll('.mode button').forEach(b=>b.classList.remove('on'));el.classList.add('on');$('law-list').style.display=m==='list'?'':'none';$('law-sub').style.display=m==='sub'?'':'none';}
+function lawOpen(i){const mine=S.cat?1:0;const c=i<mine?{t:S.cat.title,rows:S.rows}:OPEN[i-mine];S.lawCase=i<mine?'mine':i;
+  const rows=c.rows||[['지역',c.r],['청구예정액',c.a],['현재 단계',c.s],['희망 업무',c.t]];
+  $('ld-card').innerHTML=`<h2 style="font-size:19px">${c.t}</h2><dl style="margin-top:12px">${rows.map(([k,v])=>`<dt>${k}</dt><dd>${v}</dd>`).join('')}</dl><div class="note">이름·연락처·상대방 정보는 소비자가 상담을 요청하면 공개됩니다.</div>`;
+  $('o-scope').querySelectorAll('.chip').forEach(b=>b.onclick=()=>b.classList.toggle('sel'));go('s-lawdetail');}
+function lawSubmit(){const fee=parseInt(($('o-fee').value||'').replace(/\D/g,''));if(!fee){toast('착수금을 입력해주세요');return;}
+  toast(`제안 제출됨 · 착수금 ${man(fee)} · VAT ${$('o-vat').value}`);
+  if(S.lawCase==='mine'&&S.offers.length){S.offers.push({n:'내 제안 (방금 입력)',firm:'—',yrs:'—',loc:'—',how:'—',feeWon:fee,succ:$('o-succ').value||'없음',cons:$('o-cons').value,vat:$('o-vat').value,stamp:$('o-stamp').value,app:$('o-app').value,msg:$('o-msg').value||''});renderCmp();}
+  go('s-law');}
+const _go=go;go=function(id){if(id==='s-law')renderLaw();_go(id);};
+[['이혼·가사',31,88,64],['임대차',26,92,73],['민사금전',23,83,57],['회생·파산',18,72,44],['노동',12,75,50],['기타',17,41,18]].forEach(([n,c,p,t])=>{const tr=document.createElement('tr');tr.innerHTML=`<td>${n}</td><td>${c}</td><td>${p}%</td><td><div style="display:flex;align-items:center;gap:8px;justify-content:center"><div class="bar" style="width:60px"><i style="width:${t}%"></i></div>${t}%</div></td>`;$('a-tbl').appendChild(tr);});
+</script>
+</body>
+</html>
