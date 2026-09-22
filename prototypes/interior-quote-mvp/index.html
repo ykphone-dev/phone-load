@@ -5,39 +5,43 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>인테리어 비교견적 — 우리 집 인테리어, 얼마가 적당할까요?</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#F6F5F2; --card:#FFFFFF; --ink:#1B1F1D; --ink2:#5F6864; --line:#E2E4E0;
-  --main:#1E5E4B; --main-ink:#FFFFFF; --good:#1F7A4D; --good-bg:#E4F2EA; --warn:#B4541E; --warn-bg:#F9EBE2; --field:#EEEFEB;
+  --brand:#725be5; --brand-ink:#FFFFFF; --brand-bg:#F1EEFC;
+  --bg:#FFFFFF; --card:#FFFFFF; --ink:#0A0A0A; --ink2:#737373; --line:#E5E5E5;
+  --main:#171717; --main-ink:#FFFFFF; --good:#009588; --good-bg:#E6F6F4; --warn:#E40014; --warn-bg:#FDECEE; --field:#F5F5F5;
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
-    --bg:#111513; --card:#1B211E; --ink:#EDF0EE; --ink2:#9AA59F; --line:#2C3531;
-    --main:#3E9C7E; --main-ink:#0B120F; --good:#5CC898; --good-bg:#17301F; --warn:#E5814A; --warn-bg:#3A2418; --field:#242C28;
+    --brand:#9B8BF0; --brand-ink:#0A0A0A; --brand-bg:#26204A;
+    --bg:#0F1115; --card:#171A20; --ink:#F3F4F6; --ink2:#9CA3AF; --line:#2A2F3A;
+    --main:#F3F4F6; --main-ink:#0F1115; --good:#4ADE80; --good-bg:#14301F; --warn:#FBBF24; --warn-bg:#3A2A10; --field:#1F232B;
   }
 }
 :root[data-theme="dark"]{
-  --bg:#111513; --card:#1B211E; --ink:#EDF0EE; --ink2:#9AA59F; --line:#2C3531;
-  --main:#3E9C7E; --main-ink:#0B120F; --good:#5CC898; --good-bg:#17301F; --warn:#E5814A; --warn-bg:#3A2418; --field:#242C28;
+  --brand:#9B8BF0; --brand-ink:#0A0A0A; --brand-bg:#26204A;
+  --bg:#0F1115; --card:#171A20; --ink:#F3F4F6; --ink2:#9CA3AF; --line:#2A2F3A;
+  --main:#F3F4F6; --main-ink:#0F1115; --good:#4ADE80; --good-bg:#14301F; --warn:#FBBF24; --warn-bg:#3A2A10; --field:#1F232B;
 }
 *{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--bg);color:var(--ink);font-family:"Noto Sans KR",-apple-system,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased}
+body{background:var(--bg);color:var(--ink);font-family:Pretendard,-apple-system,BlinkMacSystemFont,system-ui,Roboto,"Apple SD Gothic Neo","Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif;font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased}
 .app{max-width:480px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column}
 .top{display:flex;align-items:center;gap:8px;padding:14px 16px 8px;position:sticky;top:0;background:var(--bg);z-index:5}
 .top button{background:none;border:0;color:var(--ink);font-size:22px;line-height:1;padding:4px 8px 4px 0;cursor:pointer}
 .top .t{font-weight:700;font-size:16px}
 .top .step{margin-left:auto;font-size:13px;color:var(--ink2);font-variant-numeric:tabular-nums}
-.prog{height:3px;background:var(--line);margin:0 16px}.prog i{display:block;height:100%;background:var(--main);transition:width .3s}
+.prog{height:3px;background:var(--line);margin:0 16px}.prog i{display:block;height:100%;background:var(--brand);transition:width .3s}
 .screen{display:none;flex:1;flex-direction:column}.screen.on{display:flex}
 .body{padding:12px 20px 130px;flex:1}
-h1{font-size:30px;line-height:1.25;font-weight:900;letter-spacing:-0.02em;word-break:keep-all}
+h1{font-size:26px;line-height:1.35;font-weight:700;letter-spacing:-0.02em;word-break:keep-all}
 h2{font-size:22px;line-height:1.3;font-weight:700;letter-spacing:-0.01em;word-break:keep-all}
 h3{font-size:17px;font-weight:700;margin-top:24px;word-break:keep-all}
 p.sub{color:var(--ink2);font-size:15px;word-break:keep-all;margin-top:8px}
 .bottom{position:fixed;left:0;right:0;bottom:0;padding:12px 20px calc(12px + env(safe-area-inset-bottom));background:linear-gradient(to top,var(--bg) 70%,transparent);pointer-events:none}
 .bottom>*{max-width:440px;margin:0 auto;pointer-events:auto}
-.btn{display:block;width:100%;border:0;border-radius:14px;padding:17px;font:inherit;font-weight:700;font-size:17px;cursor:pointer;background:var(--main);color:var(--main-ink);text-align:center}
+.btn{display:block;width:100%;border:0;border-radius:12px;padding:16px;font:inherit;font-weight:700;font-size:16px;cursor:pointer;background:var(--brand);color:var(--brand-ink);text-align:center}
 .btn:disabled{opacity:.4;cursor:default}
 .btn.ghost{background:var(--card);color:var(--ink);border:1.5px solid var(--line);margin-top:8px}
 .btn:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,.chip:focus-visible,.opt:focus-visible{outline:3px solid var(--main);outline-offset:2px}
@@ -46,14 +50,14 @@ input,select,textarea{width:100%;margin-top:6px;border:0;background:var(--field)
 .row{display:flex;gap:10px}.row>*{flex:1}
 .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
 .chip{border:1.5px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:9px 14px;font:inherit;font-size:14px;cursor:pointer}
-.chip.sel{border-color:var(--main);background:var(--main);color:var(--main-ink)}
+.chip.sel{border-color:var(--brand);background:var(--brand-bg);color:var(--brand);font-weight:700}
 .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
 .grid .chip{border-radius:12px;padding:12px 6px;text-align:center}
 .opt{display:block;width:100%;text-align:left;border:1.5px solid var(--line);background:var(--card);color:var(--ink);border-radius:14px;padding:14px 16px;margin-top:10px;font:inherit;cursor:pointer}
-.opt.sel{border-color:var(--main);box-shadow:inset 0 0 0 1px var(--main)}
+.opt.sel{border-color:var(--brand);box-shadow:inset 0 0 0 1px var(--brand)}
 .opt b{display:block;font-size:16px}.opt span{display:block;font-size:13px;color:var(--ink2);margin-top:2px;word-break:keep-all}
 .money{font-size:36px;font-weight:900;letter-spacing:-0.03em;font-variant-numeric:tabular-nums;line-height:1.15;word-break:keep-all}
-.panel{background:var(--card);border-radius:18px;padding:20px;margin-top:16px;border:1px solid var(--line)}
+.panel{background:var(--card);border-radius:12px;padding:20px;margin-top:16px;border:1px solid var(--line)}
 .panel .k{font-size:13px;color:var(--ink2)}
 .tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
 .tags span{font-size:12px;border:1px solid var(--line);border-radius:6px;padding:3px 8px;color:var(--ink2)}
@@ -61,9 +65,9 @@ input,select,textarea{width:100%;margin-top:6px;border:0;background:var(--field)
 .brk div{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px dashed var(--line);font-size:15px;font-variant-numeric:tabular-nums}
 .brk div:last-child{border:0}.brk div span:last-child{font-weight:500}
 .note{font-size:13px;color:var(--ink2);margin-top:14px;word-break:keep-all;line-height:1.55}
-.pill{display:inline-block;background:var(--good-bg);color:var(--good);font-weight:700;font-size:13px;border-radius:8px;padding:4px 9px}
+.pill{display:inline-block;background:var(--brand-bg);color:var(--brand);font-weight:700;font-size:13px;border-radius:8px;padding:4px 9px}
 .pill.w{background:var(--warn-bg);color:var(--warn)}
-.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin-top:12px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;margin-top:12px}
 .card .hd{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
 .card .nm{font-weight:700;font-size:17px}
 .card .fee{font-size:22px;font-weight:900;font-variant-numeric:tabular-nums;letter-spacing:-0.02em}
@@ -73,7 +77,7 @@ input,select,textarea{width:100%;margin-top:6px;border:0;background:var(--field)
 .msg{font-size:14px;margin-top:12px;word-break:keep-all;line-height:1.55}
 .acts{display:flex;gap:8px;margin-top:12px}
 .acts button{flex:1;border:1.5px solid var(--line);background:none;color:var(--ink);border-radius:10px;padding:11px;font:inherit;font-size:14px;cursor:pointer}
-.acts button.pri{background:var(--main);color:var(--main-ink);border-color:var(--main);font-weight:700}
+.acts button.pri{background:var(--brand);color:var(--brand-ink);border-color:var(--brand);font-weight:700}
 .acts button.on{border-color:var(--main);color:var(--main);font-weight:700}
 .tbl{overflow-x:auto;margin-top:12px;border:1px solid var(--line);border-radius:14px;background:var(--card)}
 table{border-collapse:collapse;width:100%;font-size:13px;font-variant-numeric:tabular-nums;white-space:nowrap}
@@ -86,7 +90,7 @@ td.lo{color:var(--good);font-weight:700}td.hi{color:var(--warn)}
 .tl div{position:relative;padding:6px 0 14px;color:var(--ink2);font-size:15px}
 .tl div::before{content:"";position:absolute;left:-23px;top:12px;width:10px;height:10px;border-radius:50%;background:var(--line)}
 .tl div.done{color:var(--ink);font-weight:500}.tl div.done::before{background:var(--good)}
-.tl div.now{color:var(--ink);font-weight:700}.tl div.now::before{background:var(--main);box-shadow:0 0 0 4px color-mix(in srgb,var(--main) 25%,transparent)}
+.tl div.now{color:var(--ink);font-weight:700}.tl div.now::before{background:var(--brand);box-shadow:0 0 0 4px color-mix(in srgb,var(--brand) 25%,transparent)}
 .sum dl{display:grid;grid-template-columns:1fr auto;gap:10px 16px;font-size:15px}
 .sum dt{color:var(--ink2)}.sum dd{text-align:right;font-weight:700;font-variant-numeric:tabular-nums}
 .sum dd.big{font-size:24px;font-weight:900;letter-spacing:-0.02em}
@@ -100,16 +104,31 @@ td.lo{color:var(--good);font-weight:700}td.hi{color:var(--warn)}
 .hero .ex .big.g{color:var(--good)}
 .hero .ex .arrow{color:var(--ink2);text-align:center;padding:6px 0}
 .err{color:var(--warn);font-size:13px;margin-top:8px;display:none}
+.site{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;border-bottom:1px solid var(--line);background:var(--bg);position:sticky;top:0;z-index:6}
+.site .logo{font-weight:800;font-size:20px;letter-spacing:-0.03em;color:var(--ink);text-decoration:none;display:flex;align-items:center;gap:6px}
+.site .logo i{display:inline-flex;align-items:center;justify-content:center;height:24px;padding:0 8px;border-radius:8px 8px 8px 2px;background:var(--brand);color:#fff;font-style:normal;font-weight:800;font-size:12px;letter-spacing:0}
+.site .logo small{font-weight:600;font-size:13px;color:var(--ink2);margin-left:4px}
+.site nav{display:flex;gap:14px;font-size:13px;color:var(--ink2);overflow-x:auto;white-space:nowrap;margin-left:12px}
+.site nav a{color:var(--ink2);text-decoration:none}.site nav a.on{color:var(--ink);font-weight:700;border-bottom:2px solid var(--brand);padding-bottom:2px}
+.crumb{font-size:12px;color:var(--ink2);padding:10px 20px 0}.crumb b{color:var(--ink);font-weight:600}
+.footer{margin-top:40px;border-top:1px solid var(--line);padding:24px 20px 120px;font-size:12px;color:var(--ink2);line-height:1.7;word-break:keep-all}
+.footer .fl{font-weight:700;color:var(--ink);font-size:15px;margin-bottom:8px}
+.footer .fn{display:flex;gap:12px;flex-wrap:wrap;margin:8px 0 12px}.footer .fn a{color:var(--ink);text-decoration:none;font-weight:600}
+.trust{display:flex;gap:6px;flex-wrap:wrap;margin-top:14px}.trust span{font-size:12px;background:var(--field);border-radius:6px;padding:4px 9px;color:var(--ink)}
+.hero .ex{border-radius:12px}
 @media (prefers-reduced-motion: reduce){*{transition:none!important}}
 </style>
 </head>
 <body>
 <div class="app">
+<header class="site"><a class="logo" href="#" onclick="location.reload();return false"><i>옆커폰</i><small>인테리어 비교견적</small></a><nav><a>휴대폰</a><a>요금제</a><a>인터넷</a><a>매장</a><a>시세표</a><a>부동산</a><a class="on">인테리어</a></nav></header>
+<div class="crumb">홈 › 인테리어 › <b>비교견적</b></div>
 
 <section class="screen on" id="s-home">
   <div class="body hero">
     <h1>우리 집 인테리어,<br>얼마가 적당할까요?</h1>
-    <p class="sub">30초면 예상가격을 확인하고 우리 지역 인테리어 업체들의 실제 견적을 비교할 수 있습니다.</p>
+    <p class="sub">30초면 예상가격을 확인하고, 인증 업체들의 공정별 견적을 같은 조건으로 비교할 수 있습니다. 견적서에는 공정별 금액과 업체 마진이 따로 적힙니다.</p>
+    <div class="trust"><span>공정별 금액·마진 표기</span><span>하자보수 1~2년</span><span>현장실측 무료</span><span>전국 720호점 옆커폰</span></div>
     <div class="ex">
       <div>대구 수성구 34평 · 전체 인테리어 · 표준형</div>
       <div class="big">예상 4,300만 ~ 5,200만원</div>
@@ -248,8 +267,8 @@ td.lo{color:var(--good);font-weight:700}td.hi{color:var(--warn)}
 <section class="screen" id="s-cmp">
   <div class="top"><button onclick="go('s-req')" aria-label="뒤로">‹</button><span class="t">견적 비교</span></div>
   <div class="body">
-    <h2>3개 업체 1차 견적</h2>
-    <p class="sub">같은 조건, 같은 양식으로 받은 견적입니다. 업체끼리는 서로의 금액을 볼 수 없습니다.</p>
+    <h2>인증 업체 3곳의 1차 견적</h2>
+    <p class="sub">같은 조건, 같은 양식으로 받은 견적입니다. 공정별 금액과 업체 마진이 따로 적혀 있고, 업체끼리는 서로의 금액을 볼 수 없습니다.</p>
     <div id="c-cards"></div>
     <h3>공종별 비교 (만원)</h3>
     <div class="tbl" id="c-tbl"></div>
@@ -312,6 +331,9 @@ td.lo{color:var(--good);font-weight:700}td.hi{color:var(--warn)}
   <div class="bottom"><button class="btn ghost" onclick="location.reload()">처음부터 다시 해보기</button></div>
 </section>
 
+<footer class="footer"><div class="fl">옆커폰</div>
+<div class="fn"><a>공지사항</a><a>FAQ</a><a>이용약관</a><a>개인정보처리방침</a></div>
+주식회사 옆커폰 · 대표 문성혁 · 사업자등록번호 405-88-01347 · 통신판매번호 2021-대구달서-0620<br>대구광역시 달서구 달구벌대로 1726, 골든두류타워 8층~11층 · ykphone.kr@gmail.com<br>고객센터 1800-6706 (평일 09:00–17:00) · 인테리어 상담 1661-4522<br>© 2021–2026 YEOPKERPHONE INC. All rights reserved.</footer>
 </div>
 <div class="toast" id="toast"></div>
 
@@ -373,7 +395,8 @@ function buildBids(){
   const base=S.est.rows; // [n,lo,hi]
   const mk=(name,mul,tilt,days,as,rating,cnt,yrs,design,d3,msg)=>{
     const items=base.map(([n,l,h])=>{let v=(l+h)/2*mul*(tilt[n]||1);return [n,Math.round(v/10)*10];});
-    const total=items.reduce((a,[,v])=>a+v,0);
+    const sub=items.reduce((a,[,v])=>a+v,0);const margin=Math.round(sub*(mul>1?0.12:0.1)/10)*10;items.push(['업체 마진 (별도 표기)',margin]);
+    const total=sub+margin;
     return {name,items,total,days,as,rating,cnt,yrs,design,d3,msg,gu};
   };
   S.bids=[
